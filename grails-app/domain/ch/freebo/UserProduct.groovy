@@ -6,6 +6,7 @@ class UserProduct {
 
 	Product product
 	User user
+	
 	Date optInDate
 	Date optOutDate
 	Boolean isActive

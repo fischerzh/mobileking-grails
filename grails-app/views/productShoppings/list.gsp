@@ -1,10 +1,10 @@
 
-<%@ page import="ch.freebo.Shopping" %>
+<%@ page import="ch.freebo.ProductShoppings" %>
 <!doctype html>
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'shopping.label', default: 'Shopping')}" />
+		<g:set var="entityName" value="${message(code: 'productShoppings.label', default: 'ProductShoppings')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,38 +44,38 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="date" title="${message(code: 'shopping.date.label', default: 'Date')}" />
+							<g:sortableColumn property="price" title="${message(code: 'productShoppings.price.label', default: 'Price')}" />
 						
-							<th class="header"><g:message code="shopping.location.label" default="Location" /></th>
+							<th class="header"><g:message code="productShoppings.product.label" default="Product" /></th>
 						
-							<th class="header"><g:message code="shopping.retailer.label" default="Retailer" /></th>
+							<g:sortableColumn property="qty" title="${message(code: 'productShoppings.qty.label', default: 'Qty')}" />
 						
-							<th class="header"><g:message code="shopping.user.label" default="User" /></th>
+							<th class="header"><g:message code="productShoppings.shopping.label" default="Shopping" /></th>
 						
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-					<g:each in="${shoppingInstanceList}" var="shoppingInstance">
+					<g:each in="${productShoppingsInstanceList}" var="productShoppingsInstance">
 						<tr>
 						
-							<td><g:formatDate date="${shoppingInstance.date}" /></td>
+							<td>${fieldValue(bean: productShoppingsInstance, field: "price")}</td>
 						
-							<td>${fieldValue(bean: shoppingInstance, field: "location")}</td>
+							<td>${fieldValue(bean: productShoppingsInstance, field: "product")}</td>
 						
-							<td>${fieldValue(bean: shoppingInstance, field: "retailer")}</td>
+							<td>${fieldValue(bean: productShoppingsInstance, field: "qty")}</td>
 						
-							<td>${fieldValue(bean: shoppingInstance, field: "user")}</td>
+							<td>${fieldValue(bean: productShoppingsInstance, field: "shopping")}</td>
 						
 							<td class="link">
-								<g:link action="show" id="${shoppingInstance.id}" class="btn btn-small">Show &raquo;</g:link>
+								<g:link action="show" id="${productShoppingsInstance.id}" class="btn btn-small">Show &raquo;</g:link>
 							</td>
 						</tr>
 					</g:each>
 					</tbody>
 				</table>
 				<div class="pagination">
-					<bootstrap:paginate total="${shoppingInstanceTotal}" />
+					<bootstrap:paginate total="${productShoppingsInstanceTotal}" />
 				</div>
 			</div>
 

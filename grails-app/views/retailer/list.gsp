@@ -1,10 +1,10 @@
 
-<%@ page import="ch.freebo.Shopping" %>
+<%@ page import="ch.freebo.Retailer" %>
 <!doctype html>
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'shopping.label', default: 'Shopping')}" />
+		<g:set var="entityName" value="${message(code: 'retailer.label', default: 'Retailer')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,38 +44,30 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="date" title="${message(code: 'shopping.date.label', default: 'Date')}" />
+							<th class="header"><g:message code="retailer.location.label" default="Location" /></th>
 						
-							<th class="header"><g:message code="shopping.location.label" default="Location" /></th>
-						
-							<th class="header"><g:message code="shopping.retailer.label" default="Retailer" /></th>
-						
-							<th class="header"><g:message code="shopping.user.label" default="User" /></th>
+							<g:sortableColumn property="name" title="${message(code: 'retailer.name.label', default: 'Name')}" />
 						
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-					<g:each in="${shoppingInstanceList}" var="shoppingInstance">
+					<g:each in="${retailerInstanceList}" var="retailerInstance">
 						<tr>
 						
-							<td><g:formatDate date="${shoppingInstance.date}" /></td>
+							<td>${fieldValue(bean: retailerInstance, field: "location")}</td>
 						
-							<td>${fieldValue(bean: shoppingInstance, field: "location")}</td>
-						
-							<td>${fieldValue(bean: shoppingInstance, field: "retailer")}</td>
-						
-							<td>${fieldValue(bean: shoppingInstance, field: "user")}</td>
+							<td>${fieldValue(bean: retailerInstance, field: "name")}</td>
 						
 							<td class="link">
-								<g:link action="show" id="${shoppingInstance.id}" class="btn btn-small">Show &raquo;</g:link>
+								<g:link action="show" id="${retailerInstance.id}" class="btn btn-small">Show &raquo;</g:link>
 							</td>
 						</tr>
 					</g:each>
 					</tbody>
 				</table>
 				<div class="pagination">
-					<bootstrap:paginate total="${shoppingInstanceTotal}" />
+					<bootstrap:paginate total="${retailerInstanceTotal}" />
 				</div>
 			</div>
 

@@ -18,14 +18,6 @@
 	<g:textField name="imageLink" value="${productInstance?.imageLink}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: productInstance, field: 'shoppings', 'error')} ">
-	<label for="shoppings">
-		<g:message code="product.shoppings.label" default="Shoppings" />
-		
-	</label>
-	<g:select name="shoppings" from="${ch.freebo.Shopping.list()}" multiple="multiple" optionKey="id" size="5" value="${productInstance?.shoppings*.id}" class="many-to-many"/>
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: productInstance, field: 'ingredients', 'error')} ">
 	<label for="ingredients">
 		<g:message code="product.ingredients.label" default="Ingredients" />

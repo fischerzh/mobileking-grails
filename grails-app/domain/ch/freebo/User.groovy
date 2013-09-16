@@ -16,10 +16,10 @@ class User {
 		password blank: false
 		loyaltyCards nullable:true
 		shoppings nullable:true
-		loyaltyPrograms nullable:true
+//		loyaltyPrograms nullable:true
 	}
 	
-	static hasMany = [loyaltyCards:LoyaltyCard, loyaltyPrograms:LoyaltyProgram, shoppings: Shopping]
+	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping] //loyaltyPrograms:LoyaltyProgram, 
 
 	static mapping = {
 		password column: '`password`'

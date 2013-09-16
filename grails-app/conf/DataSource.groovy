@@ -15,7 +15,7 @@ environments {
         dataSource {
 			pooled = true
 			driverClassName = "com.mysql.jdbc.Driver"
-			dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
+			dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
 			url ="jdbc:mysql://176.28.9.173:3306/product_king?useUnicode=yes&characterEncoding=UTF-8"
 			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
 			username = "mf"

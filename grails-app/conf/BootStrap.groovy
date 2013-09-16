@@ -1,6 +1,9 @@
+import ch.freebo.Location
 import ch.freebo.Product
 import ch.freebo.ProductCategory
 import ch.freebo.ProductSegment
+import ch.freebo.ProductShoppings
+import ch.freebo.Retailer
 import ch.freebo.Role
 import ch.freebo.Shopping
 import ch.freebo.User
@@ -28,12 +31,19 @@ class BootStrap {
 		def product1 = Product.findByName("Rivella")?:new Product(name:"Rivella",ean:"12341241", productCategory:prodCategory1, imageLink:"http://www.codecheck.info/img/69696/1").save(flush:true)
 		def product2 = Product.findByName("Zweifel Chips")?:new Product(name:"Zweifel Chips",ean:"12341241", productCategory:prodCategory2, imageLink:"http://www.codecheck.info/img/55405/1").save(flush:true)
 		
-		def date = new Date()
-		def shoppingList = Shopping.findByPlace("Migros Brunaupark")?:new Shopping(date:date, place:"Migros Brunaupark").save(flush:true)
+		def location = Location.findByName("Zuerich")?:new Location(name:"Zuerich", plz:8000).save(flush:true)
+		def migros = Retailer.findByName("Migros")?:new Retailer(name:"Migros", location:location).save(flush:true)
 		
-		shoppingList.addToProducts(product1)
-		shoppingList.addToProducts(product2)
-		shoppingList.save(flush:true)
+		def date = new Date()
+		def shoppingList = Shopping.findByLocationAndRetailer(location, migros)?:new Shopping(date:date, location:location, retailer:migros, user:testUser).save(flush:true)
+		println shoppingList
+//		shoppingList.addToProducts(product1)
+//		shoppingList.addToProducts(product2)
+//		shoppingList.save(flush:true)
+		
+		def rivellaKauf = new ProductShoppings(product:product1, shopping:shoppingList, qty:2).save(failOnError:true)
+		def zweifelKauf = new ProductShoppings(product:product2, shopping:shoppingList, qty:3).save(failOnError:true)
+		
 		
 		testUser.addToShoppings(shoppingList).save(flush:true)
     }

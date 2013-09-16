@@ -2,6 +2,8 @@ package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
 
+import ch.freebo.Role;
+
 class RoleController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']

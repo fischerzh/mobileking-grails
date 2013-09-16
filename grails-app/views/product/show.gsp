@@ -56,15 +56,6 @@
 						
 					</g:if>
 				
-					<g:if test="${productInstance?.shoppings}">
-						<dt><g:message code="product.shoppings.label" default="Shoppings" /></dt>
-						
-							<g:each in="${productInstance.shoppings}" var="s">
-							<dd><g:link controller="shopping" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></dd>
-							</g:each>
-						
-					</g:if>
-				
 					<g:if test="${productInstance?.ingredients}">
 						<dt><g:message code="product.ingredients.label" default="Ingredients" /></dt>
 						

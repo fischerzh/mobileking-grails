@@ -42,11 +42,11 @@
 
 				<dl>
 				
-					<g:if test="${shoppingInstance?.products}">
-						<dt><g:message code="shopping.products.label" default="Products" /></dt>
+					<g:if test="${shoppingInstance?.productShoppings}">
+						<dt><g:message code="shopping.productShoppings.label" default="Product Shoppings" /></dt>
 						
-							<g:each in="${shoppingInstance.products}" var="p">
-							<dd><g:link controller="product" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></dd>
+							<g:each in="${shoppingInstance.productShoppings}" var="p">
+							<dd><g:link controller="productShoppings" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></dd>
 							</g:each>
 						
 					</g:if>
@@ -58,10 +58,24 @@
 						
 					</g:if>
 				
-					<g:if test="${shoppingInstance?.place}">
-						<dt><g:message code="shopping.place.label" default="Place" /></dt>
+					<g:if test="${shoppingInstance?.location}">
+						<dt><g:message code="shopping.location.label" default="Location" /></dt>
 						
-							<dd><g:fieldValue bean="${shoppingInstance}" field="place"/></dd>
+							<dd><g:link controller="location" action="show" id="${shoppingInstance?.location?.id}">${shoppingInstance?.location?.encodeAsHTML()}</g:link></dd>
+						
+					</g:if>
+				
+					<g:if test="${shoppingInstance?.retailer}">
+						<dt><g:message code="shopping.retailer.label" default="Retailer" /></dt>
+						
+							<dd><g:link controller="retailer" action="show" id="${shoppingInstance?.retailer?.id}">${shoppingInstance?.retailer?.encodeAsHTML()}</g:link></dd>
+						
+					</g:if>
+				
+					<g:if test="${shoppingInstance?.user}">
+						<dt><g:message code="shopping.user.label" default="User" /></dt>
+						
+							<dd><g:link controller="user" action="show" id="${shoppingInstance?.user?.id}">${shoppingInstance?.user?.encodeAsHTML()}</g:link></dd>
 						
 					</g:if>
 				

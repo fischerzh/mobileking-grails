@@ -26,29 +26,12 @@
 	<g:select name="loyaltyCards" from="${ch.freebo.LoyaltyCard.list()}" multiple="multiple" optionKey="id" size="5" value="${userInstance?.loyaltyCards*.id}" class="many-to-many"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: userInstance, field: 'shoppings', 'error')} ">
-	<label for="shoppings">
-		<g:message code="user.shoppings.label" default="Shoppings" />
+<div class="fieldcontain ${hasErrors(bean: userInstance, field: 'productShoppings', 'error')} ">
+	<label for="productShoppings">
+		<g:message code="user.productShoppings.label" default="Product Shoppings" />
 		
 	</label>
-	<g:select name="shoppings" from="${ch.freebo.Shopping.list()}" multiple="multiple" optionKey="id" size="5" value="${userInstance?.shoppings*.id}" class="many-to-many"/>
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: userInstance, field: 'loyaltyPrograms', 'error')} ">
-	<label for="loyaltyPrograms">
-		<g:message code="user.loyaltyPrograms.label" default="Loyalty Programs" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${userInstance?.loyaltyPrograms?}" var="l">
-    <li><g:link controller="loyaltyProgram" action="show" id="${l.id}">${l?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="loyaltyProgram" action="create" params="['user.id': userInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'loyaltyProgram.label', default: 'LoyaltyProgram')])}</g:link>
-</li>
-</ul>
-
+	<g:select name="productShoppings" from="${ch.freebo.ProductShoppings.list()}" multiple="multiple" optionKey="id" size="5" value="${userInstance?.productShoppings*.id}" class="many-to-many"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'accountExpired', 'error')} ">

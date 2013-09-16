@@ -27,6 +27,14 @@
 	<g:textField name="linkToLoyaltyProvider" value="${loyaltyProgramInstance?.linkToLoyaltyProvider}"/>
 </div>
 
+<div class="fieldcontain ${hasErrors(bean: loyaltyProgramInstance, field: 'active', 'error')} ">
+	<label for="active">
+		<g:message code="loyaltyProgram.active.label" default="Active" />
+		
+	</label>
+	<g:checkBox name="active" value="${loyaltyProgramInstance?.active}" />
+</div>
+
 <div class="fieldcontain ${hasErrors(bean: loyaltyProgramInstance, field: 'status', 'error')} ">
 	<label for="status">
 		<g:message code="loyaltyProgram.status.label" default="Status" />
@@ -41,14 +49,6 @@
 		
 	</label>
 	<g:checkBox name="ranking" value="${loyaltyProgramInstance?.ranking}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: loyaltyProgramInstance, field: 'users', 'error')} ">
-	<label for="users">
-		<g:message code="loyaltyProgram.users.label" default="Users" />
-		
-	</label>
-	<g:select id="users" name="users.id" from="${ch.freebo.User.list()}" optionKey="id" value="${loyaltyProgramInstance?.users?.id}" class="many-to-one" noSelection="['null': '']"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: loyaltyProgramInstance, field: 'name', 'error')} ">

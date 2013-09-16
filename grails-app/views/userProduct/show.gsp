@@ -42,10 +42,31 @@
 
 				<dl>
 				
-					<g:if test="${userProductInstance?.points}">
-						<dt><g:message code="userProduct.points.label" default="Points" /></dt>
+					<g:if test="${userProductInstance?.optInDate}">
+						<dt><g:message code="userProduct.optInDate.label" default="Opt In Date" /></dt>
 						
-							<dd><g:fieldValue bean="${userProductInstance}" field="points"/></dd>
+							<dd><g:formatDate date="${userProductInstance?.optInDate}" /></dd>
+						
+					</g:if>
+				
+					<g:if test="${userProductInstance?.optOutDate}">
+						<dt><g:message code="userProduct.optOutDate.label" default="Opt Out Date" /></dt>
+						
+							<dd><g:formatDate date="${userProductInstance?.optOutDate}" /></dd>
+						
+					</g:if>
+				
+					<g:if test="${userProductInstance?.isActive}">
+						<dt><g:message code="userProduct.isActive.label" default="Is Active" /></dt>
+						
+							<dd><g:formatBoolean boolean="${userProductInstance?.isActive}" /></dd>
+						
+					</g:if>
+				
+					<g:if test="${userProductInstance?.optIn}">
+						<dt><g:message code="userProduct.optIn.label" default="Opt In" /></dt>
+						
+							<dd><g:formatBoolean boolean="${userProductInstance?.optIn}" /></dd>
 						
 					</g:if>
 				

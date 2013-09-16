@@ -58,6 +58,13 @@
 						
 					</g:if>
 				
+					<g:if test="${loyaltyProgramInstance?.active}">
+						<dt><g:message code="loyaltyProgram.active.label" default="Active" /></dt>
+						
+							<dd><g:formatBoolean boolean="${loyaltyProgramInstance?.active}" /></dd>
+						
+					</g:if>
+				
 					<g:if test="${loyaltyProgramInstance?.status}">
 						<dt><g:message code="loyaltyProgram.status.label" default="Status" /></dt>
 						
@@ -69,13 +76,6 @@
 						<dt><g:message code="loyaltyProgram.ranking.label" default="Ranking" /></dt>
 						
 							<dd><g:formatBoolean boolean="${loyaltyProgramInstance?.ranking}" /></dd>
-						
-					</g:if>
-				
-					<g:if test="${loyaltyProgramInstance?.users}">
-						<dt><g:message code="loyaltyProgram.users.label" default="Users" /></dt>
-						
-							<dd><g:link controller="user" action="show" id="${loyaltyProgramInstance?.users?.id}">${loyaltyProgramInstance?.users?.encodeAsHTML()}</g:link></dd>
 						
 					</g:if>
 				

@@ -2,6 +2,8 @@ package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
 
+import ch.freebo.Manufacturer;
+
 class ManufacturerController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']

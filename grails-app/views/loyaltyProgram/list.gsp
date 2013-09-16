@@ -46,11 +46,11 @@
 						
 							<g:sortableColumn property="linkToLoyaltyProvider" title="${message(code: 'loyaltyProgram.linkToLoyaltyProvider.label', default: 'Link To Loyalty Provider')}" />
 						
+							<g:sortableColumn property="active" title="${message(code: 'loyaltyProgram.active.label', default: 'Active')}" />
+						
 							<g:sortableColumn property="status" title="${message(code: 'loyaltyProgram.status.label', default: 'Status')}" />
 						
 							<g:sortableColumn property="ranking" title="${message(code: 'loyaltyProgram.ranking.label', default: 'Ranking')}" />
-						
-							<th class="header"><g:message code="loyaltyProgram.users.label" default="Users" /></th>
 						
 							<g:sortableColumn property="name" title="${message(code: 'loyaltyProgram.name.label', default: 'Name')}" />
 						
@@ -65,11 +65,11 @@
 						
 							<td>${fieldValue(bean: loyaltyProgramInstance, field: "linkToLoyaltyProvider")}</td>
 						
+							<td><g:formatBoolean boolean="${loyaltyProgramInstance.active}" /></td>
+						
 							<td><g:formatBoolean boolean="${loyaltyProgramInstance.status}" /></td>
 						
 							<td><g:formatBoolean boolean="${loyaltyProgramInstance.ranking}" /></td>
-						
-							<td>${fieldValue(bean: loyaltyProgramInstance, field: "users")}</td>
 						
 							<td>${fieldValue(bean: loyaltyProgramInstance, field: "name")}</td>
 						

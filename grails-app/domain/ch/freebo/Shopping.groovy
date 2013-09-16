@@ -3,18 +3,21 @@ package ch.freebo
 class Shopping {
 
 	Date date
-	String place
 	
     static constraints = {
-		products nullable:true
+		productShoppings nullable:true
     }
+		
+	static belongsTo = [location:Location, retailer:Retailer, user: User]
 	
-	static hasMany = [products:Product]
-	
-	static belongsTo = Product
+	static hasMany = [productShoppings: ProductShoppings]
 	
 	String toString()  {
-		return place? place: ""
+		def userStr = user?user.toString(): " "
+		def locationStr = retailer?retailer.toString(): " "
+		def returnStr = date.toString() + " " + locationStr +  " " + "(User: " +userStr+" )"
+		return returnStr? returnStr: " "
 	}
+	
 	
 }

@@ -44,7 +44,13 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="points" title="${message(code: 'userProduct.points.label', default: 'Points')}" />
+							<g:sortableColumn property="optInDate" title="${message(code: 'userProduct.optInDate.label', default: 'Opt In Date')}" />
+						
+							<g:sortableColumn property="optOutDate" title="${message(code: 'userProduct.optOutDate.label', default: 'Opt Out Date')}" />
+						
+							<g:sortableColumn property="isActive" title="${message(code: 'userProduct.isActive.label', default: 'Is Active')}" />
+						
+							<g:sortableColumn property="optIn" title="${message(code: 'userProduct.optIn.label', default: 'Opt In')}" />
 						
 							<th class="header"><g:message code="userProduct.product.label" default="Product" /></th>
 						
@@ -57,7 +63,13 @@
 					<g:each in="${userProductInstanceList}" var="userProductInstance">
 						<tr>
 						
-							<td>${fieldValue(bean: userProductInstance, field: "points")}</td>
+							<td><g:formatDate date="${userProductInstance.optInDate}" /></td>
+						
+							<td><g:formatDate date="${userProductInstance.optOutDate}" /></td>
+						
+							<td><g:formatBoolean boolean="${userProductInstance.isActive}" /></td>
+						
+							<td><g:formatBoolean boolean="${userProductInstance.optIn}" /></td>
 						
 							<td>${fieldValue(bean: userProductInstance, field: "product")}</td>
 						

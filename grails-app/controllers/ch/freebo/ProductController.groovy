@@ -1,8 +1,8 @@
 package ch.freebo
 
+import grails.converters.JSON
 import groovy.json.JsonBuilder
 import org.springframework.dao.DataIntegrityViolationException
-import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
 
@@ -10,7 +10,7 @@ class ProductController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-	@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
+	
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
 		println "Params" + params
@@ -47,7 +47,7 @@ class ProductController {
 		
 		def userShopping = user.shoppings.each {
 			println "Add products: " +it.products
-			products.addAll(it.products)	
+			products.addAll(it.products)
 		}
 		
 		println userShopping
@@ -108,6 +108,7 @@ class ProductController {
 	
 	def calculateProductRank(Product prod, User user)
 	{
+		
 		
 	}
 	

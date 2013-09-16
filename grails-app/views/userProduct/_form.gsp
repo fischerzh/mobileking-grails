@@ -2,12 +2,36 @@
 
 
 
-<div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'points', 'error')} ">
-	<label for="points">
-		<g:message code="userProduct.points.label" default="Points" />
+<div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'optInDate', 'error')} ">
+	<label for="optInDate">
+		<g:message code="userProduct.optInDate.label" default="Opt In Date" />
 		
 	</label>
-	<g:field name="points" type="number" value="${userProductInstance.points}"/>
+	<g:datePicker name="optInDate" precision="day"  value="${userProductInstance?.optInDate}" default="none" noSelection="['': '']" />
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'optOutDate', 'error')} ">
+	<label for="optOutDate">
+		<g:message code="userProduct.optOutDate.label" default="Opt Out Date" />
+		
+	</label>
+	<g:datePicker name="optOutDate" precision="day"  value="${userProductInstance?.optOutDate}" default="none" noSelection="['': '']" />
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'isActive', 'error')} ">
+	<label for="isActive">
+		<g:message code="userProduct.isActive.label" default="Is Active" />
+		
+	</label>
+	<g:checkBox name="isActive" value="${userProductInstance?.isActive}" />
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'optIn', 'error')} ">
+	<label for="optIn">
+		<g:message code="userProduct.optIn.label" default="Opt In" />
+		
+	</label>
+	<g:checkBox name="optIn" value="${userProductInstance?.optIn}" />
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: userProductInstance, field: 'product', 'error')} required">

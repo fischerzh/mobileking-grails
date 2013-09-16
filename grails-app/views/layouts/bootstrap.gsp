@@ -53,6 +53,12 @@
 								<%= 'Manufacturer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="Manufacturer">Manufacturer</g:link></li>
 							<li
+								<%= 'Retailer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+									controller="Retailer">Retailer</g:link></li>
+							<li
+								<%= 'Location'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+									controller="Location">Location</g:link></li>
+							<li
 								<%= 'Product'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="Product">Product</g:link></li>
 							<li
@@ -64,18 +70,25 @@
 							<li
 								<%= 'LoyaltyProgram'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="LoyaltyProgram">LoyaltyProgram</g:link></li>
-							<li
-								<%= 'LoyaltyProgramLevels'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="LoyaltyProgramLevels">LoyaltyProgramLevels</g:link></li>
-							<li
-								<%= 'LoyaltyCard'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="LoyaltyCard">LoyaltyCard</g:link></li>
+<%--							<li--%>
+<%--								<%= 'LoyaltyProgramLevels'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
+<%--									controller="LoyaltyProgramLevels">LoyaltyProgramLevels</g:link></li>--%>
+<%--							<li--%>
+<%--								<%= 'LoyaltyCard'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
+<%--									controller="LoyaltyCard">LoyaltyCard</g:link></li>--%>
 							<li
 								<%= 'User'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="User">User</g:link></li>
 							<li
 								<%= 'Shopping'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Shopping">ShoppingList</g:link></li>
+									controller="Shopping">Shopping</g:link></li>
+							<li
+								<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+									controller="ProductShoppings">Shopping Details</g:link></li>
+							<li
+								<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+									controller="UserProduct">User Opt In</g:link></li>
+
 					</ul>
 					<div class="pull-right">
 						<sec:loggedInUserInfo field="username" />

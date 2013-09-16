@@ -65,20 +65,11 @@
 						
 					</g:if>
 				
-					<g:if test="${userInstance?.shoppings}">
-						<dt><g:message code="user.shoppings.label" default="Shoppings" /></dt>
+					<g:if test="${userInstance?.productShoppings}">
+						<dt><g:message code="user.productShoppings.label" default="Product Shoppings" /></dt>
 						
-							<g:each in="${userInstance.shoppings}" var="s">
-							<dd><g:link controller="shopping" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></dd>
-							</g:each>
-						
-					</g:if>
-				
-					<g:if test="${userInstance?.loyaltyPrograms}">
-						<dt><g:message code="user.loyaltyPrograms.label" default="Loyalty Programs" /></dt>
-						
-							<g:each in="${userInstance.loyaltyPrograms}" var="l">
-							<dd><g:link controller="loyaltyProgram" action="show" id="${l.id}">${l?.encodeAsHTML()}</g:link></dd>
+							<g:each in="${userInstance.productShoppings}" var="p">
+							<dd><g:link controller="productShoppings" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></dd>
 							</g:each>
 						
 					</g:if>

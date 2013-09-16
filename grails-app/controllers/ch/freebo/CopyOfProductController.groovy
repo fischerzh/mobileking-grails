@@ -1,7 +1,12 @@
 package ch.freebo
 
 import groovy.json.JsonBuilder
+
 import org.springframework.dao.DataIntegrityViolationException
+
+import ch.freebo.Product;
+import ch.freebo.User;
+import ch.freebo.UserProduct;
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 

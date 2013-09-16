@@ -9,14 +9,14 @@ class Product {
 	
     static constraints = {
 		loyaltyProgram unique:true, nullable:true
-		shoppings nullable:true
+//		shoppings nullable:true
 		imageLink nullable:true
 		ingredients nullable:true
     }
 	
 	static hasOne = [loyaltyProgram: LoyaltyProgram]
 
-	static hasMany = [shoppings:Shopping]
+//	static hasMany = [shoppings:Shopping]
 		
 	static belongsTo = [productCategory:ProductCategory]
 		
