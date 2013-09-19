@@ -12,6 +12,8 @@
 // }
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
+
+
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [
@@ -89,6 +91,18 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+tomcat.deploy.username="mfischer"
+tomcat.deploy.password="tomcat123"
+tomcat.deploy.url="http://www.sagax.ch:8080/manager/text"
+
+grails.tomcat.jvmArgs = ["-server", "-XX:MaxPermSize=512m", "-XX:MaxNewSize=256m", "-XX:NewSize=256m",
+	"-Xms768m", "-Xmx1024m", "-XX:SurvivorRatio=128", "-XX:MaxTenuringThreshold=0",
+   "-XX:+UseTLAB", "-XX:+UseConcMarkSweepGC", "-XX:+CMSClassUnloadingEnabled",
+   "-XX:+CMSIncrementalMode", "-XX:-UseGCOverheadLimit", "-XX:+ExplicitGCInvokesConcurrent"]
+
+android.gcm.api.key = "AIzaSyAIH1NUYl8HDkMzCd2Sfo4t1leZUh1dzBM"
+
 
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'ch.freebo.User'

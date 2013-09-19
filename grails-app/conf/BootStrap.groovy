@@ -35,7 +35,7 @@ class BootStrap {
 		def migros = Retailer.findByName("Migros")?:new Retailer(name:"Migros", location:location).save(flush:true)
 		
 		def date = new Date()
-		def shoppingList = Shopping.findByLocationAndRetailer(location, migros)?:new Shopping(date:date, location:location, retailer:migros, user:testUser).save(flush:true)
+		def shoppingList = Shopping.findByLocationAndRetailer(location, migros)?:new Shopping(date:date, location:location, retailer:migros, user:testUser).save(failOnError:true)
 		println shoppingList
 //		shoppingList.addToProducts(product1)
 //		shoppingList.addToProducts(product2)
@@ -45,7 +45,7 @@ class BootStrap {
 		def zweifelKauf = new ProductShoppings(product:product2, shopping:shoppingList, qty:3).save(failOnError:true)
 		
 		
-		testUser.addToShoppings(shoppingList).save(flush:true)
+//		testUser.addToShoppings(shoppingList).save(failOnError:true)
     }
     def destroy = {
     }

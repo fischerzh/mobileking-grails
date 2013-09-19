@@ -23,8 +23,8 @@ class ProductController {
 			render([error: 'Error 500'] as JSON)
 		}
 
-		println user.shoppings.products.collect()
-		println user.loyaltyPrograms.collect()
+		println user.shoppings.productShoppings.collect()
+//		println user.loyaltyPrograms.collect()
 		
 		
 		def jsonExport = getJSONData(user)
@@ -45,9 +45,12 @@ class ProductController {
 		
 		def products = []
 		
-		def userShopping = user.shoppings.each {
-			println "Add products: " +it.products
-			products.addAll(it.products)
+		def userShopping = user.shoppings.each { s->
+			s.productShoppings.each { ps->
+				println "Add product: " +ps.product
+				products.addAll(ps.product)
+			}
+
 		}
 		
 		println userShopping
@@ -97,9 +100,9 @@ class ProductController {
 	{
 		def nmbr = 0
 		def prods = user.shoppings.each { s->
-			s.products.each {Product p ->
-				if(p == prod)
-					nmbr = nmbr+1
+			s.productShoppings.each {ps ->
+				if(ps.product == prod)
+					nmbr = nmbr+ps.qty
 			}
 		}
 		println "calculatePointsForProduct: " +nmbr
@@ -162,6 +165,11 @@ class ProductController {
 				println "Product not found for Opt-In!"
 			}
 		}
+		
+	}
+	
+	def callGCMService()
+	{
 		
 	}
 	
