@@ -6,12 +6,14 @@ class Product {
 	String ean
 	String imageLink
 	String ingredients
+	String size
 	
     static constraints = {
 		loyaltyProgram unique:true, nullable:true
 //		shoppings nullable:true
 		imageLink nullable:true
 		ingredients nullable:true
+		size nullable:true
     }
 	
 	static hasOne = [loyaltyProgram: LoyaltyProgram]

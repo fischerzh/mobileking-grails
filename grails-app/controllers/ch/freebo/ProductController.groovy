@@ -10,7 +10,7 @@ class ProductController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-	
+	@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
 		println "Params" + params
@@ -62,7 +62,7 @@ class ProductController {
 			{
 				//count products bought
 				def pointsCollected = calculatePointsForProduct(prod, user)
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected]
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients]
 			}
 		}
 		
