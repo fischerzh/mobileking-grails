@@ -96,11 +96,6 @@ tomcat.deploy.username="mfischer"
 tomcat.deploy.password="tomcat123"
 tomcat.deploy.url="http://www.sagax.ch:8080/manager/text"
 
-grails.tomcat.jvmArgs = ["-server", "-XX:MaxPermSize=512m", "-XX:MaxNewSize=256m", "-XX:NewSize=256m",
-	"-Xms768m", "-Xmx1024m", "-XX:SurvivorRatio=128", "-XX:MaxTenuringThreshold=0",
-   "-XX:+UseTLAB", "-XX:+UseConcMarkSweepGC", "-XX:+CMSClassUnloadingEnabled",
-   "-XX:+CMSIncrementalMode", "-XX:-UseGCOverheadLimit", "-XX:+ExplicitGCInvokesConcurrent"]
-
 android.gcm.api.key = "AIzaSyAIH1NUYl8HDkMzCd2Sfo4t1leZUh1dzBM"
 
 
@@ -109,6 +104,7 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'ch.freebo.User'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'ch.freebo.UserRole'
 grails.plugins.springsecurity.authority.className = 'ch.freebo.Role'
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = '/User'
+grails.plugins.springsecurity.ui.register.postRegisterUrl = '/'
 grails.plugins.springsecurity.useBasicAuth = true
 grails.plugins.springsecurity.basic.realmName = "Freebo"
 grails.plugins.springsecurity.ui.password.minLength = 4
@@ -119,8 +115,8 @@ grails {
 	mail {
 	  host = "smtp.gmail.com"
 	  port = 465
-	  username = "marcofischerzh@gmail.com"
-	  password = "marco107686"
+	  username = "marcofischr@gmail.com"
+	  password = "fischerzh123"
 	  props = ["mail.smtp.auth":"true",
 			   "mail.smtp.socketFactory.port":"465",
 			   "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",

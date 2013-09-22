@@ -58,9 +58,12 @@ class ProductController {
 		jsonMap.products = products.unique().collect {prod ->
 			//check if user has optIn
 			def optIn = hasUserOptIn(prod, user)
-			//count products bought
-			def pointsCollected = calculatePointsForProduct(prod, user)
-			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected]
+			if(optIn)
+			{
+				//count products bought
+				def pointsCollected = calculatePointsForProduct(prod, user)
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected]
+			}
 		}
 		
 		jsonMap.username = user.username
@@ -129,9 +132,9 @@ class ProductController {
 			render([error: 'Error 500'] as JSON)
 		}
 		
-		if(params.productid)
+		if(params.ean)
 		{
-			def prod = Product.findById(params.productid)
+			def prod = Product.findByEan(params.ean)
 			
 			if(prod)
 			{

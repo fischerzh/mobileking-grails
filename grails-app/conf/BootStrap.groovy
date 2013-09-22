@@ -28,8 +28,9 @@ class BootStrap {
 		def prodCategory2 = ProductCategory.findByName("Snacks")?:new ProductCategory(name:"Snacks",productSegment:prodSegment1).save(flush:true)
 		def prodCategory3 = ProductCategory.findByName("Gemuese")?:new ProductCategory(name:"Gemuese",productSegment:prodSegment1).save(flush:true)
 		
-		def product1 = Product.findByName("Rivella")?:new Product(name:"Rivella",ean:"12341241", productCategory:prodCategory1, imageLink:"http://www.codecheck.info/img/69696/1").save(flush:true)
-		def product2 = Product.findByName("Zweifel Chips")?:new Product(name:"Zweifel Chips",ean:"12341241", productCategory:prodCategory2, imageLink:"http://www.codecheck.info/img/55405/1").save(flush:true)
+		def rivella = Product.findByName("Rivella")?:new Product(name:"Rivella",ean:"7610097111072", productCategory:prodCategory1, imageLink:"http://www.codecheck.info/img/69696/1").save(flush:true)
+		def zweifel = Product.findByName("Zweifel Chips")?:new Product(name:"Zweifel Chips",ean:"12341241", productCategory:prodCategory2, imageLink:"http://www.codecheck.info/img/55405/1").save(flush:true)
+		def colazero = Product.findByName("Cola Zero")?:new Product(name:"Cola Zero",ean:"5449000131836", productCategory:prodCategory1, imageLink:"http://www.codecheck.info/img/10189/1").save(flush:true)
 		
 		def location = Location.findByName("Zuerich")?:new Location(name:"Zuerich", plz:8000).save(flush:true)
 		def migros = Retailer.findByName("Migros")?:new Retailer(name:"Migros", location:location).save(flush:true)
@@ -41,8 +42,9 @@ class BootStrap {
 //		shoppingList.addToProducts(product2)
 //		shoppingList.save(flush:true)
 		
-		def rivellaKauf = new ProductShoppings(product:product1, shopping:shoppingList, qty:2).save(failOnError:true)
-		def zweifelKauf = new ProductShoppings(product:product2, shopping:shoppingList, qty:3).save(failOnError:true)
+		def rivellaKauf = new ProductShoppings(product:rivella, shopping:shoppingList, qty:2).save(failOnError:true)
+		def zweifelKauf = new ProductShoppings(product:zweifel, shopping:shoppingList, qty:3).save(failOnError:true)
+		def colaKauf = new ProductShoppings(product:colazero, shopping:shoppingList, qty:10).save(failOnError:true)
 		
 		
 //		testUser.addToShoppings(shoppingList).save(failOnError:true)
