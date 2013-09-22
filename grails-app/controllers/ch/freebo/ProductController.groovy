@@ -5,14 +5,14 @@ import groovy.json.JsonBuilder
 import org.springframework.dao.DataIntegrityViolationException
 import grails.plugins.springsecurity.Secured
 
-
+@Secured(['ROLE_ADMIN', 'ROLE_MANUF'])
 class ProductController {
 	
 	def springSecurityService
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-	@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
 		println "Params" + params
@@ -45,6 +45,7 @@ class ProductController {
 			render( status: 500, exception: params.exception) as JSON
 	}
 	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def getJSONData(User user)
 	{
 		HashMap jsonMap = new HashMap()
@@ -80,6 +81,7 @@ class ProductController {
 		return jsonMap
 	}
 	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def hasUserOptIn(Product prod, User user)
 	{
 		def userProdListOptOut = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
@@ -106,7 +108,7 @@ class ProductController {
 		return optIn
 	}
 
-	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def calculatePointsForProduct(Product prod, User user)
 	{
 		def nmbr = 0
@@ -120,18 +122,20 @@ class ProductController {
 		return nmbr
 	}
 	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def calculateProductRank(Product prod, User user)
 	{
 		
 		
 	}
 	
-	@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def updateUserInfo()
 	{
 		println "ProductController: updateUserInfo()"
 		println "Params" + params
-		def user = User.findByUsername(params.username)
+//		def user = User.findByUsername(params.username)
+		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		println "User: " +user
 		
 		if(user==null)

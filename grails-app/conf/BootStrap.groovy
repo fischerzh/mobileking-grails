@@ -17,10 +17,18 @@ class BootStrap {
 		def userRole = new Role(authority: 'ROLE_USER').save(flush: true)
 		def manufRole = new Role(authority: 'ROLE_MANUF').save(flush: true)
 		
-		def testUser = new User(username: 'test', enabled: true, password: 'test')
-		testUser.save(flush: true)
+		def admin = new User(username: 'admin', enabled: true, password: 'test')
+		admin.save(flush: true)
+		
+		def user = new User(username: 'test', enabled: true, password: 'test')
+		user.save(flush: true)
+		
+		def manuf = new User(username: 'manuf', enabled: true, password: 'test')
+		manuf.save(flush: true)
   
-		UserRole.create testUser, adminRole, true
+		UserRole.create admin, adminRole, true
+		UserRole.create user, userRole, true
+		UserRole.create manuf, manufRole, true
 		
 		def prodSegment1 = ProductSegment.findByName("Lebensmittel / Getraenke / Tabakwaren")?:new ProductSegment(name:"Lebensmittel / Getraenke / Tabakwaren").save(flush:true)
 		
