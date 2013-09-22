@@ -66,6 +66,8 @@ class ProductController {
 			}
 		}
 		
+		jsonMap.products.removeAll([null])
+		println jsonMap
 		jsonMap.username = user.username
 		
 		println jsonMap
