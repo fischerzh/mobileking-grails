@@ -7,6 +7,8 @@ import grails.plugins.springsecurity.Secured
 
 
 class ProductController {
+	
+	def springSecurityService
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
@@ -14,7 +16,11 @@ class ProductController {
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
 		println "Params" + params
-		def user = User.findByUsername(params.username)
+		
+		println "User logged in: " + springSecurityService.currentUser
+		
+//		def user = User.findByUsername(params.username)
+		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		println "User: " +user
 		
 		if(user==null)
