@@ -62,15 +62,15 @@ class ProductController {
 		
 		println userShopping
 		
-		jsonMap.products = products.unique().collect {prod ->
+		jsonMap.products = products.unique().collect {Product prod ->
 			//check if user has optIn
 			def optIn = hasUserOptIn(prod, user)
 			if(optIn)
 			{
 				//count products bought
+				def hersteller = prod.manufacturer.toString()
 				def pointsCollected = calculatePointsForProduct(prod, user)
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, 
-					points: pointsCollected, ingredients: prod.ingredients, producer: prod.manufacturer]
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller]
 			}
 		}
 		
