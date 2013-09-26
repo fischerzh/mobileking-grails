@@ -20,7 +20,7 @@ class Product {
 
 //	static hasMany = [shoppings:Shopping]
 		
-	static belongsTo = [productCategory:ProductCategory]
+	static belongsTo = [productCategory:ProductCategory, manufacturer: Manufacturer]
 		
 	String toString()  {
 		return name? name: ""

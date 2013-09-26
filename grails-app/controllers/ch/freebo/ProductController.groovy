@@ -69,7 +69,8 @@ class ProductController {
 			{
 				//count products bought
 				def pointsCollected = calculatePointsForProduct(prod, user)
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients]
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, 
+					points: pointsCollected, ingredients: prod.ingredients, producer: prod.manufacturer]
 			}
 		}
 		
