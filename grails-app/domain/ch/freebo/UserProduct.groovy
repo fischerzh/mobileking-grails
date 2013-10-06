@@ -21,7 +21,7 @@ class UserProduct {
 	}
 	
 	def afterInsert() {
-		version+=1;
+		version= version+1;
 		Date date = new Date()
 		if(optIn)
 		{

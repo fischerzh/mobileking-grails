@@ -61,6 +61,9 @@ class ProductController {
 		}
 		
 		println userShopping
+		Random random = new Random()
+		
+		def crowns = {}
 		
 		jsonMap.products = products.unique().collect {Product prod ->
 			//check if user has optIn
@@ -69,8 +72,12 @@ class ProductController {
 			{
 				//count products bought
 				def hersteller = prod.manufacturer.toString()
+				def category = prod.productCategory.toString()
 				def pointsCollected = calculatePointsForProduct(prod, user)
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller]
+				def userrank = random.nextInt(10)
+				crowns =  getCrownsForProduct(prod, user).collect()
+				println crowns
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: userrank, category: category, crowns: crowns]
 			}
 		}
 		
@@ -124,10 +131,28 @@ class ProductController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def calculateProductRank(Product prod, User user)
+	def calculateGlobalProductRank(Product prod, User user)
 	{
 		
 		
+	}
+	
+	def getCrownsForProduct(Product prod, User user)
+	{
+		Random random = new Random()
+		
+	
+//		return [rank: "1", crownstatus: "2", salespoint: "Migros Zurich HB"]
+		def salesPoint = " "
+		def crowns =  []
+		user.shoppings.each { s ->
+				salesPoint = s.retailer.toString()
+				def userPoints = random.nextInt(2)+1
+				def rank = random.nextInt(15)
+				crowns.add([rank: rank, crownstatus: userPoints, salespoint: salesPoint])
+
+		}
+		return crowns
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
