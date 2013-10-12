@@ -35,14 +35,32 @@ class ProductController {
 		
 		def jsonExport = getJSONData(user)
 		
+		if(!user.isActiveApp)
+		{
+			jsonExport.isactiveapp = false
+		}
+		else
+		{
+			jsonExport.isactiveapp = true
+		}
+		
 		def json = new JsonBuilder(jsonExport)
 				
 		println json.toPrettyString()
 		//return product and user settings!!
+		Date date = new Date()
 		if(user)
+		{
+			user.isActiveApp = true
+			user.save(flush: true)
+			new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
 			render json
+		}
 		else
+		{
+			new UserLogin( user: user, loginDate: date, success: false).save(failOnError:true)
 			render( status: 500, exception: params.exception) as JSON
+		}
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
