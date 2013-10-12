@@ -10,7 +10,7 @@ class Product {
 	
     static constraints = {
 		loyaltyProgram unique:true, nullable:true
-		manufacturer unique:true, nullable:true
+		manufacturer nullable:true
 //		shoppings nullable:true
 		imageLink nullable:true
 		ingredients nullable:true

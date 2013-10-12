@@ -4,7 +4,7 @@ class ProductShoppings {
 	
 	Shopping shopping
 	Product product
-	Integer qty
+	Float qty
 	Float price
 	
     static constraints = {
