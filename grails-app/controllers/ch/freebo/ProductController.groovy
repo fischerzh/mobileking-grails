@@ -72,13 +72,13 @@ class ProductController {
 		
 		def userShopping = user.shoppings.each { s->
 			s.productShoppings.each { ps->
-				println "Add product: " +ps.product
+//				println "Add product: " +ps.product
 				products.addAll(ps.product)
 			}
 
 		}
 		
-		println userShopping
+//		println userShopping
 		Random random = new Random()
 		
 		def crowns = {}
@@ -94,13 +94,20 @@ class ProductController {
 				def pointsCollected = calculatePointsForProduct(prod, user)
 				def userrank = random.nextInt(10)
 				crowns =  getCrownsForProduct(prod, user).collect()
-				println crowns
+//				println crowns
 				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: userrank, category: category, crowns: crowns]
 			}
 		}
 		
+		jsonMap.recommendations = products.unique().collect { Product prod ->
+			def pointsCollected = calculatePointsForProduct(prod, user)
+			def hersteller = prod.manufacturer.toString()
+			def category = prod.productCategory.toString()
+			return [id: prod.id, name: prod.name, imagelink: prod.imageLink, points: pointsCollected, producer: hersteller, category: category]
+		}
+		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
+//		println "json Recommendations "  +jsonMap.recommendations 
 		jsonMap.products.removeAll([null])
-		println jsonMap
 		jsonMap.username = user.username
 		
 		println jsonMap
@@ -126,7 +133,7 @@ class ProductController {
 		
 		if(userProd)
 		{
-			println "optIn: " +userProd.optIn
+//			println "optIn: " +userProd.optIn
 			if(userProd.optIn)
 				optIn = true
 		}
@@ -144,7 +151,7 @@ class ProductController {
 					nmbr = nmbr+ps.qty
 			}
 		}
-		println "calculatePointsForProduct: " +nmbr
+//		println "calculatePointsForProduct: " +nmbr
 		return nmbr
 	}
 	
@@ -231,8 +238,8 @@ class ProductController {
 	{
 		
 	}
-	
-    def index() {
+
+	    def index() {
         redirect action: 'list', params: params
     }
 
@@ -240,7 +247,7 @@ class ProductController {
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [productInstanceList: Product.list(params), productInstanceTotal: Product.count()]
     }
-
+	
     def create() {
 		switch (request.method) {
 		case 'GET':
