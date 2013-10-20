@@ -11,6 +11,7 @@ class User {
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
+	String regId
 
 	static constraints = {
 		username blank: false, unique: true
@@ -18,6 +19,7 @@ class User {
 		isActiveApp nullable:true
 		loyaltyCards nullable:true
 		shoppings nullable:true
+		regId nullable:true
 //		loyaltyPrograms nullable:true
 	}
 	

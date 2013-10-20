@@ -1,14 +1,19 @@
 package ch.freebo
 
+import es.osoco.android.gcm.AndroidGcmService;
 import grails.converters.JSON
 import groovy.json.JsonBuilder
+
 import org.springframework.dao.DataIntegrityViolationException
+
 import grails.plugins.springsecurity.Secured
 
 @Secured(['ROLE_ADMIN', 'ROLE_MANUF'])
 class ProductController {
 	
 	def springSecurityService
+	
+	def androidGcmService
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
@@ -46,12 +51,15 @@ class ProductController {
 		
 		def json = new JsonBuilder(jsonExport)
 				
+		
 		println json.toPrettyString()
 		//return product and user settings!!
 		Date date = new Date()
+		
 		if(user)
 		{
 			user.isActiveApp = true
+			user.regId = params.regId
 			user.save(flush: true)
 			new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
 			render json
@@ -61,6 +69,19 @@ class ProductController {
 			new UserLogin( user: user, loginDate: date, success: false).save(failOnError:true)
 			render( status: 500, exception: params.exception) as JSON
 		}
+	}
+	
+	def sendMessage = {
+		['deviceToken', 'messageKey', 'messageValue'].each {
+				key -> params[key] = ["APA91bE4eARfV4klHMq3K5SLASQovkBHf8EgIjT5RDotDwfBZrUVFhXEPvG5-hSQMDeVJ9js3tmDAQ6VnUz6-AbeFpld-oIZFD0zGz4egIQqbGU2F_nortx1D7aaPfrWnrx17n3zk7M5SLf3-eiqL9iALfqbrlPpAw"].flatten().findAll { it }
+		}
+		def messages = params.messageKey.inject([:]) {
+				currentMessages, currentKey ->
+				currentMessages << [ "1" : "Test Message from Grails"]
+		}
+		
+		androidGcmService.sendMessage(messages, params.deviceToken,
+				"", grailsApplication.config.android.gcm.api.key).toString()
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -236,7 +257,7 @@ class ProductController {
 	
 	def callGCMService()
 	{
-		
+		sendMessage();
 	}
 
 	    def index() {

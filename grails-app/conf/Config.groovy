@@ -96,8 +96,6 @@ tomcat.deploy.username="mfischer"
 tomcat.deploy.password="tomcat123"
 tomcat.deploy.url="http://www.sagax.ch:8080/manager/text"
 
-android.gcm.api.key = "AIzaSyAIH1NUYl8HDkMzCd2Sfo4t1leZUh1dzBM"
-
 
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'ch.freebo.User'
@@ -123,3 +121,8 @@ grails {
 			   "mail.smtp.socketFactory.fallback":"false"]
 	}
  }
+
+android.gcm.api.key = "AIzaSyAIH1NUYl8HDkMzCd2Sfo4t1leZUh1dzBM"
+android.gcm.time.to.live = 1419200
+android.gcm.delay.'while'.idle = false
+android.gcm.retries=3

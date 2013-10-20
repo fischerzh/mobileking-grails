@@ -36,6 +36,7 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+		mavenRepo "https://github.com/slorber/gcm-server-repository/raw/master/releases/"
     }
 
     dependencies {
@@ -57,6 +58,8 @@ grails.project.dependency.resolution = {
 		compile ":mail:1.0"
 		compile ":famfamfam:1.0.1"
 		compile ':cache:1.0.1'
+//		compile 'com.google.android.gcm:gcm-server:1.0.2'
+		compile ":android-gcm:0.2"
 		
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
