@@ -3,6 +3,9 @@ package ch.freebo
 
 
 import org.junit.*
+
+import ch.freebo.LoyaltyCard;
+import ch.freebo.LoyaltyCardController;
 import grails.test.mixin.*
 
 @TestFor(LoyaltyCardController)
