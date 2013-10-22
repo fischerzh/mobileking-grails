@@ -43,53 +43,51 @@
 
 				<div class="nav-collapse">
 					<ul class="nav">
-						<li
-							<%= request.forwardURI == "${createLink(uri: '/')}" ? ' class="active"' : '' %>>
-							<a href="${createLink(uri: '/')}">Home</a>
-						</li>
+
 						<sec:ifLoggedIn>
 							<%--							<g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">--%>
 							<li
 								<%= 'Manufacturer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Manufacturer">Manufacturer</g:link></li>
+									controller="Manufacturer">Hersteller</g:link></li>
 							<li
 								<%= 'Retailer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Retailer">Retailer</g:link></li>
+									controller="Retailer">Einzelhändler</g:link></li>
 							<li
 								<%= 'Location'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Location">Location</g:link></li>
+									controller="Location">Orte</g:link></li>
 							<li
 								<%= 'Product'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Product">Product</g:link></li>
+									controller="Product">Produkte</g:link></li>
 							<li
 								<%= 'ProductCategory'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductCategory">ProductCategory</g:link></li>
+									controller="ProductCategory">Produktekategorien</g:link></li>
 							<li
 								<%= 'ProductSegment'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductSegment">ProductSegment</g:link></li>
+									controller="ProductSegment">Produktsegmente</g:link></li>
 							<li
 								<%= 'LoyaltyProgram'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="LoyaltyProgram">LoyaltyProgram</g:link></li>
-<%--							<li--%>
-<%--								<%= 'LoyaltyProgramLevels'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
-<%--									controller="LoyaltyProgramLevels">LoyaltyProgramLevels</g:link></li>--%>
-<%--							<li--%>
-<%--								<%= 'LoyaltyCard'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
-<%--									controller="LoyaltyCard">LoyaltyCard</g:link></li>--%>
+									controller="LoyaltyProgram">Loyalitätsprogramme</g:link></li>
+							<%--							<li--%>
+							<%--								<%= 'LoyaltyProgramLevels'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
+							<%--									controller="LoyaltyProgramLevels">LoyaltyProgramLevels</g:link></li>--%>
+							<%--							<li--%>
+							<%--								<%= 'LoyaltyCard'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
+							<%--									controller="LoyaltyCard">LoyaltyCard</g:link></li>--%>
 							<li
 								<%= 'User'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="User">User</g:link></li>
 							<li
 								<%= 'Shopping'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Shopping">Shopping</g:link></li>
+									controller="Shopping">Einkäufe</g:link></li>
 							<li
 								<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductShoppings">Shopping Details</g:link></li>
+									controller="ProductShoppings">Warenkörbe Details</g:link></li>
 							<li
 								<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="UserProduct">User Opt In</g:link></li>
-
-					</ul>
+									controller="UserProduct">Opt-In</g:link></li>
+							<li
+								<%= 'ControlPanel'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+									controller="ControlPanel">Control Panel</g:link></li>					</ul>
 					<div class="pull-right">
 						<sec:loggedInUserInfo field="username" />
 						<g:link controller="logout">
@@ -99,6 +97,10 @@
 					</sec:ifLoggedIn>
 					<sec:ifNotLoggedIn>
 						<ul class="nav pull-right">
+												<li
+							<%= request.forwardURI == "${createLink(uri: '/')}" ? ' class="active"' : '' %>>
+							<a href="${createLink(uri: '/')}">Home</a>
+						</li>
 							<li><a href="/Freebo/register">Sign Up</a></li>
 							<li class="divider-vertical"></li>
 							<li class="dropdown"><a class="dropdown-toggle" href="#"
@@ -106,22 +108,23 @@
 								<div class="dropdown-menu"
 									style="padding: 15px; padding-bottom: 0px;">
 									<!-- Login form here -->
-
-									<form action="/Freebo/j_spring_security_check" id="loginForm"
+<%--								<form action='${postUrl}' method='POST' id="loginForm" name="loginForm" autocomplete='off'>--%>
+									<form name ="loginForm" action="${resource('file': 'j_spring_security_check')}" id="loginForm"
 										method="POST" accept-charset="UTF-8">
-										<input id="user_username" style="margin-bottom: 15px;"
-											type="text" name="user[username]" size="30" /> <input
-											id="user_password" style="margin-bottom: 15px;"
-											type="password" name="user[password]" size="30" /> <input
-											id="user_remember_me"
-											style="float: left; margin-right: 10px;" type="checkbox"
-											name="user[remember_me]" value="1" /> <label
+										<input name="j_username" id="username" style="margin-bottom: 15px;"
+											type="text" name="user[username]" size="30" /> 
+										<input	type="password" name="j_password" id="password" style="margin-bottom: 15px;"
+											type="password" name="user[password]" size="30" /> 
+										<input id="user_remember_me"style="float: left; margin-right: 10px;" type="checkbox"
+											name="user[remember_me]" value="1" /> 
+										<label
 											class="string optional" for="user_remember_me">
-											Remember me</label> <input class="btn btn-primary"
-											style="clear: left; width: 100%; height: 32px; font-size: 13px;"
-											type="submit" name="commit" value="Sign In" />
-										<s2ui:submitButton elementId='loginButton' form='loginForm'
-											messageCode='spring.security.ui.login.login' />
+											Remember me</label> 
+											<s2ui:submitButton class="btn btn-primary" elementId='loginButton' form='loginForm' messageCode='Login'/>
+<%--										<input class="btn btn-primary"--%>
+<%--											style="clear: left; width: 100%; height: 32px; font-size: 13px;"--%>
+<%--											type="submit" name="commit" value="Sign In" />--%>
+
 									</form>
 								</div></li>
 						</ul>
