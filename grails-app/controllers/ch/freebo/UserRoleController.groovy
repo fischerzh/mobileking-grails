@@ -3,7 +3,10 @@ package ch.freebo
 import org.springframework.dao.DataIntegrityViolationException
 
 import ch.freebo.UserRole;
+import grails.plugins.springsecurity.Secured
 
+
+@Secured(['ROLE_ADMIN'])
 class UserRoleController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']

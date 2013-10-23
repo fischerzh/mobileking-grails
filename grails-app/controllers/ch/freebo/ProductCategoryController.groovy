@@ -1,9 +1,11 @@
 package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
-
 import ch.freebo.ProductCategory;
+import grails.plugins.springsecurity.Secured
 
+
+@Secured(['ROLE_ADMIN'])
 class ProductCategoryController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']

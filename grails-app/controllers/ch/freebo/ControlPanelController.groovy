@@ -1,7 +1,10 @@
 package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
+import grails.plugins.springsecurity.Secured
 
+
+@Secured(['ROLE_ADMIN'])
 class ControlPanelController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
@@ -32,8 +35,11 @@ class ControlPanelController {
     }
 
     def list() {
+		
+		def userRole = Role.findByAuthority('ROLE_USER')
+		
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        [controlPanelInstanceList: User.list(params), controlPanelInstanceTotal: User.count()]
+        [controlPanelInstanceList: UserRole.findAllByRole(userRole).user, controlPanelInstanceTotal: User.count()]
     }
 
     def create() {

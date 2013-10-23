@@ -4,6 +4,10 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import ch.freebo.LoyaltyProgramLevels;
 
+import grails.plugins.springsecurity.Secured
+
+
+@Secured(['ROLE_ADMIN'])
 class LoyaltyProgramLevelsController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']

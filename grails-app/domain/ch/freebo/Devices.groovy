@@ -12,4 +12,11 @@ class Devices {
 		deviceScreen nullable:true
 		deviceOs nullable:true
     }
+	
+	String toString()  {
+		def deviceType = deviceType?deviceType.toString(): " "
+		def deviceOs = deviceOs?deviceOs.toString(): " "
+		def returnStr = deviceType.toString() + " Android " + deviceOs;
+		return returnStr? returnStr: " "
+	}
 }

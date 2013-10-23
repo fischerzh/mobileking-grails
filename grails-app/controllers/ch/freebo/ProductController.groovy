@@ -8,12 +8,10 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import grails.plugins.springsecurity.Secured
 
-@Secured(['ROLE_ADMIN', 'ROLE_MANUF'])
+@Secured(['ROLE_ADMIN'])
 class ProductController {
 	
 	def springSecurityService
-	
-	def androidGcmService
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
@@ -24,7 +22,6 @@ class ProductController {
 		
 		println "User logged in: " + springSecurityService.currentUser
 		
-//		def user = User.findByUsername(params.username)
 		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		println "User: " +user
 		
@@ -35,8 +32,6 @@ class ProductController {
 		}
 
 		println user.shoppings.productShoppings.collect()
-//		println user.loyaltyPrograms.collect()
-		
 		
 		def jsonExport = getJSONData(user)
 		
@@ -59,7 +54,14 @@ class ProductController {
 		if(user)
 		{
 			user.isActiveApp = true
-			user.regId = params.regId
+			if(params.regId)
+			{
+//				println "Registration Params: " + params.regId, params.deviceType, params.deviceOs
+				def device = new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs).save(failOnError:true)
+				println "Device for User created:  " +device
+				if(device)
+					user.addToDevices(device)
+			}
 			user.save(flush: true)
 			new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
 			render json
@@ -71,18 +73,6 @@ class ProductController {
 		}
 	}
 	
-	def sendMessage = {
-		['deviceToken', 'messageKey', 'messageValue'].each {
-				key -> params[key] = ["APA91bE4eARfV4klHMq3K5SLASQovkBHf8EgIjT5RDotDwfBZrUVFhXEPvG5-hSQMDeVJ9js3tmDAQ6VnUz6-AbeFpld-oIZFD0zGz4egIQqbGU2F_nortx1D7aaPfrWnrx17n3zk7M5SLf3-eiqL9iALfqbrlPpAw"].flatten().findAll { it }
-		}
-		def messages = params.messageKey.inject([:]) {
-				currentMessages, currentKey ->
-				currentMessages << [ "1" : "Test Message from Grails"]
-		}
-		
-		androidGcmService.sendMessage(messages, params.deviceToken,
-				"", grailsApplication.config.android.gcm.api.key).toString()
-	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def getJSONData(User user)
@@ -255,10 +245,6 @@ class ProductController {
 		
 	}
 	
-	def callGCMService()
-	{
-		sendMessage();
-	}
 
 	    def index() {
         redirect action: 'list', params: params
