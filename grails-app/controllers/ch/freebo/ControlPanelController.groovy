@@ -49,9 +49,13 @@ class ControlPanelController {
 				currentMessages << [ "1" : params.inputMessage]
 		}
 		
+		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
+		
 		androidGcmService.sendMessage(messages, params.deviceToken,"", grailsApplication.config.android.gcm.api.key).toString()
-		render action: 'list', params: params
+		redirect action: 'list', params: params
+		return
 	}
+	
 
     def index() {
         redirect action: 'list', params: params

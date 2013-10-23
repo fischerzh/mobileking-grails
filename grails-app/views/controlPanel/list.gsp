@@ -18,6 +18,11 @@
 					<g:message code="default.label" default="Control Panel" />
 				</h1>
 			</div>
+			
+				<g:if test="${flash.message}">
+				<bootstrap:alert class="alert-info">${flash.message}</bootstrap:alert>
+				</g:if>
+				
 
 			<g:form method="post" controller="controlPanel" action="callGCMService" id="${controlPanelInstanceList?.id}">
 
