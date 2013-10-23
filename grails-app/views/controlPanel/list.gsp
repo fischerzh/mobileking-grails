@@ -19,54 +19,53 @@
 				</h1>
 			</div>
 
-			<table class="table table-striped">
-					<thead>
-						<tr>
-							<th class="header"><g:message code="shopping.location.label" default="User" /></th>
+			<g:form method="post" controller="controlPanel" action="callGCMService" id="${controlPanelInstanceList?.id}">
 
-							<th class="header"><g:message code="shopping.location.label" default="Registrierte Geräte" /></th>
-							
-														<th class="header"><g:message code="shopping.location.label" default="Registrations ID" /></th>
-							
+				<%--        <g:select name="controlPanelInstanceList.username" from="${controlPanelInstanceList}" />--%>
+<table class="table table-striped">
+				<thead>
+					<tr>
+						<th class="header"><g:message code="shopping.location.label"
+								default="User" /></th>
 
-						</tr>
-					</thead>
-					
-					
-					<tbody>
+						<th class="header"><g:message code="shopping.location.label"
+								default="Registrierte Geräte" /></th>
+
+						<th class="header"><g:message code="shopping.location.label"
+								default="Registrations ID" /></th>
+
+
+					</tr>
+				</thead>
+
+
+				<tbody>
 					<g:each in="${controlPanelInstanceList}" var="controlPanelInstance">
 						<tr>
-						
-							<td>${fieldValue(bean: controlPanelInstance, field: "username")}</td>
-						
-							<td>${fieldValue(bean: controlPanelInstance, field: "devices")}</td>
-							
-							<td>${controlPanelInstance.devices.deviceId}</td>
-							
-					</tr>
+
+							<td>
+								${fieldValue(bean: controlPanelInstance, field: "username")}
+							</td>
+
+							<td>
+								${fieldValue(bean: controlPanelInstance, field: "devices")}
+							</td>
+
+							<td>
+								${controlPanelInstance.devices.deviceId}
+							</td>
+
+						</tr>
 					</g:each>
-					</tbody>
-				</table>
-					
-			<g:form method="post" 
-        controller="controlPanel" action="callGCMService" id="${controlPanelInstanceList?.id}">
-        
-<%--        <g:select name="controlPanelInstanceList.username" from="${controlPanelInstanceList}" />--%>
-        <g:textArea name="inputMessage" value="Message an registrierte Geräte!"/>
-        <input type="submit" name="submit" />
-</g:form>
-			
-			
-<%--			<div class="span4">--%>
-<%--				<g:select name="controlPanelInstanceList.username"--%>
-<%--					from="${controlPanelInstanceList}" />--%>
-<%----%>
-<%--				<g:textArea name="inputMessage" id="inputMessage"></g:textArea>--%>
-<%--			</div>--%>
-<%--			<div class="span2">--%>
-<%--				<g:link action="callGCMService" class="btn btn-small" params="">Send Message &raquo;</g:link>--%>
-<%--				<button type="submit" class="btn btn-info" name="_action_call_GCMService">Submit</button>--%>
-<%--			</div>--%>
+				</tbody>
+			</table>
+
+				<g:textArea name="inputMessage" value="Message an registrierte Geräte!" />
+				
+				<input type="submit" name="submit" />
+			</g:form>
+
+
 			<div class="pagination">
 				<bootstrap:paginate total="${controlPanelInstanceTotal}" />
 			</div>

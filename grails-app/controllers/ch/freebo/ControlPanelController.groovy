@@ -17,9 +17,32 @@ class ControlPanelController {
 		sendMessage();
 	}
 	
-	def sendMessage = {
+	def sendMessageOriginal = {
 		['deviceToken', 'messageKey', 'messageValue'].each {
-				key -> params[key] = ["APA91bE4eARfV4klHMq3K5SLASQovkBHf8EgIjT5RDotDwfBZrUVFhXEPvG5-hSQMDeVJ9js3tmDAQ6VnUz6-AbeFpld-oIZFD0zGz4egIQqbGU2F_nortx1D7aaPfrWnrx17n3zk7M5SLf3-eiqL9iALfqbrlPpAw"].flatten().findAll { it }
+				key -> params[key] = [params[key]].flatten().findAll { it }
+		}
+		def messages = params.messageKey.inject([:]) {
+				currentMessages, currentKey ->
+				currentMessages << [ (currentKey) : params.messageValue[currentMessages.size()]]
+		}
+		flash.message = 'received.message.response'
+		flash.args = [androidGcmService.sendMessage(messages, "APA91bE4eARfV4klHMq3K5SLASQovkBHf8EgIjT5RDotDwfBZrUVFhXEPvG5-hSQMDeVJ9js3tmDAQ6VnUz6-AbeFpld-oIZFD0zGz4egIQqbGU2F_nortx1D7aaPfrWnrx17n3zk7M5SLf3-eiqL9iALfqbrlPpAw",
+				params.collapseKey, grailsApplication.config.android.gcm.api.key).toString()]
+		redirect(action:'index', params: params)
+	}
+	
+	def sendMessage = {
+		def deviceList = Devices.all
+		def idList = []
+		deviceList.each { 
+			println it.deviceId
+			idList.add(it.deviceId)
+		}
+		println "Device Ids: " + idList
+		println "Device List: " +deviceList
+		
+		['deviceToken', 'messageKey', 'messageValue'].each {
+				key -> params[key] = [idList].flatten().findAll { it }
 		}
 		def messages = params.messageKey.inject([:]) {
 				currentMessages, currentKey ->
