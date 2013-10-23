@@ -16,6 +16,7 @@ class UserRoleController {
     }
 
     def list() {
+		
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [userRoleInstanceList: UserRole.list(params), userRoleInstanceTotal: UserRole.count()]
     }
