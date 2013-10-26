@@ -18,14 +18,14 @@ class BootStrap {
 		def userRole = new Role(authority: 'ROLE_USER').save(flush: true)
 		def manufRole = new Role(authority: 'ROLE_MANUF').save(flush: true)
 		
-		def admin = new User(username: 'admin', enabled: true, password: 'test')
-		admin.save(flush: true)
+		def admin = User.findByUsername('admin')?:new User(username: 'admin', enabled: true, password: 'test')
+		admin.save(failOnError: true)
 		
-		def user = new User(username: 'test', enabled: true, password: 'test')
-		user.save(flush: true)
+		def user = User.findByUsername('test')?:new User(username: 'test', enabled: true, password: 'test')
+		user.save(failOnError: true)
 		
-		def manuf = new User(username: 'manuf', enabled: true, password: 'test')
-		manuf.save(flush: true)
+		def manuf = User.findByUsername('manuf')?:new User(username: 'manuf', enabled: true, password: 'test')
+		manuf.save(failOnError: true)
   
 		UserRole.create admin, adminRole, true
 		UserRole.create user, userRole, true
@@ -51,15 +51,15 @@ class BootStrap {
 		def migros = Retailer.findByName("Migros")?:new Retailer(name:"Migros", location:location).save(failOnError:true)
 		
 		def date = new Date()
-		def shoppingList = Shopping.findByLocationAndRetailer(location, migros)?:new Shopping(date:date, location:location, retailer:migros, user:user).save(failOnError:true)
+		def shoppingList = Shopping.findByUserAndRetailer(user, migros)?:new Shopping(date:date, retailer:migros, user:user).save(failOnError:true)
 		println shoppingList
 //		shoppingList.addToProducts(product1)
 //		shoppingList.addToProducts(product2)
 //		shoppingList.save(flush:true)
 		
-		def rivellaKauf = new ProductShoppings(product:rivella, shopping:shoppingList, qty:2).save(failOnError:true)
-		def zweifelKauf = new ProductShoppings(product:zweifel, shopping:shoppingList, qty:3).save(failOnError:true)
-		def colaKauf = new ProductShoppings(product:colazero, shopping:shoppingList, qty:10).save(failOnError:true)
+		def rivellaKauf = ProductShoppings.findByProductAndShopping(rivella, shoppingList)?:new ProductShoppings(product:rivella, shopping:shoppingList, qty:2).save(failOnError:true)
+		def zweifelKauf = ProductShoppings.findByProductAndShopping(zweifel, shoppingList)?:new ProductShoppings(product:zweifel, shopping:shoppingList, qty:3).save(failOnError:true)
+		def colaKauf = ProductShoppings.findByProductAndShopping(colazero, shoppingList)?:new ProductShoppings(product:colazero, shopping:shoppingList, qty:10).save(failOnError:true)
 		
 		
 //		testUser.addToShoppings(shoppingList).save(failOnError:true)

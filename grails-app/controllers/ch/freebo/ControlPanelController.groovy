@@ -17,22 +17,25 @@ class ControlPanelController {
 		sendMessage();
 	}
 	
-	def sendMessageOriginal = {
-		['deviceToken', 'messageKey', 'messageValue'].each {
-				key -> params[key] = [params[key]].flatten().findAll { it }
-		}
-		def messages = params.messageKey.inject([:]) {
-				currentMessages, currentKey ->
-				currentMessages << [ (currentKey) : params.messageValue[currentMessages.size()]]
-		}
-		flash.message = 'received.message.response'
-		flash.args = [androidGcmService.sendMessage(messages, "APA91bE4eARfV4klHMq3K5SLASQovkBHf8EgIjT5RDotDwfBZrUVFhXEPvG5-hSQMDeVJ9js3tmDAQ6VnUz6-AbeFpld-oIZFD0zGz4egIQqbGU2F_nortx1D7aaPfrWnrx17n3zk7M5SLf3-eiqL9iALfqbrlPpAw",
-				params.collapseKey, grailsApplication.config.android.gcm.api.key).toString()]
-		redirect(action:'index', params: params)
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+	def callGCMServiceMsg(String message, User user)
+	{
+		params.inputMessage = message
+		params.user = user
+		println params
+		sendMessage();
 	}
 	
+	
 	def sendMessage = {
-		def deviceList = Devices.all
+		def deviceList
+		if(params.user)
+		{
+			def user = User.find(params.user)
+			deviceList = user.devices
+		}
+		else
+			deviceList = Devices.all
 		def idList = []
 		deviceList.each { 
 			println it.deviceId
@@ -52,8 +55,10 @@ class ControlPanelController {
 		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
 		
 		androidGcmService.sendMessage(messages, params.deviceToken,"", grailsApplication.config.android.gcm.api.key).toString()
-		redirect action: 'list', params: params
-		return
+		if(params.user)
+			return
+		else
+			redirect action: 'list'
 	}
 	
 

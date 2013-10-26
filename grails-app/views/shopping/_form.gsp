@@ -27,14 +27,6 @@
 	<g:datePicker name="date" precision="day"  value="${shoppingInstance?.date}"  />
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: shoppingInstance, field: 'location', 'error')} required">
-	<label for="location">
-		<g:message code="shopping.location.label" default="Location" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:select id="location" name="location.id" from="${ch.freebo.Location.list()}" optionKey="id" required="" value="${shoppingInstance?.location?.id}" class="many-to-one"/>
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: shoppingInstance, field: 'retailer', 'error')} required">
 	<label for="retailer">
 		<g:message code="shopping.retailer.label" default="Retailer" />

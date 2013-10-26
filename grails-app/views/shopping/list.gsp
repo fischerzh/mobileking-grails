@@ -13,17 +13,17 @@
 			<div class="span3">
 				<div class="well">
 					<ul class="nav nav-list">
-						<li class="nav-header">EINKÄUFE</li>
+						<li class="nav-header">${entityName}</li>
 						<li class="active">
 							<g:link class="list" action="list">
 								<i class="icon-list icon-white"></i>
-								<g:message code="default.label" default="Einkäufe" />
+								<g:message code="default.list.label" args="[entityName]" />
 							</g:link>
 						</li>
 						<li>
 							<g:link class="create" action="create">
 								<i class="icon-plus"></i>
-								<g:message code="default.label" default="Einkauf anlegen" />
+								<g:message code="default.create.label" args="[entityName]" />
 							</g:link>
 						</li>
 					</ul>
@@ -33,7 +33,7 @@
 			<div class="span9">
 				
 				<div class="page-header">
-					<h1><g:message code="default.label" default="Einkäufe" /></h1>
+					<h1><g:message code="default.list.label" args="[entityName]" /></h1>
 				</div>
 
 				<g:if test="${flash.message}">
@@ -45,8 +45,6 @@
 						<tr>
 						
 							<g:sortableColumn property="date" title="${message(code: 'shopping.date.label', default: 'Date')}" />
-						
-							<th class="header"><g:message code="shopping.location.label" default="Location" /></th>
 						
 							<th class="header"><g:message code="shopping.retailer.label" default="Retailer" /></th>
 						
@@ -60,8 +58,6 @@
 						<tr>
 						
 							<td><g:formatDate date="${shoppingInstance.date}" /></td>
-						
-							<td>${fieldValue(bean: shoppingInstance, field: "location")}</td>
 						
 							<td>${fieldValue(bean: shoppingInstance, field: "retailer")}</td>
 						

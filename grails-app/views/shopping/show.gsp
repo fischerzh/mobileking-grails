@@ -58,13 +58,6 @@
 						
 					</g:if>
 				
-					<g:if test="${shoppingInstance?.location}">
-						<dt><g:message code="shopping.location.label" default="Location" /></dt>
-						
-							<dd><g:link controller="location" action="show" id="${shoppingInstance?.location?.id}">${shoppingInstance?.location?.encodeAsHTML()}</g:link></dd>
-						
-					</g:if>
-				
 					<g:if test="${shoppingInstance?.retailer}">
 						<dt><g:message code="shopping.retailer.label" default="Retailer" /></dt>
 						

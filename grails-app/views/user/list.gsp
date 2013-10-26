@@ -48,7 +48,7 @@
 							
 							<g:sortableColumn property="loyaltyCards" title="${message(code: 'user.loyaltyCards.label', default: 'Loyalty Cards')}" />
 						
-							<g:sortableColumn property="soppings" title="${message(code: 'user.shoppings.label', default: 'Shoppings')}" />
+							<g:sortableColumn property="soppings" title="${message(code: 'user.shoppings.label', default: 'Letztes Login')}" />
 							
 <%--							<g:sortableColumn property="password" title="${message(code: 'user.password.label', default: 'Password')}" />--%>
 						
@@ -71,7 +71,7 @@
 							
 							<td>${fieldValue(bean: userInstance, field: "loyaltyCards")}</td>
 							
-							<td>${fieldValue(bean: userInstance, field: "shoppings")}</td>
+							<td></td>
 						
 <%--							<td>${fieldValue(bean: userInstance, field: "password")}</td>--%>
 						

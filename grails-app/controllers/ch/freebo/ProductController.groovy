@@ -12,8 +12,13 @@ import grails.plugins.springsecurity.Secured
 class ProductController {
 	
 	def springSecurityService
+	
+	ControlPanelController controlPanel = new ControlPanelController()
+	
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
+	
+	def User user
 
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def loginFromApp() {
@@ -22,7 +27,7 @@ class ProductController {
 		
 		println "User logged in: " + springSecurityService.currentUser
 		
-		def user = User.findByUsername(springSecurityService.currentUser.toString())
+		user = User.findByUsername(springSecurityService.currentUser.toString())
 		println "User: " +user
 		
 		if(user==null)
@@ -33,7 +38,7 @@ class ProductController {
 
 		println user.shoppings.productShoppings.collect()
 		
-		def jsonExport = getJSONData(user)
+		def jsonExport = getJSONData()
 		
 		if(!user.isActiveApp)
 		{
@@ -57,7 +62,15 @@ class ProductController {
 			if(params.regId)
 			{
 //				println "Registration Params: " + params.regId, params.deviceType, params.deviceOs
-				def device = new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs).save(failOnError:true)
+				def device = Devices.findByDeviceId(params.regId)
+				if(device)
+				{
+					println "Device already registered! User cleared App and re-installed!"
+				}	
+				else
+				{
+					device new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs).save(failOnError:true)
+				}
 				println "Device for User created:  " +device
 				if(device)
 					user.addToDevices(device)
@@ -75,7 +88,7 @@ class ProductController {
 	
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def getJSONData(User user)
+	def getJSONData()
 	{
 		HashMap jsonMap = new HashMap()
 		
@@ -102,7 +115,7 @@ class ProductController {
 				//count products bought
 				def hersteller = prod.manufacturer.toString()
 				def category = prod.productCategory.toString()
-				def pointsCollected = calculatePointsForProduct(prod, user)
+				def pointsCollected = calculatePointsForProduct(prod)
 				def userrank = random.nextInt(10)
 				crowns =  getCrownsForProduct(prod, user).collect()
 //				println crowns
@@ -110,15 +123,21 @@ class ProductController {
 			}
 		}
 		
-		jsonMap.recommendations = products.unique().collect { Product prod ->
-			def pointsCollected = calculatePointsForProduct(prod, user)
-			def hersteller = prod.manufacturer.toString()
-			def category = prod.productCategory.toString()
-			return [id: prod.id, name: prod.name, imagelink: prod.imageLink, points: pointsCollected, producer: hersteller, category: category]
-		}
-		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
-//		println "json Recommendations "  +jsonMap.recommendations 
+//		jsonMap.recommendations = products.unique().collect { Product prod ->
+//			def pointsCollected = calculatePointsForProduct(prod, user)
+//			def hersteller = prod.manufacturer.toString()
+//			def category = prod.productCategory.toString()
+//			return [id: prod.id, name: prod.name, imagelink: prod.imageLink, points: pointsCollected, producer: hersteller, category: category]
+//		}
+//		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
+		
 		jsonMap.products.removeAll([null])
+		
+		def badges = calculateBadges(jsonMap.products.size()).collect()
+		println "User-Badges:" +badges
+		jsonMap.badges =  badges.unique().collect {
+			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
+		}
 		jsonMap.username = user.username
 		
 		println jsonMap
@@ -144,7 +163,6 @@ class ProductController {
 		
 		if(userProd)
 		{
-//			println "optIn: " +userProd.optIn
 			if(userProd.optIn)
 				optIn = true
 		}
@@ -153,7 +171,7 @@ class ProductController {
 	}
 
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def calculatePointsForProduct(Product prod, User user)
+	def calculatePointsForProduct(Product prod)
 	{
 		def nmbr = 0
 		def prods = user.shoppings.each { s->
@@ -167,16 +185,77 @@ class ProductController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def calculateGlobalProductRank(Product prod, User user)
+	def calculateGlobalProductRank(Product prod)
 	{
 		
 		
 	}
 	
+	def calculateBadges(int productCount)
+	{
+		println "#productCount: " +productCount
+		def userLogins = UserLogin.countByUser(user)
+		println '#userLogins ' + userLogins
+		
+		def badges = []
+		
+		if(userLogins >= 42)
+		{
+			def badge = Badge.findByNameAndUser('Shopper', user)
+			if(!badge)
+				badge = createBadge('Login', 'Shopper')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
+		if(userLogins >= 100)
+		{
+			def badge = Badge.findByNameAndUser('Shoppaholic', user)
+			if(!badge)
+				badge = createBadge('Login', 'Shoppaholic')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
+		if(productCount > 0)
+		{
+			def badge = Badge.findByNameAndUser('Lonely', user)
+			if(!badge)
+				badge = createBadge('OptIn', 'Lonely')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
+		if(productCount >= 2)
+		{
+			def badge = Badge.findByNameAndUser('Lover', user)
+			if(!badge)
+				badge = createBadge('OptIn', 'Lover')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)		
+		}
+		if(productCount >=10)
+		{
+			def badge = Badge.findByNameAndUser('Addicted', user)
+			if(!badge)
+				badge = createBadge('OptIn', 'Addicted')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)		
+		}
+		println "List badges after calc: " + badges
+		return badges
+	}
+	
 	def getCrownsForProduct(Product prod, User user)
 	{
 		Random random = new Random()
-		
 	
 //		return [rank: "1", crownstatus: "2", salespoint: "Migros Zurich HB"]
 		def salesPoint = " "
@@ -189,6 +268,15 @@ class ProductController {
 
 		}
 		return crowns
+	}
+	
+	def createBadge(badgeGroup, badgeName)
+	{
+		def badge = new Badge(user: user, name: badgeName, achieved: true, achievementDate: new Date(), badgeGroup: badgeGroup, newAchieved: true )
+		println "Send message"
+		controlPanel.callGCMServiceMsg('New Badge', user)
+		
+		return badge
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])

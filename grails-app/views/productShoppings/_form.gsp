@@ -23,7 +23,7 @@
 		<g:message code="productShoppings.qty.label" default="Qty" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:field name="qty" type="number" value="${productShoppingsInstance.qty}" required=""/>
+	<g:field name="qty" value="${fieldValue(bean: productShoppingsInstance, field: 'qty')}" required=""/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: productShoppingsInstance, field: 'shopping', 'error')} required">

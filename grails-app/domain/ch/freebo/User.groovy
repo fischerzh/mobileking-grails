@@ -11,7 +11,6 @@ class User {
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
-	String regId
 
 	static constraints = {
 		username blank: false, unique: true
@@ -19,12 +18,11 @@ class User {
 		isActiveApp nullable:true
 		loyaltyCards nullable:true
 		shoppings nullable:true
-		regId nullable:true
 		devices nullable:true
-//		loyaltyPrograms nullable:true
+		badges nullable:true
 	}
 	
-	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices] //loyaltyPrograms:LoyaltyProgram, 
+	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices, badges: Badge]
 
 	static mapping = {
 		password column: '`password`'
@@ -48,7 +46,10 @@ class User {
 		password = springSecurityService.encodePassword(password)
 	}
 	
+	
 	String toString()  {
 		return username? username: ""
 	}
+	
+	
 }
