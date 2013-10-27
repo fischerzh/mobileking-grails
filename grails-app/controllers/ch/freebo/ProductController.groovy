@@ -120,15 +120,17 @@ class ProductController {
 				def pointsCollected = calculatePointsForProduct(prod)
 				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
 				def newRank = 0
+				def oldRank = 0
 				def newRankAchieved = false
 				if(userrank)
 				{
 					newRank = userrank.rank
+					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
 				}
 				crowns =  getCrownsForProduct(prod, user).collect()
 //				println crowns
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 			}
 		}
 		
