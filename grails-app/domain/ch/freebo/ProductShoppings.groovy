@@ -17,4 +17,6 @@ class ProductShoppings {
 		def returnStr = qty.toString() + " x " + productStr
 		return returnStr? returnStr: " "
 	}
+	
+
 }

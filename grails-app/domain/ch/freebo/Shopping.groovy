@@ -1,7 +1,8 @@
 package ch.freebo
 
-class Shopping {
 
+class Shopping {
+	
 	Date date
 	
     static constraints = {
@@ -15,9 +16,10 @@ class Shopping {
 	String toString()  {
 		def userStr = user?user.toString(): " "
 		def locationStr = retailer?retailer.toString(): " "
-		def returnStr = date.toString() + " " + locationStr
+		def returnStr = date.toString() + " " + locationStr + " ("+userStr+")"
 		return returnStr? returnStr: " "
 	}
+	
 	
 	
 }

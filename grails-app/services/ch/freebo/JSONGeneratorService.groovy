@@ -8,7 +8,7 @@ import grails.plugins.springsecurity.Secured
 class JSONGeneratorService {
 
     def serviceMethod() {
-
+		println "Called service method"
     }
 	
 	@Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
@@ -69,6 +69,7 @@ class JSONGeneratorService {
 	
 	def hasUserOptIn(Product prod, User user)
 	{
+		println "User OptIn for product " +prod
 		def userProdListOptOut = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
 		def	userProdListOptIn = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optInDate", order:"desc"])
 		

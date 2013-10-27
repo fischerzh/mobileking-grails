@@ -10,6 +10,8 @@ class ShoppingController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
+	def RankingService rankingService
+	
     def index() {
         redirect action: 'list', params: params
     }
@@ -26,6 +28,7 @@ class ShoppingController {
 			break
 		case 'POST':
 	        def shoppingInstance = new Shopping(params)
+			
 	        if (!shoppingInstance.save(flush: true)) {
 	            render view: 'create', model: [shoppingInstance: shoppingInstance]
 	            return

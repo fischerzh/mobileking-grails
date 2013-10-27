@@ -9,6 +9,7 @@ class UserProduct {
 	
 	Date optInDate
 	Date optOutDate
+	Date updated
 	Boolean isActive
 	Boolean optIn
 	Integer version
@@ -33,5 +34,6 @@ class UserProduct {
 			isActive = false
 			optOutDate = date;
 		}
+		updated = date;
 	}
 }

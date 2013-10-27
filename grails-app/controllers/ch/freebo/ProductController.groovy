@@ -13,8 +13,9 @@ class ProductController {
 	
 	def springSecurityService
 	
-	ControlPanelController controlPanel = new ControlPanelController()
+	JSONGeneratorService jsonGenerator = new JSONGeneratorService()
 	
+	ControlPanelController controlPanel = new ControlPanelController()
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 	
@@ -24,6 +25,8 @@ class ProductController {
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
 		println "Params" + params
+		
+//		jsonGenerator.loginFromApp()
 		
 		println "User logged in: " + springSecurityService.currentUser
 		
@@ -102,7 +105,6 @@ class ProductController {
 
 		}
 		
-//		println userShopping
 		Random random = new Random()
 		
 		def crowns = {}
@@ -116,10 +118,17 @@ class ProductController {
 				def hersteller = prod.manufacturer.toString()
 				def category = prod.productCategory.toString()
 				def pointsCollected = calculatePointsForProduct(prod)
-				def userrank = random.nextInt(10)
+				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+				def newRank = 0
+				def newRankAchieved = false
+				if(userrank)
+				{
+					newRank = userrank.rank
+					newRankAchieved = userrank.newRank
+				}
 				crowns =  getCrownsForProduct(prod, user).collect()
 //				println crowns
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: userrank, category: category, crowns: crowns]
+				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 			}
 		}
 		

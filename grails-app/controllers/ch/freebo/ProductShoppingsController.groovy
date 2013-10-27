@@ -2,10 +2,18 @@ package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
 
+import grails.plugins.springsecurity.Secured
+
+
+@Secured(['ROLE_ADMIN'])
 class ProductShoppingsController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
+	def RankingService rankingService
+	
+	def JSONGeneratorService jsonService
+	
     def index() {
         redirect action: 'list', params: params
     }
@@ -22,10 +30,23 @@ class ProductShoppingsController {
 			break
 		case 'POST':
 	        def productShoppingsInstance = new ProductShoppings(params)
+			
+//			println "params" + params
+//			println "Shopping " + params.shopping.id
+			
+			def shopping = Shopping.findById(params.shopping.id)
+			
+			def user = User.find(shopping.user)
+			
+			def product = Product.findById(params.product.id)
+			
 	        if (!productShoppingsInstance.save(flush: true)) {
 	            render view: 'create', model: [productShoppingsInstance: productShoppingsInstance]
 	            return
 	        }
+			
+			if(rankingService.hasUserOptIn(product, user) )
+				rankingService.calculateUserRanking(product, user, productShoppingsInstance)
 
 			flash.message = message(code: 'default.created.message', args: [message(code: 'productShoppings.label', default: 'ProductShoppings'), productShoppingsInstance.id])
 	        redirect action: 'show', id: productShoppingsInstance.id
