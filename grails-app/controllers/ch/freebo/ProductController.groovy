@@ -39,7 +39,9 @@ class ProductController {
 			render([error: 'Error 500'] as JSON)
 		}
 
-		println user.shoppings.productShoppings.collect()
+//		println user.shoppings.productShoppings.collect()
+		
+		user = registerUserAndDevice(user, params.regId)
 		
 		def jsonExport = getJSONData()
 		
@@ -62,22 +64,7 @@ class ProductController {
 		if(user)
 		{
 			user.isActiveApp = true
-			if(params.regId)
-			{
-//				println "Registration Params: " + params.regId, params.deviceType, params.deviceOs
-				def device = Devices.findByDeviceId(params.regId)
-				if(device)
-				{
-					println "Device already registered! User cleared App and re-installed!"
-				}	
-				else
-				{
-					device new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
-				}
-				println "Device for User created:  " +device
-				if(device)
-					user.addToDevices(device)
-			}
+			
 			if(user.save(flush: true))
 				new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
 			render json
@@ -196,10 +183,24 @@ class ProductController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def calculateGlobalProductRank(Product prod)
+	def registerUserAndDevice(User user, regId)
 	{
-		
-		
+		if(regId)
+		{
+			def device = Devices.findByDeviceId(params.regId)
+			if(device)
+			{
+				println "Device already registered! User cleared App and re-installed!"
+			}
+			else
+			{
+				device new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
+			}
+			println "Device for User created:  " +device
+			if(device)
+				user.addToDevices(device)
+		}
+		return user
 	}
 	
 	def calculateBadges(int productCount)
