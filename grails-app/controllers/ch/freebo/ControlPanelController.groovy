@@ -11,19 +11,26 @@ class ControlPanelController {
 	
 	def androidGcmService
 	
+	def messageList = [:]
+	
 	def callGCMService()
 	{
 		println params
+		addMessages("MESSAGE", params.inputMessage)
 		sendMessage();
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def callGCMServiceMsg(String message, User user)
+	def callGCMServiceMsg(User user)
 	{
-		params.inputMessage = message
 		params.user = user
 		println params
 		sendMessage();
+	}
+	
+	def addMessages(String type, String message)
+	{
+		messageList[type] = message
 	}
 	
 	
@@ -47,10 +54,21 @@ class ControlPanelController {
 		['deviceToken', 'messageKey', 'messageValue'].each {
 				key -> params[key] = [idList].flatten().findAll { it }
 		}
+		
+//		def messageList = [:]
+		
+//		messageList['STATUS'] = 'Neuer Status!'
+//		messageList['BADGE'] = 'Neuer Badge!'
+//		messageList['RANG'] = 'Neuer Rang!'
+		
+		println messageList
+ 		
 		def messages = params.messageKey.inject([:]) {
 				currentMessages, currentKey ->
-				currentMessages << [ "1" : params.inputMessage]
+				currentMessages << messageList//[ "1" : params.inputMessage]
 		}
+		
+		println messages
 		
 		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
 		

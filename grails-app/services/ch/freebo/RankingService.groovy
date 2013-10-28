@@ -42,21 +42,22 @@ class RankingService {
 		
 		newUserRank = calculateRank(usersForRanking, user, shopping)
 
-		if (oldPoints < oldPoints+shopping.qty)
-		{
-			def newRankAchieved = oldUserRank!=newUserRank?true:false
-			def userRanking = new UserRanking(rank: newUserRank,  rankBefore: oldUserRank, newRank: newRankAchieved,  pointsCollected: shopping.qty?shopping.qty:(newPoints-oldPoints), totalPointsCollected: oldPoints + shopping.qty, product: product,  user: user, updated: new Date())
-			if(userRanking.save(failOnError:true))
-			{
-				println "NEW user ranking: "  +userRanking.rank
-				if(newRankAchieved)
-				{
-					controlPanel.callGCMServiceMsg("Gratuliere: Du hast einen neuen Rang erreicht!", user)
-//					senderService.callGCMServiceMsg("Gratuliere: Du hast einen neuen Rang erreicht!", user)
-				}
-				
-			}
-		}
+//		if (oldPoints < oldPoints+shopping.qty)
+//		{
+//			def newRankAchieved = oldUserRank!=newUserRank?true:false
+//			def userRanking = new UserRanking(rank: newUserRank,  rankBefore: oldUserRank, newRank: newRankAchieved,  pointsCollected: shopping.qty?shopping.qty:(newPoints-oldPoints), totalPointsCollected: oldPoints + shopping.qty, product: product,  user: user, updated: new Date())
+//			if(userRanking.save(failOnError:true))
+//			{
+//				println "NEW user ranking: "  +userRanking.rank
+//				if(newRankAchieved)
+//				{
+//					controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
+//					controlPanel.callGCMServiceMsg(user)
+////					senderService.callGCMServiceMsg("Gratuliere: Du hast einen neuen Rang erreicht!", user)
+//				}
+//				
+//			}
+//		}
 		
 		
     }
@@ -77,12 +78,10 @@ class RankingService {
 	
 	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping)
 	{
-//		println "all users Ranking: " + allUsersRanking
 		def newUserRank = 1
 		def isUserInRank = false
 		def allRankings = []
 		allUsersOptIn.each { User user ->
-//			println "name: " +user.username
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(user, product, [sort:"updated", order:"desc"])
 			if(oldRanking)
 			{
@@ -95,11 +94,10 @@ class RankingService {
 
 			}
 		}
-		println "All Rankings List: " +allRankings
+		println "All Rankings: " +allRankings
 		def rank = 1
 		def groupedByRating = allRankings.groupBy({ -it.points})
-		println "Before:" + groupedByRating
-		
+		println "Before: " +groupedByRating
 		if(!isUserInRank)
 		{
 			allRankings.add([currentUser, shopping.qty])
@@ -118,10 +116,40 @@ class RankingService {
 		  rank += items.size()
 		}
 		println "After: " + groupedByRating
+		println "User Rank"  + newUserRank
 		
-		println "New User Rank"  + newUserRank
+		sendUpdatesForRank(groupedByRating, allUsersOptIn)
 		
 		return newUserRank
+	}
+	
+	def sendUpdatesForRank(groupedRating, allRankings)
+	{
+		println "All Rankings: " +allRankings
+		groupedRating.each() { key, value ->
+			println "points: "+ (-key)
+			println value
+			println "user: " +value.getAt(0)['user']
+			def rankUser = value.getAt(0)['user']
+			def points = value.getAt(0)['points']
+			def newRank = value.getAt(0)['rank']
+			println "new Rank:" +newRank + " newPoints: " +points
+			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
+			println "old Rank:" +oldRanking.rank +" oldPoints: " +oldRanking.totalPointsCollected
+//			if(newRank!=oldRanking.rank)
+//			{
+				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRanking.rank, newRank: true,  pointsCollected: points-oldRanking.totalPointsCollected, totalPointsCollected: points, product: oldRanking.product,  user: rankUser, updated: new Date())
+				if(newUserRanking.save(failOnError:true))
+				{
+					if(newUserRanking.rank < oldRanking.rank)
+						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
+					else if(newUserRanking.rank > oldRanking.rank)
+						controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
+					if(newUserRanking.rank!=oldRanking.rank)
+						controlPanel.callGCMServiceMsg(rankUser)
+				}
+//			}
+		}
 	}
 	
 	def findAllUsersOptInForProduct(Product prod)
@@ -167,9 +195,20 @@ class RankingService {
 		return optIn
 	}
 	
-	
-	def createNewRanking()
+	def getCrownsForProduct(Product prod, User user)
 	{
-		
+		Random random = new Random()
+	
+//		return [rank: "1", crownstatus: "2", salespoint: "Migros Zurich HB"]
+		def salesPoint = " "
+		def crowns =  []
+		user.shoppings.each { s ->
+				salesPoint = s.retailer.toString()
+				def userPoints = random.nextInt(2)+1
+				def rank = random.nextInt(15)
+				crowns.add([rank: rank, crownstatus: userPoints, salespoint: salesPoint])
+
+		}
+		return crowns
 	}
 }

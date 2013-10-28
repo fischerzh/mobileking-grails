@@ -210,7 +210,7 @@ class ProductController {
 		
 		def badges = []
 		
-		if(userLogins >= 42)
+		if(userLogins >= 50)
 		{
 			def badge = Badge.findByNameAndUser('Shopper', user)
 			if(!badge)
