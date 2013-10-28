@@ -41,8 +41,6 @@ class ProductController {
 
 //		println user.shoppings.productShoppings.collect()
 		
-		user = registerUserAndDevice(user, params.regId)
-		
 		def jsonExport = getJSONData()
 		
 		if(!user.isActiveApp)
@@ -64,6 +62,8 @@ class ProductController {
 		if(user)
 		{
 			user.isActiveApp = true
+			
+			user = registerUserAndDevice(user, params.regId)
 			
 			if(user.save(flush: true))
 				new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
@@ -131,11 +131,15 @@ class ProductController {
 		
 		jsonMap.products.removeAll([null])
 		
-		def badges = calculateBadges(jsonMap.products.size()).collect()
-		println "User-Badges:" +badges
-		jsonMap.badges =  badges.unique().collect {
-			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
+		if(user.isActiveApp)
+		{
+			def badges = calculateBadges(jsonMap.products.size()).collect()
+			println "User-Badges:" +badges
+			jsonMap.badges =  badges.unique().collect {
+				return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
+			}
 		}
+
 		jsonMap.username = user.username
 		
 		println jsonMap
