@@ -119,7 +119,7 @@ class ProductController {
 				}
 				else
 				{
-					rankingService.calculateUserRanking(prod, user, productShoppingsInstance)
+					rankingService.calculateUserRanking(prod, user, null)
 				}
 //				crowns =  getCrownsForProduct(prod, user).collect()
 				
