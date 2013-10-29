@@ -153,23 +153,14 @@ class ProductController {
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def hasUserOptIn(Product prod, User user)
 	{
-		def userProdListOptOut = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
-		def	userProdListOptIn = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optInDate", order:"desc"])
-		
-		def userProd
-		
-		if(userProdListOptOut && userProdListOptIn)
-			userProd = userProdListOptOut[0].optOutDate > userProdListOptIn[0].optInDate ? userProdListOptOut[0] : userProdListOptIn[0]
-		else if(userProdListOptOut)
-			userProd = userProdListOptOut[0]
-		else if(userProdListOptIn)
-			userProd = userProdListOptIn[0]
+		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
 		
 		def optIn = false
 		
-		if(userProd)
+		if(userProdListOptIn)
 		{
-			if(userProd.optIn)
+			println "optIn: " +userProdListOptIn.optIn
+			if(userProdListOptIn.optIn)
 				optIn = true
 		}
 
@@ -329,7 +320,7 @@ class ProductController {
 				//OPT IN
 				if(params.optin)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true)
+					def userProd = new UserProduct(user: user, product: prod, optIn: true, updated: new Date())
 					println "Opt-in: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
@@ -339,7 +330,7 @@ class ProductController {
 				//OPT OUT
 				else if(params.optout)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false )
+					def userProd = new UserProduct(user: user, product: prod, optIn: false, updated: new Date() )
 					println "Opt-Out: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
