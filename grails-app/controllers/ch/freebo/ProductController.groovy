@@ -120,8 +120,11 @@ class ProductController {
 				else
 				{
 					rankingService.calculateUserRanking(prod, user, null)
+					userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+					newRank = userrank.rank
+					oldRank = userrank.rankBefore
+					newRankAchieved = userrank.newRank
 				}
-//				crowns =  getCrownsForProduct(prod, user).collect()
 				
 				crowns = rankingService.getCrownsForProduct(prod, user).collect()
 				

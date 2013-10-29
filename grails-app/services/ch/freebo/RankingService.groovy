@@ -37,14 +37,13 @@ class RankingService {
 			/* NO RANKING EXISTS YET, RECALCULATE POINTS */
 		    newPoints = calculatePointsForProduct(product, user)
 			println "newPoints: " +newPoints
-			def userRanking = new UserRanking(rank: 0,  rankBefore: 0, newRank: false,  pointsCollected: shopping.qty, totalPointsCollected: newPoints, product: product,  user: user, updated: new Date())
-			userRanking.save(failOnError:true)
+
 		}
 		
 		//Go through all users with Opt-in, check ranking (and send Notification if it has changed!)
 		def usersForRanking = findAllUsersOptInForProduct(product)
 		
-		newUserRank = calculateRank(usersForRanking, user, shopping)
+		newUserRank = calculateRank(usersForRanking, user, shopping, newPoints)
 
 //		if (oldPoints < oldPoints+shopping.qty)
 //		{
@@ -95,7 +94,7 @@ class RankingService {
 		return nmbr
 	}
 	
-	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping)
+	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping, newPoints)
 	{
 		def newUserRank = 1
 		def isUserInRank = false
@@ -111,6 +110,18 @@ class RankingService {
 					totalPoints = oldRanking.totalPointsCollected+(shopping?shopping.qty:0)
 				}
 				allRankings.add([user:user, points:totalPoints])
+			}
+			else
+			{
+				//NO RANKING EXISTS FOR CURRENT USER!!
+				if(user.id == currentUser.id){
+//					
+//					def userRanking = new UserRanking(rank: 0,  rankBefore: 0, newRank: false,  pointsCollected: shopping?shopping.qty:0, totalPointsCollected: newPoints, product: product,  user: user, updated: new Date())
+//					userRanking.save(failOnError:true)
+					allRankings.add([user:user, points:newPoints])
+					
+				}
+
 			}
 		}
 		def rank = 1
@@ -145,17 +156,18 @@ class RankingService {
 			def points = value.getAt(0)['points']
 			def newRank = value.getAt(0)['rank']
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
+			println "Found Ranking: " +oldRanking
 			def oldPoints = oldRanking?oldRanking.totalPointsCollected:0
 			def oldRank = oldRanking?oldRanking.rank:0
-				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-oldRanking.totalPointsCollected, totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
+				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-(oldRanking?oldRanking.totalPointsCollected:0), totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
 				if(newUserRanking.save(failOnError:true))
 				{
 					println "New User Ranking: " +newUserRanking
-					if(newRank < oldRanking.rank)
+					if(newRank < oldRank)
 						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
-					else if(newRank > oldRanking.rank)
+					else if(newRank > oldRank)
 						controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
-					if(newUserRanking.rank!=oldRanking.rank)
+					if(newUserRanking.rank!=oldRank)
 						controlPanel.callGCMServiceMsg(rankUser)
 				}
 //			}
