@@ -117,6 +117,10 @@ class ProductController {
 					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
 				}
+				else
+				{
+					rankingService.calculateUserRanking(prod, user, productShoppingsInstance)
+				}
 //				crowns =  getCrownsForProduct(prod, user).collect()
 				
 				crowns = rankingService.getCrownsForProduct(prod, user).collect()

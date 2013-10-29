@@ -108,7 +108,7 @@ class RankingService {
 				def Integer totalPoints = oldRanking.totalPointsCollected
 				if(user.id == currentUser.id){
 					isUserInRank = true
-					totalPoints = oldRanking.totalPointsCollected+shopping.qty
+					totalPoints = oldRanking.totalPointsCollected+(shopping?shopping.qty:0)
 				}
 				allRankings.add([user:user, points:totalPoints])
 			}
@@ -117,8 +117,7 @@ class RankingService {
 		def groupedByRating = allRankings.groupBy({ -it.points})
 		if(!isUserInRank)
 		{
-			allRankings.add([currentUser, shopping.qty])
-			
+			allRankings.add([currentUser, shopping?shopping.qty:0])
 		}
 		//sort and calculate the rank
 		groupedByRating.sort().each { points, items ->
