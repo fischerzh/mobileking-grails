@@ -238,8 +238,8 @@ class RankingService {
 		
 		def currentUsersCnt = groupedByRating.size()
 		Double percent_10 = Math.ceil(currentUsersCnt * 0.1)
-		Double percent_20 = Math.max(2.0, Math.ceil(currentUsersCnt * 0.2))
-		Double percent_30 = Math.max(3.0, Math.ceil(currentUsersCnt * 0.3))
+		Double percent_20 = Math.max(2.0, Math.ceil(currentUsersCnt * 0.2)).toDouble()
+		Double percent_30 = Math.max(3.0, Math.ceil(currentUsersCnt * 0.3)).toDouble()
 		def crownstatus = 0
 		println "top 10: " + percent_10 + "top 20: " +percent_20 + "top 30: " +percent_30
 		if(newUserRank <= percent_10)
