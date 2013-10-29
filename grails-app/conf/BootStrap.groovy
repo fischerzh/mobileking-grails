@@ -53,16 +53,12 @@ class BootStrap {
 		def date = new Date()
 		def shoppingList = Shopping.findByUserAndRetailer(user, migros)?:new Shopping(date:date, retailer:migros, user:user).save(failOnError:true)
 		println shoppingList
-//		shoppingList.addToProducts(product1)
-//		shoppingList.addToProducts(product2)
-//		shoppingList.save(flush:true)
 		
-		def rivellaKauf = ProductShoppings.findByProductAndShopping(rivella, shoppingList)?:new ProductShoppings(product:rivella, shopping:shoppingList, qty:2).save(failOnError:true)
-		def zweifelKauf = ProductShoppings.findByProductAndShopping(zweifel, shoppingList)?:new ProductShoppings(product:zweifel, shopping:shoppingList, qty:3).save(failOnError:true)
-		def colaKauf = ProductShoppings.findByProductAndShopping(colazero, shoppingList)?:new ProductShoppings(product:colazero, shopping:shoppingList, qty:10).save(failOnError:true)
+//		def rivellaKauf = ProductShoppings.findByProductAndShopping(rivella, shoppingList)?:new ProductShoppings(product:rivella, shopping:shoppingList, qty:2).save(failOnError:true)
+//		def zweifelKauf = ProductShoppings.findByProductAndShopping(zweifel, shoppingList)?:new ProductShoppings(product:zweifel, shopping:shoppingList, qty:3).save(failOnError:true)
+//		def colaKauf = ProductShoppings.findByProductAndShopping(colazero, shoppingList)?:new ProductShoppings(product:colazero, shopping:shoppingList, qty:10).save(failOnError:true)
+//		
 		
-		
-//		testUser.addToShoppings(shoppingList).save(failOnError:true)
     }
     def destroy = {
     }

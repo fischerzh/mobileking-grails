@@ -15,6 +15,8 @@ class ProductController {
 	
 	JSONGeneratorService jsonGenerator = new JSONGeneratorService()
 	
+	RankingService rankingService = new RankingService()
+	
 	ControlPanelController controlPanel = new ControlPanelController()
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
@@ -115,8 +117,10 @@ class ProductController {
 					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
 				}
-				crowns =  getCrownsForProduct(prod, user).collect()
-//				println crowns
+//				crowns =  getCrownsForProduct(prod, user).collect()
+				
+				crowns = rankingService.getCrownsForProduct(prod, user).collect()
+				
 				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 			}
 		}
@@ -278,9 +282,9 @@ class ProductController {
 		def crowns =  []
 		user.shoppings.each { s ->
 				salesPoint = s.retailer.toString()
-				def userPoints = random.nextInt(2)+1
-				def rank = random.nextInt(15)
-				crowns.add([rank: rank, crownstatus: userPoints, salespoint: salesPoint])
+				def crownstatus = random.nextInt(2)+1
+//				def rank = random.nextInt(15)
+				crowns.add([rank: rank, crownstatus: crownstatus, salespoint: salesPoint])
 
 		}
 		return crowns
@@ -289,9 +293,13 @@ class ProductController {
 	def createBadge(badgeGroup, badgeName)
 	{
 		def badge = new Badge(user: user, name: badgeName, achieved: true, achievementDate: new Date(), badgeGroup: badgeGroup, newAchieved: true )
-		println "Send message"
-		controlPanel.addMessages("BADGE", "Glückwunsch: Du hast einen neuen Badge!")
-		controlPanel.callGCMServiceMsg(user)
+		println "New Badge achieved: " +badge
+//		if(user.devices)
+//		{
+//		println "Send message"
+//			controlPanel.addMessages("BADGE", "Glückwunsch: Du hast einen neuen Badge!")
+//			controlPanel.callGCMServiceMsg(user)
+//		}
 		
 		return badge
 	}
