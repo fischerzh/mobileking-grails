@@ -215,7 +215,7 @@ class RankingService {
 		def crowns =  []
 		def dataPoS = []
 		def allUsersOptIn = findAllUsersOptInForProduct(prod)
-		def pointsPoS = 0
+		Integer pointsPoS = 0
 		allUsersOptIn.each{ User optInUser ->
 				optInUser.shoppings.each { Shopping shopping ->
 					salesPoint = shopping.retailer.toString()
