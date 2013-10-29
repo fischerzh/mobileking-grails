@@ -67,7 +67,7 @@ class RankingService {
 	
 	def calculatePointsForProduct(Product prod, User currentUser)
 	{
-		def nmbr = 0
+		Integer nmbr = 0
 		def prods = currentUser.shoppings.each { Shopping s->
 			TimeDuration td = TimeCategory.minus(new Date(), s.date)
 			println "TimeDifference: " +td
@@ -81,7 +81,7 @@ class RankingService {
 	
 	def calculatePointsForProductPerLocation(Product prod, User currentUser, Shopping shopping)
 	{
-		def nmbr = 0
+		Integer nmbr = 0
 		shopping.each { Shopping s->
 				TimeDuration td = TimeCategory.minus(new Date(), s.date)
 				println "TimeDifference: " +td
@@ -104,7 +104,7 @@ class RankingService {
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(user, product, [sort:"updated", order:"desc"])
 			if(oldRanking)
 			{
-				def Integer totalPoints = oldRanking.totalPointsCollected
+				Integer totalPoints = oldRanking.totalPointsCollected
 				if(user.id == currentUser.id){
 					isUserInRank = true
 					totalPoints = oldRanking.totalPointsCollected+(shopping?shopping.qty:0)
