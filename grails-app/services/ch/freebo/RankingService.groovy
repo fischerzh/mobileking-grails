@@ -183,10 +183,14 @@ class RankingService {
 		
 		def usersList = []
 		
-		users.each { User user ->
-			def userProdOptIn = UserProduct.findByUserAndProduct(user, prod, [max:1, sort:"updated", order:"desc"])
-			if(userProdOptIn.optIn)
-				usersList.add(user)
+		users.each { User currentUser ->
+			def userProdOptIn = UserProduct.findByUserAndProduct(currentUser, prod, [sort:"updated", order:"desc"])
+			if(userProdOptIn)
+			{
+				if(userProdOptIn.optIn)
+					usersList.add(currentUser)
+			}
+
 		}
 		println "AllUsers Opt In for Product " + prod + " "+usersList
 		return usersList

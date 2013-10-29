@@ -160,15 +160,13 @@ class ProductController {
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def hasUserOptIn(Product prod, User user)
 	{
-		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [sort:"updated", order:"desc"])
 		
 		def optIn = false
 		
 		if(userProdListOptIn)
 		{
-			println "optIn: " +userProdListOptIn.optIn
-			if(userProdListOptIn.optIn)
-				optIn = true
+				optIn = userProdListOptIn.optIn
 		}
 
 		return optIn
