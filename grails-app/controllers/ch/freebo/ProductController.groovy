@@ -151,7 +151,7 @@ class ProductController {
 		}
 		else
 		{
-			jsonMap.products = [id: "0", ean: "", name: "Dein Lieblingsprodukt", imagelink: "", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie", crowns: null]
+			jsonMap.products = [id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie", crowns: null]
 		}
 		
 		println "jsonMap: " + jsonMap
