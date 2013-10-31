@@ -56,6 +56,20 @@
 						
 					</g:if>
 				
+					<g:if test="${userInstance?.email}">
+						<dt><g:message code="user.email.label" default="Email" /></dt>
+						
+							<dd><g:fieldValue bean="${userInstance}" field="email"/></dd>
+						
+					</g:if>
+				
+					<g:if test="${userInstance?.isActiveApp}">
+						<dt><g:message code="user.isActiveApp.label" default="Is Active App" /></dt>
+						
+							<dd><g:formatBoolean boolean="${userInstance?.isActiveApp}" /></dd>
+						
+					</g:if>
+				
 					<g:if test="${userInstance?.loyaltyCards}">
 						<dt><g:message code="user.loyaltyCards.label" default="Loyalty Cards" /></dt>
 						
@@ -65,11 +79,29 @@
 						
 					</g:if>
 				
-					<g:if test="${userInstance?.productShoppings}">
-						<dt><g:message code="user.productShoppings.label" default="Product Shoppings" /></dt>
+					<g:if test="${userInstance?.shoppings}">
+						<dt><g:message code="user.shoppings.label" default="Shoppings" /></dt>
 						
-							<g:each in="${userInstance.productShoppings}" var="p">
-							<dd><g:link controller="productShoppings" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></dd>
+							<g:each in="${userInstance.shoppings}" var="s">
+							<dd><g:link controller="shopping" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></dd>
+							</g:each>
+						
+					</g:if>
+				
+					<g:if test="${userInstance?.devices}">
+						<dt><g:message code="user.devices.label" default="Devices" /></dt>
+						
+							<g:each in="${userInstance.devices}" var="d">
+							<dd><g:link controller="devices" action="show" id="${d.id}">${d?.encodeAsHTML()}</g:link></dd>
+							</g:each>
+						
+					</g:if>
+				
+					<g:if test="${userInstance?.badges}">
+						<dt><g:message code="user.badges.label" default="Badges" /></dt>
+						
+							<g:each in="${userInstance.badges}" var="b">
+							<dd><g:link controller="badge" action="show" id="${b.id}">${b?.encodeAsHTML()}</g:link></dd>
 							</g:each>
 						
 					</g:if>

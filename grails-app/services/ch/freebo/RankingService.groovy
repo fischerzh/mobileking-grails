@@ -44,24 +44,6 @@ class RankingService {
 		def usersForRanking = findAllUsersOptInForProduct(product)
 		
 		newUserRank = calculateRank(usersForRanking, user, shopping, newPoints)
-
-//		if (oldPoints < oldPoints+shopping.qty)
-//		{
-//			def newRankAchieved = oldUserRank!=newUserRank?true:false
-//			def userRanking = new UserRanking(rank: newUserRank,  rankBefore: oldUserRank, newRank: newRankAchieved,  pointsCollected: shopping.qty?shopping.qty:(newPoints-oldPoints), totalPointsCollected: oldPoints + shopping.qty, product: product,  user: user, updated: new Date())
-//			if(userRanking.save(failOnError:true))
-//			{
-//				println "NEW user ranking: "  +userRanking.rank
-//				if(newRankAchieved)
-//				{
-//					controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
-//					controlPanel.callGCMServiceMsg(user)
-////					senderService.callGCMServiceMsg("Gratuliere: Du hast einen neuen Rang erreicht!", user)
-//				}
-//				
-//			}
-//		}
-		
 		
     }
 	
@@ -149,20 +131,18 @@ class RankingService {
 	
 	def sendUpdatesForRank(groupedRating, allRankings)
 	{
-		println "sendUpdatesForRank: " +groupedRating
-		println "allRankings: " +allRankings
 		groupedRating.each() { key, value ->
 			def rankUser = value.getAt(0)['user']
 			def points = value.getAt(0)['points']
 			def newRank = value.getAt(0)['rank']
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
-			println "Found Ranking: " +oldRanking
+			println "Found Ranking for User: "+user +" Rank before:" +oldRanking
 			def oldPoints = oldRanking?oldRanking.totalPointsCollected:0
 			def oldRank = oldRanking?oldRanking.rank:0
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-(oldRanking?oldRanking.totalPointsCollected:0), totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
 				if(newUserRanking.save(failOnError:true))
 				{
-					println "New User Ranking: " +newUserRanking
+					println "New User Ranking saved: " +newUserRanking
 					if(newRank < oldRank)
 						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
 					else if(newRank > oldRank)

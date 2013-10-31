@@ -6,6 +6,7 @@ class User {
 
 	String username
 	String password
+	String email
 	Boolean isActiveApp
 	boolean enabled
 	boolean accountExpired
@@ -15,6 +16,7 @@ class User {
 	static constraints = {
 		username blank: false, unique: true
 		password blank: false
+		email email: true, blank: false, unique:true
 		isActiveApp nullable:true
 		loyaltyCards nullable:true
 		shoppings nullable:true

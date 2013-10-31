@@ -1,7 +1,6 @@
 package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
-
 import grails.plugins.springsecurity.Secured
 
 

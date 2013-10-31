@@ -4,9 +4,11 @@ class Retailer {
 	
 	String name
 	Location location
+	String street
 	
     static constraints = {
 		location nullable:true
+		street nullable:true
     }
 	
 	String toString()  {

@@ -45,20 +45,14 @@
 						<tr>
 						
 							<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" />
-							
-							<g:sortableColumn property="loyaltyCards" title="${message(code: 'user.loyaltyCards.label', default: 'Loyalty Cards')}" />
 						
-							<g:sortableColumn property="soppings" title="${message(code: 'user.shoppings.label', default: 'Letztes Login')}" />
-							
-<%--							<g:sortableColumn property="password" title="${message(code: 'user.password.label', default: 'Password')}" />--%>
+							<g:sortableColumn property="email" title="${message(code: 'user.email.label', default: 'Email')}" />
 						
-<%--							<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />--%>
+							<g:sortableColumn property="isActiveApp" title="${message(code: 'user.isActiveApp.label', default: 'Is Active App')}" />
 						
-<%--							<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" />--%>
+							<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
 						
-							<g:sortableColumn property="enabled" title="${message(code: 'user.enabled.label', default: 'Enabled')}" />
-						
-<%--							<g:sortableColumn property="passwordExpired" title="${message(code: 'user.passwordExpired.label', default: 'Password Expired')}" />--%>
+							<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" />
 						
 							<th></th>
 						</tr>
@@ -68,20 +62,14 @@
 						<tr>
 						
 							<td>${fieldValue(bean: userInstance, field: "username")}</td>
-							
-							<td>${fieldValue(bean: userInstance, field: "loyaltyCards")}</td>
-							
-							<td></td>
 						
-<%--							<td>${fieldValue(bean: userInstance, field: "password")}</td>--%>
+							<td>${fieldValue(bean: userInstance, field: "email")}</td>
 						
-<%--							<td><g:formatBoolean boolean="${userInstance.accountExpired}" /></td>--%>
+							<td><g:formatBoolean boolean="${userInstance.isActiveApp}" /></td>
 						
-<%--							<td><g:formatBoolean boolean="${userInstance.accountLocked}" /></td>--%>
+							<td><g:formatBoolean boolean="${userInstance.accountExpired}" /></td>
 						
-							<td><g:formatBoolean boolean="${userInstance.enabled}" /></td>
-						
-<%--							<td><g:formatBoolean boolean="${userInstance.passwordExpired}" /></td>--%>
+							<td><g:formatBoolean boolean="${userInstance.accountLocked}" /></td>
 						
 							<td class="link">
 								<g:link action="show" id="${userInstance.id}" class="btn btn-small">Show &raquo;</g:link>
