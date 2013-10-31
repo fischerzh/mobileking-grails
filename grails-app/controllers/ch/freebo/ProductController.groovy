@@ -109,8 +109,8 @@ class ProductController {
 		
 		def crowns = {}
 		
-		if (products)
-		{
+//		if (products)
+//		{
 			jsonMap.products = products.unique().collect {Product prod ->
 				//check if user has optIn
 				def optIn = hasUserOptIn(prod, user)
@@ -148,8 +148,8 @@ class ProductController {
 			if(jsonMap.products)
 				jsonMap.products.removeAll([null])
 			
-		}
-		else
+//		}
+//		else
 		{
 //			jsonMap.products = []
 //			jsonMap.products.add(
