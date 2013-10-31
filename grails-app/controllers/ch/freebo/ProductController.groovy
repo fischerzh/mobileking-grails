@@ -153,7 +153,7 @@ class ProductController {
 		{
 			jsonMap.products = []
 			jsonMap.products.add(
-				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: " ", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie"]
+				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "http://www.subulahanews.com/wp-content/uploads/2012/10/no-image-icon1.jpg", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie"]
 			)
 		}
 		
