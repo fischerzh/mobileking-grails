@@ -91,47 +91,73 @@ class ProductController {
 //				println "Add product: " +ps.product
 				products.addAll(ps.product)
 			}
-
 		}
+		
+		println "Products shopped by user:" +products.unique()
+//		def c = UserProduct.createCriteria()
+//		def results = c.list {
+//			eq("user", user)
+//			and {
+//				eq("optIn", true)
+//			}
+//			
+//			order("updated", "desc")
+//		}
+//		println results
 		
 		Random random = new Random()
 		
 		def crowns = {}
 		
-		jsonMap.products = products.unique().collect {Product prod ->
-			//check if user has optIn
-			def optIn = hasUserOptIn(prod, user)
-			if(optIn)
-			{
-				//count products bought
-				def hersteller = prod.manufacturer.toString()
-				def category = prod.productCategory.toString()
-				def pointsCollected = calculatePointsForProduct(prod)
-				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-				def newRank = 0
-				def oldRank = 0
-				def newRankAchieved = false
-				if(userrank)
+		if (products)
+		{
+			jsonMap.products = products.unique().collect {Product prod ->
+				//check if user has optIn
+				def optIn = hasUserOptIn(prod, user)
+				if(optIn)
 				{
-					newRank = userrank.rank
-					oldRank = userrank.rankBefore
-					newRankAchieved = userrank.newRank
+					//count products bought
+					def hersteller = prod.manufacturer.toString()
+					def category = prod.productCategory.toString()
+					def pointsCollected = calculatePointsForProduct(prod)
+					def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+					def newRank = 0
+					def oldRank = 0
+					def newRankAchieved = false
+					if(userrank)
+					{
+						newRank = userrank.rank
+						oldRank = userrank.rankBefore
+						newRankAchieved = userrank.newRank
+					}
+					else
+					{
+						rankingService.calculateUserRanking(prod, user, null)
+						userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+						newRank = userrank.rank
+						oldRank = userrank.rankBefore
+						newRankAchieved = userrank.newRank
+					}
+					
+					crowns = rankingService.getCrownsForProduct(prod, user).collect()
+					
+					return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 				}
-				else
-				{
-					rankingService.calculateUserRanking(prod, user, null)
-					userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-					newRank = userrank.rank
-					oldRank = userrank.rankBefore
-					newRankAchieved = userrank.newRank
-				}
-				
-				crowns = rankingService.getCrownsForProduct(prod, user).collect()
-				
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 			}
+			
+			if(jsonMap.products)
+				jsonMap.products.removeAll([null])
+			
+		}
+		else
+		{
+			jsonMap.products = [id: "0", ean: "", name: "Dein Lieblingsprodukt", imagelink: "", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie", crowns: null]
 		}
 		
+		println "jsonMap: " + jsonMap
+		
+		println "jsonMap, size: " + jsonMap.size()
+			
 //		jsonMap.recommendations = products.unique().collect { Product prod ->
 //			def pointsCollected = calculatePointsForProduct(prod, user)
 //			def hersteller = prod.manufacturer.toString()
@@ -140,16 +166,12 @@ class ProductController {
 //		}
 //		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
 		
-		jsonMap.products.removeAll([null])
 		
-//		if(user.isActiveApp)
-//		{
-			def badges = calculateBadges(jsonMap.products.size()).collect()
-			println "User-Badges:" +badges
-			jsonMap.badges =  badges.unique().collect {
-				return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
-			}
-//		}
+		def badges = calculateBadges(jsonMap.size()).collect()
+		println "User-Badges:" +badges
+		jsonMap.badges =  badges.unique().collect {
+			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
+		}
 
 		jsonMap.username = user.username
 		

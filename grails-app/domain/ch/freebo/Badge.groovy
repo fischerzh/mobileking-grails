@@ -11,7 +11,7 @@ class Badge {
 	String badgeGroup
 	
     static constraints = {
-    	name unique:true
+    	
 	}
 	
 	String toString()  {
