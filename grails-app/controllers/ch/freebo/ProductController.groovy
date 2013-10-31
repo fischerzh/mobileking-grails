@@ -198,7 +198,7 @@ class ProductController {
 			}
 			else
 			{
-				device new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
+				device = new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
 			}
 			println "Device for User created:  " +device
 			if(device)
