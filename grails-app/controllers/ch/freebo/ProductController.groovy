@@ -142,14 +142,14 @@ class ProductController {
 		
 		jsonMap.products.removeAll([null])
 		
-		if(user.isActiveApp)
-		{
+//		if(user.isActiveApp)
+//		{
 			def badges = calculateBadges(jsonMap.products.size()).collect()
 			println "User-Badges:" +badges
 			jsonMap.badges =  badges.unique().collect {
 				return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
 			}
-		}
+//		}
 
 		jsonMap.username = user.username
 		
