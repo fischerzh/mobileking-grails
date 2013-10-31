@@ -215,6 +215,16 @@ class ProductController {
 		
 		def badges = []
 		
+		if(userLogins >= 0)
+		{
+			def badge = Badge.findByNameAndUser('Starter', user)
+			if(!badge)
+				badge = createBadge('Login', 'Starter')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
 		if(userLogins >= 50)
 		{
 			def badge = Badge.findByNameAndUser('Shopper', user)
