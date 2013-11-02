@@ -48,11 +48,9 @@
 						
 							<g:sortableColumn property="email" title="${message(code: 'user.email.label', default: 'Email')}" />
 						
-							<g:sortableColumn property="isActiveApp" title="${message(code: 'user.isActiveApp.label', default: 'Is Active App')}" />
+							<g:sortableColumn property="isActiveApp" title="${message(code: 'user.isActiveApp.label', default: 'App Aktiviert')}" />
 						
-							<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
-						
-							<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" />
+							<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account gelockt')}" />
 						
 							<th></th>
 						</tr>
@@ -67,12 +65,10 @@
 						
 							<td><g:formatBoolean boolean="${userInstance.isActiveApp}" /></td>
 						
-							<td><g:formatBoolean boolean="${userInstance.accountExpired}" /></td>
-						
 							<td><g:formatBoolean boolean="${userInstance.accountLocked}" /></td>
 						
 							<td class="link">
-								<g:link action="show" id="${userInstance.id}" class="btn btn-small">Show &raquo;</g:link>
+								<g:link action="show" id="${userInstance.id}" class="btn btn-small">Details &raquo;</g:link>
 							</td>
 						</tr>
 					</g:each>

@@ -41,7 +41,7 @@ class UserController {
 					}
 					println errorMessage
 					println "createFromApp: " +params.createFromApp
-					render([status: "Error: Username oder E-Mail bereits vorhanden"] as JSON)
+					render([status: "FAILED", exception: "Username oder E-Mail bereits vorhanden"] as JSON)
 //					render( status: 500, exception: "Create not successful") as JSON
 				}
 				else

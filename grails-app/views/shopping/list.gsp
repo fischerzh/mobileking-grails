@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'shopping.label', default: 'Shopping')}" />
+		<g:set var="entityName" value="${message(code: 'shopping.label', default: 'Einkäufe')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,9 +44,9 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="date" title="${message(code: 'shopping.date.label', default: 'Date')}" />
+							<g:sortableColumn property="date" title="${message(code: 'shopping.date.label', default: 'Datum')}" />
 						
-							<th class="header"><g:message code="shopping.retailer.label" default="Retailer" /></th>
+							<th class="header"><g:message code="shopping.retailer.label" default="Einzelhändler (PoS)" /></th>
 						
 							<th class="header"><g:message code="shopping.user.label" default="User" /></th>
 						
@@ -64,7 +64,7 @@
 							<td>${fieldValue(bean: shoppingInstance, field: "user")}</td>
 						
 							<td class="link">
-								<g:link action="show" id="${shoppingInstance.id}" class="btn btn-small">Show &raquo;</g:link>
+								<g:link action="show" id="${shoppingInstance.id}" class="btn btn-small">Details &raquo;</g:link>
 							</td>
 						</tr>
 					</g:each>

@@ -81,10 +81,10 @@
 									controller="Shopping">Einkäufe</g:link></li>
 							<li
 								<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductShoppings">Warenkörbe Details</g:link></li>
+									controller="ProductShoppings">Einkaufs Details</g:link></li>
 							<li
 								<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="UserProduct">Opt-In</g:link></li>
+									controller="UserProduct">Opt In/Out</g:link></li>
 							<li
 								<%= 'ControlPanel'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 									controller="ControlPanel">Control Panel</g:link></li>					</ul>

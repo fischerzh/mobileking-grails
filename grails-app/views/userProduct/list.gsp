@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'userProduct.label', default: 'UserProduct')}" />
+		<g:set var="entityName" value="${message(code: 'userProduct.label', default: 'Opt In/Out')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,15 +44,15 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="optInDate" title="${message(code: 'userProduct.optInDate.label', default: 'Opt In Date')}" />
+							<g:sortableColumn property="optInDate" title="${message(code: 'userProduct.optInDate.label', default: 'Opt In Datum')}" />
 						
-							<g:sortableColumn property="optOutDate" title="${message(code: 'userProduct.optOutDate.label', default: 'Opt Out Date')}" />
+							<g:sortableColumn property="optOutDate" title="${message(code: 'userProduct.optOutDate.label', default: 'Opt Out Datum')}" />
 						
-							<g:sortableColumn property="isActive" title="${message(code: 'userProduct.isActive.label', default: 'Is Active')}" />
+							<g:sortableColumn property="isActive" title="${message(code: 'userProduct.isActive.label', default: 'Produkt Aktiv')}" />
 						
 							<g:sortableColumn property="optIn" title="${message(code: 'userProduct.optIn.label', default: 'Opt In')}" />
 						
-							<th class="header"><g:message code="userProduct.product.label" default="Product" /></th>
+							<th class="header"><g:message code="userProduct.product.label" default="Produkt" /></th>
 						
 							<th class="header"><g:message code="userProduct.user.label" default="User" /></th>
 						

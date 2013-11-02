@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'productShoppings.label', default: 'ProductShoppings')}" />
+		<g:set var="entityName" value="${message(code: 'productShoppings.label', default: 'Einkaufs Details')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,13 +44,13 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="price" title="${message(code: 'productShoppings.price.label', default: 'Price')}" />
+							<g:sortableColumn property="price" title="${message(code: 'productShoppings.price.label', default: 'Preis')}" />
 						
-							<th class="header"><g:message code="productShoppings.product.label" default="Product" /></th>
+							<th class="header"><g:message code="productShoppings.product.label" default="Produkt" /></th>
 						
-							<g:sortableColumn property="qty" title="${message(code: 'productShoppings.qty.label', default: 'Qty')}" />
+							<g:sortableColumn property="qty" title="${message(code: 'productShoppings.qty.label', default: 'Anzahl')}" />
 						
-							<th class="header"><g:message code="productShoppings.shopping.label" default="Shopping" /></th>
+							<th class="header"><g:message code="productShoppings.shopping.label" default="Einkauf" /></th>
 						
 							<th></th>
 						</tr>
@@ -68,7 +68,7 @@
 							<td>${fieldValue(bean: productShoppingsInstance, field: "shopping")}</td>
 						
 							<td class="link">
-								<g:link action="show" id="${productShoppingsInstance.id}" class="btn btn-small">Show &raquo;</g:link>
+								<g:link action="show" id="${productShoppingsInstance.id}" class="btn btn-small">Details &raquo;</g:link>
 							</td>
 						</tr>
 					</g:each>

@@ -37,8 +37,7 @@ class ProductController {
 		
 		if(user==null)
 		{
-			response.status = 500
-			render([error: 'Error 500'] as JSON)
+			render([status: "FAILED", exception: "User nicht gefunden!"] as JSON)
 		}
 
 //		println user.shoppings.productShoppings.collect()
@@ -74,7 +73,7 @@ class ProductController {
 		else
 		{
 			new UserLogin( user: user, loginDate: date, success: false).save(failOnError:true)
-			render( status: 500, exception: params.exception) as JSON
+			render([status: "FAILED", exception: "Login fehlerhaft!"] as JSON)
 		}
 	}
 	
@@ -88,12 +87,12 @@ class ProductController {
 		
 		def userShopping = user.shoppings.each { s->
 			s.productShoppings.each { ps->
-//				println "Add product: " +ps.product
-				products.addAll(ps.product)
+				def optIn = hasUserOptIn(ps.product, user)
+				if(optIn)
+					products.addAll(ps.product)
 			}
 		}
 		
-		println "Products shopped by user:" +products.unique()
 //		def c = UserProduct.createCriteria()
 //		def results = c.list {
 //			eq("user", user)
@@ -109,20 +108,24 @@ class ProductController {
 		
 		def crowns = {}
 		
-//		if (products)
-//		{
+		println "products (with OptIn)" +products
+		if (products)
+		{
 			jsonMap.products = products.unique().collect {Product prod ->
 				//check if user has optIn
 				def optIn = hasUserOptIn(prod, user)
 				if(optIn)
 				{
+					def newRank = 0
+					def oldRank = 0
 					//count products bought
 					def hersteller = prod.manufacturer.toString()
 					def category = prod.productCategory.toString()
+					
 					def pointsCollected = calculatePointsForProduct(prod)
+					
 					def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-					def newRank = 0
-					def oldRank = 0
+
 					def newRankAchieved = false
 					if(userrank)
 					{
@@ -148,18 +151,18 @@ class ProductController {
 			if(jsonMap.products)
 				jsonMap.products.removeAll([null])
 			
-//		}
-//		else
+		}
+		else
 		{
-//			jsonMap.products = []
-//			jsonMap.products.add(
-//				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "http://www.subulahanews.com/wp-content/uploads/2012/10/no-image-icon1.jpg", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie"]
-//			)
+			jsonMap.products = []
+			jsonMap.products.add(
+				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "http://www.subulahanews.com/wp-content/uploads/2012/10/no-image-icon1.jpg", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie"]
+			)
 		}
 		
 		println "jsonMap: " + jsonMap
 		
-		println "jsonMap, size: " + jsonMap.size()
+		println "jsonMap.products, size: " + jsonMap.products.size()
 			
 //		jsonMap.recommendations = products.unique().collect { Product prod ->
 //			def pointsCollected = calculatePointsForProduct(prod, user)
@@ -170,14 +173,15 @@ class ProductController {
 //		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
 		
 		
-		def badges = calculateBadges(jsonMap.size()).collect()
+		def badges = calculateBadges(jsonMap.products.size()).collect()
 		println "User-Badges:" +badges
 		jsonMap.badges =  badges.unique().collect {
 			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
 		}
 
 		jsonMap.username = user.username
-		
+		jsonMap.status = "SUCCESS"
+		jsonMap.exception = "Aktualisierung erfolgreich!"
 		println jsonMap
 		return jsonMap
 	}
@@ -346,8 +350,7 @@ class ProductController {
 		
 		if(user==null)
 		{
-			response.status = 500
-			render([error: 'Error 500'] as JSON)
+			render([status: "FAILED", exception: "User nicht gefunden!"] as JSON)
 		}
 		
 		if(params.ean)
@@ -364,7 +367,7 @@ class ProductController {
 					println "Opt-in: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
-						render( status: 500, exception: params.exception) as JSON
+						render([status: "FAILED", exception: "Opt-In fehlerhaft: Produkt nicht gefunden!"] as JSON)
 					}
 				}
 				//OPT OUT
@@ -374,16 +377,17 @@ class ProductController {
 					println "Opt-Out: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
-						render( status: 500, exception: params.exception) as JSON
+						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
 					}
 				}
 				
-				render([response: 'OK 201'] as JSON)
-				
+				render([status: "SUCCESS", exception: "Opt In/Out erfolgreich: Produkt aktualisiert!"] as JSON)
+
 			}
 			else
 			{
 				println "Product not found for Opt-In!"
+				
 			}
 		}
 		
