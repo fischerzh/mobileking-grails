@@ -220,18 +220,32 @@ class ProductController {
 	{
 		if(regId)
 		{
-			def device = Devices.findByDeviceId(params.regId)
+			def Devices device = Devices.findByDeviceId(params.regId)
 			if(device)
 			{
-				println "Device already registered! User cleared App and re-installed!"
+				def deviceFound = false;
+				user.devices.each {
+					if(it == device)
+						deviceFound = true;
+				}
+				if(deviceFound)
+				{
+					println "Device already registered with User! User cleared App and re-installed!"
+				}
+				else
+				{
+					println "Device registered with different User! Re-register!"
+					user.addToDevices(device)
+				}
 			}
 			else
 			{
 				device = new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
+				println "Device for User created:  " +device
+				if(device)
+					user.addToDevices(device)
 			}
-			println "Device for User created:  " +device
-			if(device)
-				user.addToDevices(device)
+
 		}
 		return user
 	}

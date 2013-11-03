@@ -131,26 +131,35 @@ class RankingService {
 	
 	def sendUpdatesForRank(groupedRating, allRankings)
 	{
-		groupedRating.each() { key, value ->
+		groupedRating.each { key, value ->
 			def rankUser = value.getAt(0)['user']
 			def points = value.getAt(0)['points']
 			def newRank = value.getAt(0)['rank']
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
-			println "Found Ranking for User: "+user +" Rank before:" +oldRanking
+			println "Found Ranking for User: "+rankUser +" Rank before:" +oldRanking
 			def oldPoints = oldRanking?oldRanking.totalPointsCollected:0
 			def oldRank = oldRanking?oldRanking.rank:0
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-(oldRanking?oldRanking.totalPointsCollected:0), totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
 				if(newUserRanking.save(failOnError:true))
 				{
-					println "New User Ranking saved: " +newUserRanking
-					if(newRank < oldRank)
-						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
-					else if(newRank > oldRank)
+//					println "newRank: " +newRank
+//					println "oldRank: " +oldRank
+//					println "New User Ranking saved: " +newUserRanking
+					if(oldRank > newRank)
+					{
+//						println "New Rank!"
 						controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
+					}
+					else if(oldRank < newRank)
+					{
+//						println "Lost Rank!"
+						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
+
+					}
 					if(newUserRanking.rank!=oldRank)
 						controlPanel.callGCMServiceMsg(rankUser)
 				}
-//			}
+				
 		}
 	}
 	
