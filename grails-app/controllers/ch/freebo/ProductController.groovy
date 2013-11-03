@@ -255,14 +255,15 @@ class ProductController {
 		println "#productCount: " +productCount
 		def userLogins = UserLogin.countByUser(user)
 		println '#userLogins ' + userLogins
+		def shoppingCounts = Shopping.countByUser(user)
 		
 		def badges = []
 		
 		if(userLogins >= 0)
 		{
-			def badge = Badge.findByNameAndUser('Starter', user)
+			def badge = Badge.findByNameAndUser('Login1', user)
 			if(!badge)
-				badge = createBadge('Login', 'Starter')
+				badge = createBadge('Login', 'Login1')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
@@ -270,9 +271,9 @@ class ProductController {
 		}
 		if(userLogins >= 50)
 		{
-			def badge = Badge.findByNameAndUser('Shopper', user)
+			def badge = Badge.findByNameAndUser('Login2', user)
 			if(!badge)
-				badge = createBadge('Login', 'Shopper')
+				badge = createBadge('Login', 'Login2')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
@@ -280,9 +281,9 @@ class ProductController {
 		}
 		if(userLogins >= 100)
 		{
-			def badge = Badge.findByNameAndUser('Shoppaholic', user)
+			def badge = Badge.findByNameAndUser('Login3', user)
 			if(!badge)
-				badge = createBadge('Login', 'Shoppaholic')
+				badge = createBadge('Login', 'Login3')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
@@ -290,9 +291,9 @@ class ProductController {
 		}
 		if(productCount > 0)
 		{
-			def badge = Badge.findByNameAndUser('Lonely', user)
+			def badge = Badge.findByNameAndUser('OptIn1', user)
 			if(!badge)
-				badge = createBadge('OptIn', 'Lonely')
+				badge = createBadge('OptIn', 'OptIn1')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
@@ -300,9 +301,9 @@ class ProductController {
 		}
 		if(productCount >= 2)
 		{
-			def badge = Badge.findByNameAndUser('Lover', user)
+			def badge = Badge.findByNameAndUser('OptIn2', user)
 			if(!badge)
-				badge = createBadge('OptIn', 'Lover')
+				badge = createBadge('OptIn', 'OptIn2')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
@@ -310,13 +311,43 @@ class ProductController {
 		}
 		if(productCount >=10)
 		{
-			def badge = Badge.findByNameAndUser('Addicted', user)
+			def badge = Badge.findByNameAndUser('OptIn3', user)
 			if(!badge)
-				badge = createBadge('OptIn', 'Addicted')
+				badge = createBadge('OptIn', 'OptIn3')
 			else
 				badge.newAchieved = false
 			badge.save(failOnError:true)
 			badges.add(badge)		
+		}
+		if(shoppingCounts >=5)
+		{
+			def badge = Badge.findByNameAndUser('Shopping1', user)
+			if(!badge)
+				badge = createBadge('Shopping', 'Shopping1')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
+		if(shoppingCounts >= 10)
+		{
+			def badge = Badge.findByNameAndUser('Shopping2', user)
+			if(!badge)
+				badge = createBadge('Shopping', 'Shopping2')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
+		}
+		if(shoppingCounts >=30)
+		{
+			def badge = Badge.findByNameAndUser('Shopping3', user)
+			if(!badge)
+				badge = createBadge('Shopping', 'Shopping3')
+			else
+				badge.newAchieved = false
+			badge.save(failOnError:true)
+			badges.add(badge)
 		}
 		println "List badges after calc: " + badges
 		return badges
