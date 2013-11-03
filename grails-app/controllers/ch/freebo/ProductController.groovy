@@ -108,7 +108,7 @@ class ProductController {
 		
 		def crowns = {}
 		
-		println "products (with OptIn)" +products
+		println "products (with OptIn)" +products.unique()
 		if (products)
 		{
 			jsonMap.products = products.unique().collect {Product prod ->
@@ -171,10 +171,15 @@ class ProductController {
 //			return [id: prod.id, name: prod.name, imagelink: prod.imageLink, points: pointsCollected, producer: hersteller, category: category]
 //		}
 //		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
-		
+		def leaderBoard = rankingService.getLeaderboardRanking(user)
+		jsonMap.leaderboard =  leaderBoard.collect {
+			def username = it.username.toString()
+			return [username: username, points: it.points, rank: it.rank]
+		}
 		
 		def badges = calculateBadges(jsonMap.products.size()).collect()
-		println "User-Badges:" +badges
+		
+//		println "User-Badges:" +badges
 		jsonMap.badges =  badges.unique().collect {
 			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
 		}
@@ -349,40 +354,18 @@ class ProductController {
 			badge.save(failOnError:true)
 			badges.add(badge)
 		}
-		println "List badges after calc: " + badges
+//		println "List badges after calc: " + badges
 		return badges
-	}
-	
-	def getCrownsForProduct(Product prod, User user)
-	{
-		Random random = new Random()
-	
-//		return [rank: "1", crownstatus: "2", salespoint: "Migros Zurich HB"]
-		def salesPoint = " "
-		def crowns =  []
-		user.shoppings.each { s ->
-				salesPoint = s.retailer.toString()
-				def crownstatus = random.nextInt(2)+1
-//				def rank = random.nextInt(15)
-				crowns.add([rank: rank, crownstatus: crownstatus, salespoint: salesPoint])
-
-		}
-		return crowns
 	}
 	
 	def createBadge(badgeGroup, badgeName)
 	{
 		def badge = new Badge(user: user, name: badgeName, achieved: true, achievementDate: new Date(), badgeGroup: badgeGroup, newAchieved: true )
-		println "New Badge achieved: " +badge
-//		if(user.devices)
-//		{
-//		println "Send message"
-//			controlPanel.addMessages("BADGE", "Glückwunsch: Du hast einen neuen Badge!")
-//			controlPanel.callGCMServiceMsg(user)
-//		}
+//		println "New Badge achieved (not saved): " +badge
 		
 		return badge
 	}
+	
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def updateUserInfo()
@@ -391,7 +374,7 @@ class ProductController {
 		println "Params" + params
 //		def user = User.findByUsername(params.username)
 		def user = User.findByUsername(springSecurityService.currentUser.toString())
-		println "User: " +user
+//		println "User: " +user
 		
 		if(user==null)
 		{

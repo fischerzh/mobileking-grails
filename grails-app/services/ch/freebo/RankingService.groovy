@@ -76,6 +76,21 @@ class RankingService {
 		return nmbr
 	}
 	
+	def calculatePointsForAll(User currentUser)
+	{
+		println "User: " +currentUser
+		println "Shoppings: " + currentUser.shoppings
+		Integer nmbr = 0
+		currentUser.shoppings.each { Shopping s->
+			TimeDuration td = TimeCategory.minus(new Date(), s.date)
+			s.productShoppings.each {ps ->
+				if(hasUserOptIn(ps.product, currentUser))
+					nmbr = nmbr+ps.qty
+			}
+		}
+		return nmbr
+	}
+	
 	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping, newPoints)
 	{
 		def newUserRank = 1
@@ -258,5 +273,45 @@ class RankingService {
 		println "Crown collected: " +crowns
 		
 		return crowns
+	}
+	
+	def getLeaderboardRanking(User inputUser)
+	{
+		def leaderBoard = []
+		
+		def userRole = Role.findByAuthority('ROLE_USER')
+		def users = UserRole.findAllByRole(userRole).user
+		println "users: " + users
+		def usersList = []
+		def int totalPointsForUser= 0
+		
+		users.each { User currentUser ->
+				if(currentUser.shoppings)
+					totalPointsForUser = calculatePointsForAll(currentUser)
+				usersList.add([user: currentUser, points: totalPointsForUser])
+		}
+		
+		def groupedByRating = usersList.groupBy({ -it.points})
+		def rank = 1
+		groupedByRating.sort().each { points, items ->
+		  items.each { 
+			  println "items: " +it
+			  it.rank = rank 
+		  }
+		  rank += items.size()
+		}
+		println "Leaderboard: " +groupedByRating
+		
+		groupedByRating.each { key, value ->
+			def rankUser = value.getAt(0)['user']
+			def points = value.getAt(0)['points']
+			def newRank = value.getAt(0)['rank']
+			println "newRank :" +newRank
+			if(newRank in 1..3 || rankUser == inputUser)
+				leaderBoard.add([username: rankUser, points: points, rank: newRank])
+		}
+		
+		println "Leaderboard after cleanup: " +leaderBoard
+		return leaderBoard
 	}
 }
