@@ -271,8 +271,10 @@ class RankingService {
 		
 		users.each { User currentUser ->
 				if(currentUser.shoppings)
+				{
 					totalPointsForUser = calculatePointsForAll(currentUser)
-				usersList.add([user: currentUser, points: totalPointsForUser])
+					usersList.add([user: currentUser, points: totalPointsForUser])
+				}
 		}
 		
 		def groupedByRating = usersList.groupBy({ -it.points})
