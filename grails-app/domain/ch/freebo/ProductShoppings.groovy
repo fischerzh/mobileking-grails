@@ -8,7 +8,7 @@ class ProductShoppings {
 	Float price
 	
     static constraints = {
-		price nullable:true
+		price nullable:true, scale: 2
     }
 	
 	String toString()  {

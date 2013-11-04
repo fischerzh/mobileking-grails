@@ -42,17 +42,17 @@
 
 				<dl>
 				
-					<g:if test="${locationInstance?.plz}">
-						<dt><g:message code="location.plz.label" default="Plz" /></dt>
-						
-							<dd><g:fieldValue bean="${locationInstance}" field="plz"/></dd>
-						
-					</g:if>
-				
 					<g:if test="${locationInstance?.name}">
 						<dt><g:message code="location.name.label" default="Name" /></dt>
 						
 							<dd><g:fieldValue bean="${locationInstance}" field="name"/></dd>
+						
+					</g:if>
+				
+					<g:if test="${locationInstance?.plz}">
+						<dt><g:message code="location.plz.label" default="Plz" /></dt>
+						
+							<dd><g:fieldValue bean="${locationInstance}" field="plz"/></dd>
 						
 					</g:if>
 				

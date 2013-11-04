@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'location.label', default: 'Location')}" />
+		<g:set var="entityName" value="${message(code: 'location.label', default: 'Ortschaft')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -44,9 +44,9 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="plz" title="${message(code: 'location.plz.label', default: 'Plz')}" />
-						
 							<g:sortableColumn property="name" title="${message(code: 'location.name.label', default: 'Name')}" />
+						
+							<g:sortableColumn property="plz" title="${message(code: 'location.plz.label', default: 'Plz')}" />
 						
 							<th></th>
 						</tr>
@@ -55,9 +55,9 @@
 					<g:each in="${locationInstanceList}" var="locationInstance">
 						<tr>
 						
-							<td>${fieldValue(bean: locationInstance, field: "plz")}</td>
-						
 							<td>${fieldValue(bean: locationInstance, field: "name")}</td>
+						
+							<td>CH-${locationInstance.plz}</td>
 						
 							<td class="link">
 								<g:link action="show" id="${locationInstance.id}" class="btn btn-small">Show &raquo;</g:link>

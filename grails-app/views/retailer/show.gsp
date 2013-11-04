@@ -49,6 +49,13 @@
 						
 					</g:if>
 				
+					<g:if test="${retailerInstance?.street}">
+						<dt><g:message code="retailer.street.label" default="Street" /></dt>
+						
+							<dd><g:fieldValue bean="${retailerInstance}" field="street"/></dd>
+						
+					</g:if>
+				
 					<g:if test="${retailerInstance?.name}">
 						<dt><g:message code="retailer.name.label" default="Name" /></dt>
 						

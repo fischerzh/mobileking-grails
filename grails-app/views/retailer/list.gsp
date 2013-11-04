@@ -46,6 +46,8 @@
 						
 							<th class="header"><g:message code="retailer.location.label" default="Location" /></th>
 						
+							<g:sortableColumn property="street" title="${message(code: 'retailer.street.label', default: 'Street')}" />
+						
 							<g:sortableColumn property="name" title="${message(code: 'retailer.name.label', default: 'Name')}" />
 						
 							<th></th>
@@ -56,6 +58,8 @@
 						<tr>
 						
 							<td>${fieldValue(bean: retailerInstance, field: "location")}</td>
+						
+							<td>${fieldValue(bean: retailerInstance, field: "street")}</td>
 						
 							<td>${fieldValue(bean: retailerInstance, field: "name")}</td>
 						
