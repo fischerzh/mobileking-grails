@@ -26,14 +26,8 @@ class ProductController {
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def loginFromApp() {
 		println "ProductController: loginFromApp()"
-		println "Params" + params
-		
-//		jsonGenerator.loginFromApp()
-		
-		println "User logged in: " + springSecurityService.currentUser
 		
 		user = User.findByUsername(springSecurityService.currentUser.toString())
-		println "User: " +user
 		
 		if(user==null)
 		{
@@ -85,6 +79,10 @@ class ProductController {
 		
 		def products = []
 		
+		def crowns = {}
+		
+		def productListSize = 0
+		
 		def userShopping = user.shoppings.each { s->
 			s.productShoppings.each { ps->
 				def optIn = hasUserOptIn(ps.product, user)
@@ -93,22 +91,6 @@ class ProductController {
 			}
 		}
 		
-//		def c = UserProduct.createCriteria()
-//		def results = c.list {
-//			eq("user", user)
-//			and {
-//				eq("optIn", true)
-//			}
-//			
-//			order("updated", "desc")
-//		}
-//		println results
-		
-		Random random = new Random()
-		
-		def crowns = {}
-		
-		println "products (with OptIn)" +products.unique()
 		if (products)
 		{
 			jsonMap.products = products.unique().collect {Product prod ->
@@ -144,26 +126,23 @@ class ProductController {
 					
 					crowns = rankingService.getCrownsForProduct(prod, user).collect()
 					
-					return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
+					return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 				}
 			}
 			
 			if(jsonMap.products)
 				jsonMap.products.removeAll([null])
 			
+			productListSize = jsonMap.products.size()
 		}
 		else
 		{
 			jsonMap.products = []
 			jsonMap.products.add(
-				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "http://www.subulahanews.com/wp-content/uploads/2012/10/no-image-icon1.jpg", optin: true, points: 0, ingredients: "Inhaltsstoffe", producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie"]
+				[id: 0, ean: " ", name: "Dein Lieblingsprodukt", imagelink: "http://www.subulahanews.com/wp-content/uploads/2012/10/no-image-icon1.jpg", optin: true, points: 0, ingredients: "Inhaltsstoffe" , producer: "Dein Lieblingshersteller", userrank: 1, olduserrank: 0, newrankachieved: true, category: "Produktkategorie", size: "0g"]
 			)
 		}
 		
-		println "jsonMap: " + jsonMap
-		
-		println "jsonMap.products, size: " + jsonMap.products.size()
-			
 //		jsonMap.recommendations = products.unique().collect { Product prod ->
 //			def pointsCollected = calculatePointsForProduct(prod, user)
 //			def hersteller = prod.manufacturer.toString()
@@ -171,13 +150,14 @@ class ProductController {
 //			return [id: prod.id, name: prod.name, imagelink: prod.imageLink, points: pointsCollected, producer: hersteller, category: category]
 //		}
 //		jsonMap.recommendations = jsonMap.recommendations.sort {a, b -> b.points <=> a.points }
+		
 		def leaderBoard = rankingService.getLeaderboardRanking(user)
 		jsonMap.leaderboard =  leaderBoard.collect {
 			def username = it.username.toString()
 			return [username: username, points: it.points, rank: it.rank]
 		}
 		
-		def badges = calculateBadges(jsonMap.products.size()).collect()
+		def badges = calculateBadges(productListSize).collect()
 		
 //		println "User-Badges:" +badges
 		jsonMap.badges =  badges.unique().collect {
@@ -187,7 +167,9 @@ class ProductController {
 		jsonMap.username = user.username
 		jsonMap.status = "SUCCESS"
 		jsonMap.exception = "Aktualisierung erfolgreich!"
+		
 		println jsonMap
+		
 		return jsonMap
 	}
 	
@@ -304,7 +286,7 @@ class ProductController {
 			badge.save(failOnError:true)
 			badges.add(badge)
 		}
-		if(productCount >= 2)
+		if(productCount >= 5)
 		{
 			def badge = Badge.findByNameAndUser('OptIn2', user)
 			if(!badge)
