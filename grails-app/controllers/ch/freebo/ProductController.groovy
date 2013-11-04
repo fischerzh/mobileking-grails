@@ -367,7 +367,9 @@ class ProductController {
 		{
 			def prod = Product.findByEan(params.ean)
 			
-			if(prod)
+			def pointsForProduct = rankingService.calculatePointsForProduct(prod, user)
+			
+			if(prod && pointsForProduct != 0)
 			{
 				println "Found product for Opt-In: " + prod.name
 				//OPT IN
@@ -397,6 +399,10 @@ class ProductController {
 			else
 			{
 				println "Product not found for Opt-In!"
+				if(pointsForProduct == 0 && prod)
+					render([status: "FAILED", exception: "Opt In fehlerhaft: Noch keine Einkäufe vorhanden!"] as JSON)
+				else
+					render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
 				
 			}
 		}

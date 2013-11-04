@@ -12,4 +12,8 @@ class Location {
 		def returnName = "CH-"+plz+" "+name
 		return returnName? returnName: ""
 	}
+	
+	String toShortString()  {
+		return name? name: ""
+	}
 }
