@@ -13,7 +13,7 @@ class ProductController {
 	
 	def springSecurityService
 	
-	DataGeneratorService jsonGenerator = new DataGeneratorService()
+	DataGeneratorService dataGenerator = new DataGeneratorService()
 	
 	RankingService rankingService = new RankingService()
 	
@@ -25,50 +25,8 @@ class ProductController {
 
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def loginFromApp() {
-		println "ProductController: loginFromApp()"
 		
-		user = User.findByUsername(springSecurityService.currentUser.toString())
-		
-		if(user==null)
-		{
-			render([status: "FAILED", exception: "User nicht gefunden!"] as JSON)
-		}
-
-//		println user.shoppings.productShoppings.collect()
-		
-		def jsonExport = getJSONData()
-		
-		if(!user.isActiveApp)
-		{
-			jsonExport.isactiveapp = false
-		}
-		else
-		{
-			jsonExport.isactiveapp = true
-		}
-		
-		def json = new JsonBuilder(jsonExport)
-				
-		
-		println json.toPrettyString()
-		//return product and user settings!!
-		Date date = new Date()
-		
-		if(user)
-		{
-			user.isActiveApp = true
-			
-			user = registerUserAndDevice(user, params.regId)
-			
-			if(user.save(flush: true))
-				new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)
-			render json
-		}
-		else
-		{
-			new UserLogin( user: user, loginDate: date, success: false).save(failOnError:true)
-			render([status: "FAILED", exception: "Login fehlerhaft!"] as JSON)
-		}
+		render dataGenerator.loginFromApp(user, params)
 	}
 	
 	
@@ -188,54 +146,6 @@ class ProductController {
 		return optIn
 	}
 
-	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def calculatePointsForProduct(Product prod)
-	{
-		def nmbr = 0
-		def prods = user.shoppings.each { s->
-			s.productShoppings.each {ps ->
-				if(ps.product == prod)
-					nmbr = nmbr+ps.qty
-			}
-		}
-//		println "calculatePointsForProduct: " +nmbr
-		return nmbr
-	}
-	
-	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def registerUserAndDevice(User user, regId)
-	{
-		if(regId)
-		{
-			def Devices device = Devices.findByDeviceId(params.regId)
-			if(device)
-			{
-				def deviceFound = false;
-				user.devices.each {
-					if(it == device)
-						deviceFound = true;
-				}
-				if(deviceFound)
-				{
-					println "Device already registered with User! User cleared App and re-installed!"
-				}
-				else
-				{
-					println "Device registered with different User! Re-register!"
-					user.addToDevices(device)
-				}
-			}
-			else
-			{
-				device = new Devices(deviceId: params.regId, deviceType: params.deviceType,  deviceOs: params.deviceOs, registrationDate: new Date()).save(failOnError:true)
-				println "Device for User created:  " +device
-				if(device)
-					user.addToDevices(device)
-			}
-
-		}
-		return user
-	}
 	
 	def calculateBadges(int productCount)
 	{
@@ -349,65 +259,6 @@ class ProductController {
 	}
 	
 	
-	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def updateUserInfo()
-	{
-		println "ProductController: updateUserInfo()"
-		println "Params" + params
-//		def user = User.findByUsername(params.username)
-		def user = User.findByUsername(springSecurityService.currentUser.toString())
-//		println "User: " +user
-		
-		if(user==null)
-		{
-			render([status: "FAILED", exception: "User nicht gefunden!"] as JSON)
-		}
-		
-		if(params.ean)
-		{
-			def prod = Product.findByEan(params.ean)
-			
-			def pointsForProduct = rankingService.calculatePointsForProduct(prod, user)
-			
-			if(prod && pointsForProduct != 0)
-			{
-				println "Found product for Opt-In: " + prod.name
-				//OPT IN
-				if(params.optin)
-				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true, updated: new Date())
-					println "Opt-in: " +userProd
-					if(!userProd.save(failOnError:true))
-					{
-						render([status: "FAILED", exception: "Opt-In fehlerhaft: Produkt nicht gefunden!"] as JSON)
-					}
-				}
-				//OPT OUT
-				else if(params.optout)
-				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false, updated: new Date() )
-					println "Opt-Out: " +userProd
-					if(!userProd.save(failOnError:true))
-					{
-						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
-					}
-				}
-				
-				render([status: "SUCCESS", exception: "Opt In/Out erfolgreich: Produkt aktualisiert!"] as JSON)
-
-			}
-			else
-			{
-				println "Product not found for Opt-In!"
-				if(pointsForProduct == 0 && prod)
-					render([status: "FAILED", exception: "Opt In fehlerhaft: Noch keine Einkäufe vorhanden!"] as JSON)
-				else
-					render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
-				
-			}
-		}
-		
-	}
 	
 
 	    def index() {

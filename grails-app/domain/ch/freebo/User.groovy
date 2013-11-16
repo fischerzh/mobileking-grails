@@ -22,9 +22,10 @@ class User {
 		shoppings nullable:true
 		devices nullable:true
 		badges nullable:true
+		logMessages nullable:true
 	}
 	
-	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices, badges: Badge]
+	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices, badges: Badge, logMessages: LogMessages]
 
 	static mapping = {
 		password column: '`password`'
