@@ -5,7 +5,7 @@ import groovy.json.JsonBuilder
 import grails.plugins.springsecurity.Secured
 
 
-class JSONGeneratorService {
+class DataGeneratorService {
 
     def serviceMethod() {
 		println "Called service method"
@@ -40,6 +40,20 @@ class JSONGeneratorService {
 			render( status: 500, exception: params.exception) as JSON
 	}
 	
+	def getAllOptInProductsForUser(User user)
+	{
+		def products = []
+		def userShopping = user.shoppings.each { s->
+			s.productShoppings.each { ps->
+				def optIn = hasUserOptIn(ps.product, user)
+				if(optIn)
+					products.addAll(ps.product)
+			}
+		}
+		
+		return products.unique()
+	}
+	
 	def getJSONData(User user)
 	{
 		HashMap jsonMap = new HashMap()
@@ -69,25 +83,14 @@ class JSONGeneratorService {
 	
 	def hasUserOptIn(Product prod, User user)
 	{
-		println "User OptIn for product " +prod
-		def userProdListOptOut = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
-		def	userProdListOptIn = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optInDate", order:"desc"])
-		
-		def userProd
-		
-		if(userProdListOptOut && userProdListOptIn)
-			userProd = userProdListOptOut[0].optOutDate > userProdListOptIn[0].optInDate ? userProdListOptOut[0] : userProdListOptIn[0]
-		else if(userProdListOptOut)
-			userProd = userProdListOptOut[0]
-		else if(userProdListOptIn)
-			userProd = userProdListOptIn[0]
+		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
 		
 		def optIn = false
 		
-		if(userProd)
+		if(userProdListOptIn)
 		{
-			println "optIn: " +userProd.optIn
-			if(userProd.optIn)
+			println "optIn: " +userProdListOptIn.optIn
+			if(userProdListOptIn.optIn)
 				optIn = true
 		}
 

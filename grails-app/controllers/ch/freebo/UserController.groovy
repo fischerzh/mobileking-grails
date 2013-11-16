@@ -7,19 +7,56 @@ import grails.plugins.springsecurity.Secured
 import ch.freebo.UserRole
 
 class UserController {
+	
+	def springSecurityService
+	
+	def DataGeneratorService dataGeneratorService
+	
+	def RankingService rankingService
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 	@Secured(['ROLE_ADMIN'])
     def index() {
         redirect action: 'list', params: params
     }
+	
+	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
+	def userControlPanel() {
+		User user = springSecurityService.currentUser
+		def userInstance = User.get(user.id)
+		
+        if (!userInstance) {
+			flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
+            redirect controller: 'logout', action: 'index'
+            return
+        }
+		
+		def optInProducts = dataGeneratorService.getAllOptInProductsForUser(user)
+
+		def pointsCollected = rankingService.calculatePointsForAll(user)
+		
+        [userInstance: userInstance, optInProducts: optInProducts, points: pointsCollected]
+	}
+	
+	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
+	def loggedIn = {
+		println "LoginController/loggedIn"
+		User user = springSecurityService.currentUser
+		def role_user = Role.findByAuthority("ROLE_USER")
+		if(user.authorities.contains(role_user))
+			redirect(controller: 'User', action: 'userControlPanel')
+		def roleAdmin = Role.findByAuthority("ROLE_ADMIN")
+		if(user.authorities.contains(roleAdmin))
+			redirect(controller: 'ControlPanel')
+	}
+
+	
 	@Secured(['ROLE_ADMIN'])
     def list() {
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [userInstanceList: User.list(params), userInstanceTotal: User.count()]
     }
 
-	
     def create() {
 		switch (request.method) {
 		case 'GET':

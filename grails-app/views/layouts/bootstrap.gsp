@@ -40,54 +40,56 @@
 					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
 					class="icon-bar"></span> <span class="icon-bar"></span>
 				</a> <a class="brand" href="${createLink(uri: '/')}"></a>
+				
+				
 
 				<div class="nav-collapse">
 					<ul class="nav">
 
 						<sec:ifLoggedIn>
-							<%--							<g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">--%>
-							<li
-								<%= 'Manufacturer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Manufacturer">Hersteller</g:link></li>
-							<li
-								<%= 'Retailer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Retailer">Einzelhändler</g:link></li>
-							<li
-								<%= 'Location'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Location">Orte</g:link></li>
-							<li
-								<%= 'Product'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Product">Produkte</g:link></li>
-							<li
-								<%= 'ProductCategory'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductCategory">Produktekategorien</g:link></li>
-							<li
-								<%= 'ProductSegment'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductSegment">Produktsegmente</g:link></li>
-							<li
-								<%= 'LoyaltyProgram'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="LoyaltyProgram">Loyalitätsprogramme</g:link></li>
-							<%--							<li--%>
-							<%--								<%= 'LoyaltyProgramLevels'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
-							<%--									controller="LoyaltyProgramLevels">LoyaltyProgramLevels</g:link></li>--%>
-							<%--							<li--%>
-							<%--								<%= 'LoyaltyCard'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link--%>
-							<%--									controller="LoyaltyCard">LoyaltyCard</g:link></li>--%>
-							<li
-								<%= 'User'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="User">User</g:link></li>
-							<li
-								<%= 'Shopping'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="Shopping">Einkäufe</g:link></li>
-							<li
-								<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ProductShoppings">Einkaufs Details</g:link></li>
-							<li
-								<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="UserProduct">Opt In/Out</g:link></li>
-							<li
-								<%= 'ControlPanel'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-									controller="ControlPanel">Control Panel</g:link></li>					</ul>
+
+							<sec:ifAnyGranted roles="ROLE_USER">
+
+							</sec:ifAnyGranted>
+							<sec:ifAnyGranted roles="ROLE_ADMIN">
+
+								<li
+									<%= 'Manufacturer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="Manufacturer">Hersteller</g:link></li>
+								<li
+									<%= 'Retailer'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="Retailer">Einzelhändler</g:link></li>
+								<li
+									<%= 'Location'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="Location">Orte</g:link></li>
+								<li
+									<%= 'Product'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="Product">Produkte</g:link></li>
+								<li
+									<%= 'ProductCategory'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="ProductCategory">Produktekategorien</g:link></li>
+								<li
+									<%= 'ProductSegment'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="ProductSegment">Produktsegmente</g:link></li>
+								<li
+									<%= 'User'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="User">User</g:link></li>
+								<li
+									<%= 'Shopping'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="Shopping">Einkäufe</g:link></li>
+								<li
+									<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="ProductShoppings">Einkaufs Details</g:link></li>
+								<li
+									<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="UserProduct">Opt In/Out</g:link></li>
+								<li
+									<%= 'ControlPanel'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="ControlPanel">Control Panel</g:link></li>
+					</ul>
+									
+						</sec:ifAnyGranted>
+									
 					<div class="pull-right">
 						<sec:loggedInUserInfo field="username" />
 						<g:link controller="logout">

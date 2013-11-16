@@ -13,7 +13,7 @@ class ProductController {
 	
 	def springSecurityService
 	
-	JSONGeneratorService jsonGenerator = new JSONGeneratorService()
+	DataGeneratorService jsonGenerator = new DataGeneratorService()
 	
 	RankingService rankingService = new RankingService()
 	

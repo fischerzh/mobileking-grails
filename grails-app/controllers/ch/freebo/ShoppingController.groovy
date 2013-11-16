@@ -39,6 +39,7 @@ class ShoppingController {
 		}
     }
 
+	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show() {
         def shoppingInstance = Shopping.get(params.id)
         if (!shoppingInstance) {
