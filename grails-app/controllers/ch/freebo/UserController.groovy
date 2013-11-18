@@ -10,9 +10,9 @@ class UserController {
 	
 	def springSecurityService
 	
-	def DataGeneratorService dataGeneratorService
+	def DataGeneratorService dataGeneratorService = new DataGeneratorService()
 	
-	def RankingService rankingService
+	def RankingService rankingService = new RankingService()
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 	@Secured(['ROLE_ADMIN'])
@@ -31,7 +31,9 @@ class UserController {
             return
         }
 		
-		def optInProducts = dataGeneratorService.getAllOptInProductsForUser(user)
+		dataGeneratorService.setUser(user)
+		
+		def optInProducts = dataGeneratorService.getAllOptInProductsForUser()
 
 		def pointsCollected = rankingService.calculatePointsForAll(user)
 		

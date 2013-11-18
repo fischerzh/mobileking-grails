@@ -134,10 +134,10 @@ class DataController {
 	
 		if(!user.save(failOnError:true))
 		{
-			render([status: "FAILED", exception: "MessageId: "+params.logMessageId] as JSON)
+			render([status: "FAILED", exception: params.logMessageId] as JSON)
 		}
 		
-		render([status: "SUCCESS", exception: "MessageId: " +params.logMessageId] as JSON)
+		render([status: "SUCCESS", exception: params.logMessageId] as JSON)
 	}
 	
 }

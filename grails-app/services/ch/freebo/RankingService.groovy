@@ -8,8 +8,6 @@ class RankingService {
 	NotificationSenderService senderService = new NotificationSenderService()
 	ControlPanelController controlPanel = new ControlPanelController()
 	
-	DataGeneratorService dataGenerator
-	
 	User user
 	
 	Product product
@@ -86,11 +84,27 @@ class RankingService {
 		currentUser.shoppings.each { Shopping s->
 			TimeDuration td = TimeCategory.minus(new Date(), s.date)
 			s.productShoppings.each {ps ->
-				if(dataGenerator.hasUserOptIn(ps.product, currentUser))
+				if(hasUserOptIn(ps.product, currentUser))
 					nmbr = nmbr+ps.qty
 			}
 		}
 		return nmbr
+	}
+	
+	def hasUserOptIn(Product prod, User user)
+	{
+		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		
+		def optIn = false
+		
+		if(userProdListOptIn)
+		{
+			println "optIn: " +userProdListOptIn.optIn
+			if(userProdListOptIn.optIn)
+				optIn = true
+		}
+
+		return optIn
 	}
 	
 	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping, newPoints)
