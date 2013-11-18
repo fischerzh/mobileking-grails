@@ -1,7 +1,8 @@
 package ch.freebo
 
 import groovy.time.TimeCategory;
-import groovy.time.TimeDuration
+import groovy.time.TimeDuration;
+import static java.util.UUID.randomUUID;
 
 class RankingService {
 
@@ -161,7 +162,7 @@ class RankingService {
 	def sendUpdatesForRank(groupedRating, allRankings)
 	{
 		groupedRating.each { key, value ->
-			def rankUser = value.getAt(0)['user']
+			def User rankUser = value.getAt(0)['user']
 			def points = value.getAt(0)['points']
 			def newRank = value.getAt(0)['rank']
 			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
@@ -171,16 +172,36 @@ class RankingService {
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-(oldRanking?oldRanking.totalPointsCollected:0), totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
 				if(newUserRanking.save(failOnError:true))
 				{
+					def uuid = randomUUID() as String
 					if(oldRank > newRank)
 					{
-						controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
+						if(newUserRanking.rank!=oldRank)
+						{
+							controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
+							controlPanel.callGCMServiceMsg(rankUser)
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: new Date(), logDate: new Date(), message: "Gratuliere: Du hast einen neuen Rang erreicht!")
+							
+							if(newLogMessage.save(failOnError:true))
+							{
+								rankUser.addToLogMessages(newLogMessage).save(failOnError:true)
+							}
+						}
 					}
 					else if(oldRank < newRank)
 					{
-						controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
+						if(newUserRanking.rank!=oldRank)
+						{
+							controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
+							controlPanel.callGCMServiceMsg(rankUser)
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: new Date(), logDate: new Date(), message: "Achtung: Du hast einen Rang verloren!")
+							
+							if(newLogMessage.save(failOnError:true))
+							{
+								rankUser.addToLogMessages(newLogMessage).save(failOnError:true)
+							}
+						}
 					}
-					if(newUserRanking.rank!=oldRank)
-						controlPanel.callGCMServiceMsg(rankUser)
+					controlPanel.deleteMessages()
 				}
 				
 		}

@@ -80,12 +80,40 @@ class DataGeneratorService {
 		
 		println userShopping
 		
-		jsonMap.products = userShopping.collect {prod ->
+		jsonMap.products = userShopping.collect {Product prod ->
 			//check if user has optIn
 			def optIn = hasUserOptIn(prod, user)
 			//count products bought
 			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
-			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected]
+			//get product info
+			def hersteller = prod.manufacturer.toString()
+			def category = prod.productCategory.toString()
+			
+			//get rank information
+			def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+			def newRankAchieved = false
+			def newRank
+			def oldRank
+			if(userrank)
+			{
+				newRank = userrank.rank
+				oldRank = userrank.rankBefore
+				newRankAchieved = userrank.newRank
+			}
+			else
+			{
+				rankingService.calculateUserRanking(prod, user, null)
+				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+				newRank = userrank.rank
+				oldRank = userrank.rankBefore
+				newRankAchieved = userrank.newRank
+			}
+			
+			//get crown per product
+			def crowns = {}
+			crowns = rankingService.getCrownsForProduct(prod, user).collect()
+			
+			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 		}
 		
 		jsonMap.username = user.username

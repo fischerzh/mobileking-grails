@@ -10,6 +10,7 @@ class LogMessages {
 	String message
 	
     static constraints = {
+		messageId unique:true
 		createDate nullable:false
 		action nullable:false
 		message nullable:false

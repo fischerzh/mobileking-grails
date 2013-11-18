@@ -36,6 +36,11 @@ class ControlPanelController {
 		messageList[type] = message
 	}
 	
+	def deleteMessages()
+	{
+		messageList = [:]
+	}
+	
 	
 	def sendMessage = {
 		def deviceList
