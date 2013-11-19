@@ -3,6 +3,8 @@ package ch.freebo
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonBuilder
+import static java.util.UUID.randomUUID;
+
 
 /** Data access from remote for App */
 class DataController {
@@ -28,7 +30,9 @@ class DataController {
 //		println user.shoppings.productShoppings.collect()
 		
 		dataGenerator.setUser(user)
+		rankingService.setUser(user)
 		
+		/** PREPARE, CALCULATE AND SET UP JSON DATA FOR RESPONSE*/
 		def jsonExport = dataGenerator.getJSONData()
 		
 		if(!user.isActiveApp)
@@ -128,15 +132,30 @@ class DataController {
 		println "DataController, Params:" + params
 		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		
-		def newLogMessage = new LogMessages(messageId: params.logMessageId, action: params.action, createDate: params.createDate, logDate: new Date(), message: params.message)
+		def msgId = params.logMessageId
+		if(msgId=='null' || msgId==null)
+		{
+			println "Msg Id is Null!!"
+			def uuid = randomUUID() as String
+			msgId = uuid
+		}
+		
+		def newLogMessage = new LogMessages(messageId: msgId, action: params.action, createDate: params.createDate, logDate: new Date(), message: params.message)
 		if(newLogMessage.save(failOnError:true))
+		{
 			user.addToLogMessages(newLogMessage)
-	
-		if(!user.save(failOnError:true))
+		}
+		else
 		{
 			render([status: "FAILED", exception: params.logMessageId] as JSON)
 		}
-		
+	
+		if(!user.save(failOnError:true))
+		{
+			println "FAILED: " +params
+			render([status: "FAILED", exception: params.logMessageId] as JSON)
+		}
+		println "SUCCESS: "+params
 		render([status: "SUCCESS", exception: params.logMessageId] as JSON)
 	}
 	

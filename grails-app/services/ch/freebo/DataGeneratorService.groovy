@@ -74,9 +74,15 @@ class DataGeneratorService {
 	{
 		HashMap jsonMap = new HashMap()
 		
+		rankingService.setUser(user)
+		
 		def products = []
 		
 		def userShopping = getAllOptInProductsForUser()
+		
+		def productListSize = 0
+		if(userShopping)
+			productListSize = userShopping.size()
 		
 		println userShopping
 		
@@ -114,6 +120,20 @@ class DataGeneratorService {
 			crowns = rankingService.getCrownsForProduct(prod, user).collect()
 			
 			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
+		}
+		
+		def leaderBoard = rankingService.getLeaderboardRanking(user)
+		
+		jsonMap.leaderboard =  leaderBoard.collect {
+			def username = it.username.toString()
+			return [username: username, points: it.points, rank: it.rank]
+		}
+		
+		def badges = rankingService.calculateBadges(productListSize).collect()
+		
+//		println "User-Badges:" +badges
+		jsonMap.badges =  badges.unique().collect {
+			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
 		}
 		
 		jsonMap.username = user.username
