@@ -53,7 +53,7 @@ class RankingService {
 		
     }
 	
-	def calculatePointsForProduct(Product prod, User currentUser)
+	def calculatePointsForProduct(Product localProd, User currentUser)
 	{
 		Integer nmbr = 0
 		def prods = currentUser.shoppings.each { Shopping s->
@@ -64,20 +64,20 @@ class RankingService {
 			 **/
 			
 			s.productShoppings.each {ps ->
-				if(ps.product == prod)
+				if(ps.product == localProd)
 					nmbr = nmbr+ps.qty
 			}
 		}
 		return nmbr
 	}
 	
-	def calculatePointsForProductPerLocation(Product prod, User currentUser, Shopping shopping)
+	def calculatePointsForProductPerLocation(Product localProd, User currentUser, Shopping shopping)
 	{
 		Integer nmbr = 0
 		shopping.each { Shopping s->
 				TimeDuration td = TimeCategory.minus(new Date(), s.date)
 				s.productShoppings.each {ps ->
-					if(ps.product == prod)
+					if(ps.product == localProd)
 						nmbr = nmbr+ps.qty
 				}
 			}
@@ -97,9 +97,9 @@ class RankingService {
 		return nmbr
 	}
 	
-	def hasUserOptIn(Product prod, User user)
+	def hasUserOptIn(Product localProd, User user)
 	{
-		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		def	userProdListOptIn = UserProduct.findByProductAndUser(localProd, user, [max:1, sort:"updated", order:"desc"])
 		
 		def optIn = false
 		
@@ -113,14 +113,14 @@ class RankingService {
 		return optIn
 	}
 	
-	def calculateRank(allUsersOptIn, User currentUser, ProductShoppings shopping, newPoints)
+	def calculateRank(allUsersOptIn, User currentUser, Product localProd, ProductShoppings shopping, newPoints)
 	{
 		def newUserRank = 1
 		def isUserInRank = false
 		def allRankings = []
 		//for all users which are opt-in, find the old ranking
 		allUsersOptIn.each { User user ->
-			def UserRanking oldRanking = UserRanking.findByUserAndProduct(user, product, [sort:"updated", order:"desc"])
+			def UserRanking oldRanking = UserRanking.findByUserAndProduct(user, localProd, [sort:"updated", order:"desc"])
 			if(oldRanking)
 			{
 				Integer totalPoints = oldRanking.totalPointsCollected
@@ -160,17 +160,17 @@ class RankingService {
 		  }
 		  rank += items.size()
 		}
-		sendUpdatesForRank(groupedByRating, allUsersOptIn)
+		sendUpdatesForRank(groupedByRating, allUsersOptIn, localProd)
 		return newUserRank
 	}
 	
-	def sendUpdatesForRank(groupedRating, allRankings)
+	def sendUpdatesForRank(groupedRating, allRankings, Product localProd)
 	{
 		groupedRating.each { key, value ->
 			def User rankUser = value.getAt(0)['user']
 			def points = value.getAt(0)['points']
 			def newRank = value.getAt(0)['rank']
-			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, product, [sort:"updated", order:"desc"])
+			def UserRanking oldRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
 			println "Found Ranking for User: "+rankUser +" Rank before:" +oldRanking
 			def oldPoints = oldRanking?oldRanking.totalPointsCollected:0
 			def oldRank = oldRanking?oldRanking.rank:0
@@ -185,7 +185,7 @@ class RankingService {
 						{
 							controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
 							controlPanel.callGCMServiceMsg(rankUser)
-							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "Gratuliere: Du hast einen neuen Rang erreicht!")
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "New Rank for Product: "+ localProd)
 							
 							if(newLogMessage.save(failOnError:true))
 							{
@@ -199,7 +199,7 @@ class RankingService {
 						{
 							controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
 							controlPanel.callGCMServiceMsg(rankUser)
-							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "Achtung: Du hast einen Rang verloren!")
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "Lost Rank for Product: " +localProd)
 							
 							if(newLogMessage.save(failOnError:true))
 							{
@@ -215,7 +215,7 @@ class RankingService {
 	
 	
 	
-	def findAllUsersOptInForProduct(Product prod)
+	def findAllUsersOptInForProduct(Product localProd)
 	{
 		def userRole = Role.findByAuthority('ROLE_USER')
 		def users = UserRole.findAllByRole(userRole).user
@@ -223,7 +223,7 @@ class RankingService {
 		def usersList = []
 		
 		users.each { User currentUser ->
-			def userProdOptIn = UserProduct.findByUserAndProduct(currentUser, prod, [sort:"updated", order:"desc"])
+			def userProdOptIn = UserProduct.findByUserAndProduct(currentUser, localProd, [sort:"updated", order:"desc"])
 			if(userProdOptIn)
 			{
 				if(userProdOptIn.optIn)
@@ -235,19 +235,19 @@ class RankingService {
 	}
 	
 	
-	def getCrownsForProduct(Product prod, User currentUser)
+	def getCrownsForProduct(Product localProduct, User currentUser)
 	{
 		def salesPoint = " "
 		def crowns =  []
 		def dataPoS = []
-		def allUsersOptIn = findAllUsersOptInForProduct(prod)
+		def allUsersOptIn = findAllUsersOptInForProduct(localProduct)
 		Integer pointsPoS = 0
 		allUsersOptIn.each{ User optInUser ->
 				pointsPoS = 0
 				optInUser.shoppings.each { Shopping shopping ->
 					
 					salesPoint = shopping.retailer.toString()
-					pointsPoS = pointsPoS+calculatePointsForProductPerLocation(prod, optInUser, shopping)
+					pointsPoS = pointsPoS+calculatePointsForProductPerLocation(localProduct, optInUser, shopping)
 					
 					dataPoS.add([user:optInUser, points:pointsPoS, location: shopping.retailer])
 				}
