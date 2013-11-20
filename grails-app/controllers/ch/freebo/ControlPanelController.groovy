@@ -28,7 +28,8 @@ class ControlPanelController {
 		this.user = user
 		println "this.user: " + this.user
 		println params
-		sendMessage();
+		if(user.isNotificationEnabled)
+			sendMessage();
 	}
 	
 	def addMessages(String type, String message)

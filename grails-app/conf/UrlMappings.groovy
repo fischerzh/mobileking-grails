@@ -16,6 +16,7 @@ class UrlMappings {
 		
 		"/loginFromApp"(controller: "data", action: "loginFromApp")
 		"/updateUserInfo"(controller: "data", action: "updateUserInfo")
+		"/updateFavorites" (controller: "data", action: "updateFavorites")
 		"/updateUserLog"(controller: "data", action: "updateUserLog")
 		"/product/sendMessage"(controller: "product", action: "callGCMService")
 		"/controlPanel/sendMessage"(controller: "controlPanel", action: "callGCMService")

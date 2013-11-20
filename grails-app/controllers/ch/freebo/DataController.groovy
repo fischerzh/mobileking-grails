@@ -69,7 +69,7 @@ class DataController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def updateUserInfo()
+	def updateFavorites()
 	{
 		println "DataController: updateUserInfo()"
 		println "Params" + params
@@ -127,9 +127,18 @@ class DataController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+	def updateUserInfo()
+	{
+		println "DataController, UpdatUserInfo: " +params
+		def user = User.findByUsername(springSecurityService.currentUser.toString())
+		
+		
+	}
+	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
 	def updateUserLog()
 	{
-		println "DataController, Params:" + params
+		println "DataController, UpdateUserLog:" + params
 		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		
 		def msgId = params.logMessageId

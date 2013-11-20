@@ -8,6 +8,7 @@ class User {
 	String password
 	String email
 	Boolean isActiveApp
+	Boolean isNotificationEnabled
 	boolean enabled
 	boolean accountExpired
 	boolean accountLocked
@@ -29,6 +30,7 @@ class User {
 
 	static mapping = {
 		password column: '`password`'
+		isNotificationEnabled defaultValue: true
 	}
 
 	Set<Role> getAuthorities() {
