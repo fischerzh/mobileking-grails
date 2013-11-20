@@ -177,6 +177,7 @@ class RankingService {
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: true,  pointsCollected: points-(oldRanking?oldRanking.totalPointsCollected:0), totalPointsCollected: points, product: product,  user: rankUser, updated: new Date())
 				if(newUserRanking.save(failOnError:true))
 				{
+					def date = new Date()
 					def uuid = randomUUID() as String
 					if(oldRank > newRank)
 					{
@@ -184,7 +185,7 @@ class RankingService {
 						{
 							controlPanel.addMessages("RANG", "Gratuliere: Du hast einen neuen Rang erreicht!")
 							controlPanel.callGCMServiceMsg(rankUser)
-							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: new Date(), logDate: new Date(), message: "Gratuliere: Du hast einen neuen Rang erreicht!")
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "Gratuliere: Du hast einen neuen Rang erreicht!")
 							
 							if(newLogMessage.save(failOnError:true))
 							{
@@ -198,7 +199,7 @@ class RankingService {
 						{
 							controlPanel.addMessages("RANG", "Achtung: Du hast einen Rang verloren!")
 							controlPanel.callGCMServiceMsg(rankUser)
-							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: new Date(), logDate: new Date(), message: "Achtung: Du hast einen Rang verloren!")
+							def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: "Achtung: Du hast einen Rang verloren!")
 							
 							if(newLogMessage.save(failOnError:true))
 							{
