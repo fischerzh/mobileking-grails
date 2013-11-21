@@ -149,7 +149,7 @@ class DataController {
 			msgId = uuid
 		}
 		
-		def newLogMessage = new LogMessages(messageId: msgId, action: params.action, createDate: params.createDate, logDate: new Date(), message: params.message)
+		def newLogMessage = new LogMessages(messageId: msgId, action: params.title, createDate: params.createDate, logDate: new Date(), message: params.message)
 		if(newLogMessage.save(failOnError:true))
 		{
 			user.addToLogMessages(newLogMessage)
