@@ -8,6 +8,15 @@
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
+		
+		<ul class="nav nav-pills">
+  <li class="active">
+    <a href="#">User Favorites (Opt-In/Out)</a>
+  </li>
+  <li><g:link class="create" controller="LogMessages" action="list">User Log Infos</g:link></li>
+  <li><a href="#">User Achievements (Badges / Rank)</a></li>
+</ul>
+	
 		<div class="row-fluid">
 			
 			<div class="span3">
@@ -44,17 +53,21 @@
 					<thead>
 						<tr>
 						
+							<g:sortableColumn property="user" title="${message(code: 'userProduct.isActive.label', default: 'User')}" />
+						
+							<g:sortableColumn property="product" title="${message(code: 'userProduct.isActive.label', default: 'Produkt')}" />
+						
 							<g:sortableColumn property="optInDate" title="${message(code: 'userProduct.optInDate.label', default: 'Opt In Datum')}" />
 						
 							<g:sortableColumn property="optOutDate" title="${message(code: 'userProduct.optOutDate.label', default: 'Opt Out Datum')}" />
 						
 							<g:sortableColumn property="isActive" title="${message(code: 'userProduct.isActive.label', default: 'Produkt Aktiv')}" />
 						
-							<g:sortableColumn property="optIn" title="${message(code: 'userProduct.optIn.label', default: 'Opt In')}" />
 						
-							<th class="header"><g:message code="userProduct.product.label" default="Produkt" /></th>
-						
-							<th class="header"><g:message code="userProduct.user.label" default="User" /></th>
+<%--						--%>
+<%--							<th class="header"><g:message code="userProduct.product.label" default="Produkt" /></th>--%>
+<%--						--%>
+<%--							<th class="header"><g:message code="userProduct.user.label" default="User" /></th>--%>
 						
 							<th></th>
 						</tr>
@@ -62,6 +75,9 @@
 					<tbody>
 					<g:each in="${userProductInstanceList}" var="userProductInstance">
 						<tr>
+							<td>${fieldValue(bean: userProductInstance, field: "user")}</td>
+
+							<td>${fieldValue(bean: userProductInstance, field: "product")}</td>
 						
 							<td><g:formatDate date="${userProductInstance.optInDate}" /></td>
 						
@@ -70,10 +86,6 @@
 							<td><g:formatBoolean boolean="${userProductInstance.isActive}" /></td>
 						
 							<td><g:formatBoolean boolean="${userProductInstance.optIn}" /></td>
-						
-							<td>${fieldValue(bean: userProductInstance, field: "product")}</td>
-						
-							<td>${fieldValue(bean: userProductInstance, field: "user")}</td>
 						
 							<td class="link">
 								<g:link action="show" id="${userProductInstance.id}" class="btn btn-small">Show &raquo;</g:link>

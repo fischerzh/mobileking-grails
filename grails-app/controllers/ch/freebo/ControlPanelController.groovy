@@ -13,6 +13,8 @@ class ControlPanelController {
 	
 	def messageList = [:]
 	
+	def userRole = Role.findByAuthority('ROLE_USER')
+	
 	def User user
 	
 	def callGCMService()
@@ -97,8 +99,6 @@ class ControlPanelController {
 
     def list() {
 		
-		def userRole = Role.findByAuthority('ROLE_USER')
-		
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [controlPanelInstanceList: UserRole.findAllByRole(userRole).user, controlPanelInstanceTotal: User.count()]
     }
@@ -106,10 +106,22 @@ class ControlPanelController {
     def create() {
 		switch (request.method) {
 		case 'GET':
-        	[controlPanelInstance: new ControlPanel(params)]
+			def retailerList = Retailer.list(params)
+			println retailerList
+		
+			def productListForShopping = Product.list(params)
+			
+        	[userList: UserRole.findAllByRole(userRole).user, retailerList: retailerList, productListForShopping: productListForShopping]
 			break
 		case 'POST':
 	        def controlPanelInstance = new ControlPanel(params)
+			
+			/** create a new shopping Instance with many shoppingItems **/
+//			def shoppingInstance = new Shopping(params)
+			
+			/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
+			def shoppingItem = new ProductShoppings(params)
+			
 	        if (!controlPanelInstance.save(flush: true)) {
 	            render view: 'create', model: [controlPanelInstance: controlPanelInstance]
 	            return

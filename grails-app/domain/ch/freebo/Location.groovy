@@ -9,7 +9,7 @@ class Location {
     }
 	
 	String toString()  {
-		def returnName = "CH-"+plz+" "+name
+		def returnName = plz+" "+name
 		return returnName? returnName: ""
 	}
 	
