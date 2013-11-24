@@ -1,6 +1,7 @@
 package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
+
 import grails.plugins.springsecurity.Secured
 
 
@@ -10,6 +11,8 @@ class ControlPanelController {
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 	
 	def androidGcmService
+	
+//	def RankingService rankingService = new RankingService()
 	
 	def messageList = [:]
 	
@@ -114,22 +117,46 @@ class ControlPanelController {
         	[userList: UserRole.findAllByRole(userRole).user, retailerList: retailerList, productListForShopping: productListForShopping]
 			break
 		case 'POST':
-	        def controlPanelInstance = new ControlPanel(params)
+			println "ControlPanel, create Shopping: " +params
+			
+			def user = User.findById(params.userList.username)
+			println "User: " +user
+			def retailer = Retailer.findById(params.retailerList.name)
+			println "Retailer: " +retailer
 			
 			/** create a new shopping Instance with many shoppingItems **/
-//			def shoppingInstance = new Shopping(params)
+			def shoppingInstance = new Shopping(date: new Date(), retailer: retailer, user: user).save(failOnError:true)
+			println "Shopping Instance: "  +shoppingInstance
 			
-			/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
-			def shoppingItem = new ProductShoppings(params)
-			
-	        if (!controlPanelInstance.save(flush: true)) {
-	            render view: 'create', model: [controlPanelInstance: controlPanelInstance]
+	        if (shoppingInstance.save(failOnError:true)) {
+				
+				/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
+				params.product.eachWithIndex { obj, i ->
+					def product = Product.findById(obj)
+					println "Product in list: " +Product.findById(obj)
+					def anzahl = params.anzahl[i]
+					def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+					if(anzahl && preis)
+						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, shopping: shoppingInstance).save(failOnError:true)
+					
+				}
+				
+//				if(rankingService.hasUserOptIn(product, user) )
+//					rankingService.calculateUserRanking(product, user, shoppingInstance)
+				/** pass the current shopping to be excluded (calculateCurrentPoints) and then included (calculateAllPoints) for the Ranking **/
+					
+				flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'), shoppingInstance])
+				
+	            redirect action: 'create'
 	            return
 	        }
+			else
+			{
+				flash.message = message(code: 'default.deleted.message', args: [message(code: 'controlPanel.label', default: 'Einkauf konnte nicht erstellt werden!'), shoppingInstance])
+	            redirect action: 'create'
+				break
+			}
 
-			flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel'), controlPanelInstance.id])
-	        redirect action: 'show', id: controlPanelInstance.id
-			break
 		}
     }
 

@@ -59,9 +59,9 @@
 
 									<th class="header"><g:message code="shopping.label"
 											default="Produkt" /></th>
-
-									<th class="header"><g:message code="shopping.check"
-											default="Ja/Nein" /></th>
+<%----%>
+<%--									<th class="header"><g:message code="shopping.check"--%>
+<%--											default="Ja/Nein" /></th>--%>
 
 
 								</tr>
@@ -72,29 +72,31 @@
 								<g:each in="${productListForShopping}" var="item">
 									<tr>
 
-										<td><g:field type="number" name="anzahl" min="0"
-												required="" value="${anzahl}" /></td>
-										<td><g:field type="text" name="preis" min="0" required=""
-												value="${anzahl}" /></td>
+										<td><g:field type="number" name="anzahl" value="${anzahl}" /></td>
+										<td><g:field type="text" name="preis" value="${anzahl}" /></td>
 										<td>
+										<g:hiddenField name="product" value="${item.id}"/>
 											${fieldValue(bean: item, field: "name")}
 										</td>
 
-										<td><g:checkBox name="kaufen" value="${einkaufen}" /></td>
+<%--										<td><g:checkBox name="kaufen" value="${einkaufen}" /></td>--%>
 
 									</tr>
 								</g:each>
 							</tbody>
 						</table>
+						
 
 					</div>
 
 					<div class="span9">
 						Benutzer:
-						<g:select name="userList.username" from="${userList}" />
+						<g:select name="userList.username" from="${userList}" optionKey="id"/>
 						Einzelhändler (PoS):
-						<g:select name="retailerList.name" from="${retailerList}" />
-
+						<g:select name="retailerList.name" from="${retailerList}" optionKey="id"/>
+						<br/>
+						Message schicken:
+						<g:checkBox name="messageActive"/>
 
 						<fieldset>
 							<%--							<f:all bean="controlPanelInstance"/>--%>

@@ -40,8 +40,8 @@ class ProductShoppingsController {
 	            return
 	        }
 			
-			if(rankingService.hasUserOptIn(product, user) )
-				rankingService.calculateUserRanking(product, user, productShoppingsInstance)
+//			if(rankingService.hasUserOptIn(product, user) )
+//				rankingService.calculateUserRanking(product, user, productShoppingsInstance)
 
 			flash.message = message(code: 'default.created.message', args: [message(code: 'productShoppings.label', default: 'ProductShoppings'), productShoppingsInstance.id])
 	        redirect action: 'show', id: productShoppingsInstance.id
