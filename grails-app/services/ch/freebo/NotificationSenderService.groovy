@@ -4,25 +4,42 @@ class NotificationSenderService {
 	
 	def androidGcmService
 	
+	def grailsApplication = new ControlPanel().domainClass.grailsApplication
+	
 	String message
 	User user
+	
+	def messageList = [:]
+	
 
 	def callGCMService()
 	{
 		println params
+		addMessages("MESSAGE", params.inputMessage)
 		sendMessage();
 	}
 	
-	def callGCMServiceMsg(String message, User user)
+	def callGCMServiceMsg(User user)
 	{
-		this.message = message
 		this.user = user
-		sendMessage();
+		println "this.user: " + this.user
+		if(user.isNotificationEnabled)
+			sendMessage();
 	}
 	
+	def addMessages(String type, String message)
+	{
+		messageList[type] = message
+	}
+	
+	def deleteMessages()
+	{
+		messageList = [:]
+	}
 	
 	def sendMessage = {
 		def deviceList
+		def params = [:]
 		if(user)
 		{
 			def user = User.find(user)
@@ -43,15 +60,15 @@ class NotificationSenderService {
 		}
 		def messages = params.messageKey.inject([:]) {
 				currentMessages, currentKey ->
-				currentMessages << [ "1" : params.inputMessage]
+				currentMessages << messageList
 		}
 		
-		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
+//		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
 		
 		androidGcmService.sendMessage(messages, params.deviceToken,"", grailsApplication.config.android.gcm.api.key).toString()
 		if(params.user)
 			return
 		else
-			redirect action: 'list'
+			redirect controller: 'controlPanel', action: 'list'
 	}
 }

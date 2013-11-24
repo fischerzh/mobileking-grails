@@ -98,22 +98,22 @@ class DataGeneratorService {
 			//get rank information
 			def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
 			def newRankAchieved = false
-			def newRank
-			def oldRank
+			def newRank = 0
+			def oldRank = 0
 			if(userrank)
 			{
 				newRank = userrank.rank
 				oldRank = userrank.rankBefore
 				newRankAchieved = userrank.newRank
 			}
-			else
-			{
-				rankingService.calculateUserRanking(prod, user, null)
-				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-				newRank = userrank.rank
-				oldRank = userrank.rankBefore
-				newRankAchieved = userrank.newRank
-			}
+//			else
+//			{
+//				rankingService.calculateUserRanking(prod, user, null)
+//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+//				newRank = userrank.rank
+//				oldRank = userrank.rankBefore
+//				newRankAchieved = userrank.newRank
+//			}
 			
 			//get crown per product
 			def crowns = {}

@@ -1,6 +1,7 @@
 package ch.freebo
 
 import org.springframework.dao.DataIntegrityViolationException
+import static java.util.UUID.randomUUID;
 
 import grails.plugins.springsecurity.Secured
 
@@ -11,12 +12,12 @@ class ControlPanelController {
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 	
 	def androidGcmService
-	
-//	def RankingService rankingService = new RankingService()
+	def RankingService rankingService = new RankingService()
 	
 	def messageList = [:]
 	
 	def userRole = Role.findByAuthority('ROLE_USER')
+	
 	
 	def User user
 	
@@ -65,7 +66,7 @@ class ControlPanelController {
 			idList.add(it.deviceId)
 		}
 		println "Device Ids: " + idList
-		println "Device List: " +deviceList
+//		println "Device List: " +deviceList
 		
 		['deviceToken', 'messageKey', 'messageValue'].each {
 				key -> params[key] = [idList].flatten().findAll { it }
@@ -77,22 +78,41 @@ class ControlPanelController {
 //		messageList['BADGE'] = 'Neuer Badge!'
 //		messageList['RANG'] = 'Neuer Rang!'
 		
-		println messageList
+		println "messageList: " +messageList
  		
 		def messages = params.messageKey.inject([:]) {
 				currentMessages, currentKey ->
 				currentMessages << messageList//[ "1" : params.inputMessage]
 		}
 		
-		println messages
+		println "messages: " + messages
 		
-		flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
+		if(idList)
+		{
+			androidGcmService.sendMessage(messages, params.deviceToken,"", grailsApplication.config.android.gcm.api.key).toString()
+			
+			def date = new Date()
+			def uuid = randomUUID() as String
+			if(user)
+			{
+				messages.each {
+					def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: it.toString()).save(failOnError:true)
+					user.addToLogMessages(newLogMessage)
+				}
+				user.save(failOnError:true)
+			}
+			else
+			{
+				flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'ControlPanel Message verschickt: '), params.inputMessage])
+			}
+		}
 		
-		androidGcmService.sendMessage(messages, params.deviceToken,"", grailsApplication.config.android.gcm.api.key).toString()
+		
+		
 		if(this.user)
 			return
 		else
-			redirect action: 'list'
+			redirect controller: 'controlPanel', action: 'list'
 	}
 	
 
@@ -110,7 +130,7 @@ class ControlPanelController {
 		switch (request.method) {
 		case 'GET':
 			def retailerList = Retailer.list(params)
-			println retailerList
+//			println retailerList
 		
 			def productListForShopping = Product.list(params)
 			
@@ -118,37 +138,39 @@ class ControlPanelController {
 			break
 		case 'POST':
 			println "ControlPanel, create Shopping: " +params
+			def newUserRankList = []
 			
 			def user = User.findById(params.userList.username)
-			println "User: " +user
 			def retailer = Retailer.findById(params.retailerList.name)
-			println "Retailer: " +retailer
 			
 			/** create a new shopping Instance with many shoppingItems **/
 			def shoppingInstance = new Shopping(date: new Date(), retailer: retailer, user: user).save(failOnError:true)
-			println "Shopping Instance: "  +shoppingInstance
 			
-	        if (shoppingInstance.save(failOnError:true)) {
+	        if (shoppingInstance) 
+			{
 				
 				/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
 				params.product.eachWithIndex { obj, i ->
 					def product = Product.findById(obj)
-					println "Product in list: " +Product.findById(obj)
+//					println "Products in list: " +Product.findById(obj)
 					def anzahl = params.anzahl[i]
 					def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
 					if(anzahl && preis)
-						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, shopping: shoppingInstance).save(failOnError:true)
+					{
+						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product)
+						if(shoppingItem.save(failOnError:true))
+						{
+							shoppingInstance.addToProductShoppings(shoppingItem)
+						}
+					}
 					
 				}
 				
-//				if(rankingService.hasUserOptIn(product, user) )
-//					rankingService.calculateUserRanking(product, user, shoppingInstance)
+				if(shoppingInstance.save(failOnError:true))
+					newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
+				
 				/** pass the current shopping to be excluded (calculateCurrentPoints) and then included (calculateAllPoints) for the Ranking **/
 					
-				flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'), shoppingInstance])
-				
-	            redirect action: 'create'
-	            return
 	        }
 			else
 			{
@@ -156,7 +178,16 @@ class ControlPanelController {
 	            redirect action: 'create'
 				break
 			}
+			
+			addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
+			callGCMServiceMsg(user)
 
+						flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'), shoppingInstance])
+			
+			redirect action: 'create'
+			
+			return
+			
 		}
     }
 

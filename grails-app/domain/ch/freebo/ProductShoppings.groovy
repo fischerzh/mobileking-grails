@@ -2,7 +2,6 @@ package ch.freebo
 
 class ProductShoppings {
 	
-	Shopping shopping
 	Product product
 	Float qty
 	Float price

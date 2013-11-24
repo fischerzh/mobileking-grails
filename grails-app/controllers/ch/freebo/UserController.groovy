@@ -35,7 +35,7 @@ class UserController {
 		
 		def optInProducts = dataGeneratorService.getAllOptInProductsForUser()
 
-		def pointsCollected = rankingService.calculatePointsForAll(user)
+		def pointsCollected = rankingService.calculateTotalPoints(user)
 		
         [userInstance: userInstance, optInProducts: optInProducts, points: pointsCollected]
 	}

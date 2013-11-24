@@ -33,6 +33,7 @@ class DataController {
 		rankingService.setUser(user)
 		
 		/** PREPARE, CALCULATE AND SET UP JSON DATA FOR RESPONSE*/
+		
 		def jsonExport = dataGenerator.getJSONData()
 		
 		if(!user.isActiveApp)

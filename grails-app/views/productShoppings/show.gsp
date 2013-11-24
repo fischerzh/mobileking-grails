@@ -63,13 +63,6 @@
 						
 					</g:if>
 				
-					<g:if test="${productShoppingsInstance?.shopping}">
-						<dt><g:message code="productShoppings.shopping.label" default="Shopping" /></dt>
-						
-							<dd><g:link controller="shopping" action="show" id="${productShoppingsInstance?.shopping?.id}">${productShoppingsInstance?.shopping?.encodeAsHTML()}</g:link></dd>
-						
-					</g:if>
-				
 				</dl>
 
 				<g:form>

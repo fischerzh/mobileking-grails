@@ -26,11 +26,3 @@
 	<g:field name="qty" value="${fieldValue(bean: productShoppingsInstance, field: 'qty')}" required=""/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: productShoppingsInstance, field: 'shopping', 'error')} required">
-	<label for="shopping">
-		<g:message code="productShoppings.shopping.label" default="Shopping" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:select id="shopping" name="shopping.id" from="${ch.freebo.Shopping.list()}" optionKey="id" required="" value="${productShoppingsInstance?.shopping?.id}" class="many-to-one"/>
-</div>
-

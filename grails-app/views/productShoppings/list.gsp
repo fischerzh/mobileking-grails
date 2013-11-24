@@ -50,8 +50,6 @@
 						
 							<g:sortableColumn property="qty" title="${message(code: 'productShoppings.qty.label', default: 'Qty')}" />
 						
-							<th class="header"><g:message code="productShoppings.shopping.label" default="Shopping" /></th>
-						
 							<th></th>
 						</tr>
 					</thead>
@@ -64,8 +62,6 @@
 							<td>${fieldValue(bean: productShoppingsInstance, field: "product")}</td>
 						
 							<td>${fieldValue(bean: productShoppingsInstance, field: "qty")}</td>
-						
-							<td>${fieldValue(bean: productShoppingsInstance, field: "shopping")}</td>
 						
 							<td class="link">
 								<g:link action="show" id="${productShoppingsInstance.id}" class="btn btn-small">Show &raquo;</g:link>
