@@ -122,7 +122,7 @@ class DataGeneratorService {
 			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
 		}
 		
-		def leaderBoard = rankingService.getLeaderboardRanking(user)
+		def leaderBoard = rankingService.getLeaderboardProduct()
 		
 		jsonMap.leaderboard =  leaderBoard.collect {
 			def username = it.username.toString()

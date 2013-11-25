@@ -424,6 +424,77 @@ class RankingService {
 		return leaderBoard
 	}
 	
+	def getAllOptInProductsForUser(User localUser)
+	{
+		def products = []
+		if(localUser.shoppings)
+		{
+			def userShopping = localUser.shoppings.each { s->
+				s.productShoppings.each { ps->
+					def optIn = hasUserOptIn(ps.product, localUser)
+					if(optIn)
+						products.addAll(ps.product)
+				}
+			}
+		}
+		
+		return products.unique()
+	}
+	
+	def getLeaderboardProduct(Product prod)
+	{
+		def leaderBoard = []
+		
+		def userRole = Role.findByAuthority('ROLE_USER')
+		def users = UserRole.findAllByRole(userRole).user
+		def usersList = []
+		def int totalPointsForUser= 0
+		users.each { User currentUser ->
+			def optInProducts = getAllOptInProductsForUser(currentUser)
+			
+			optInProducts.each {
+				totalPointsForUser = calculatePointsForProduct(it, currentUser)
+				usersList.add([user: currentUser, points: totalPointsForUser])
+			}
+		}
+		println "getLeaderBoardProduct: " +usersList
+		
+		def groupedByRating = usersList.groupBy({ -it.points})
+		def rank = 1
+		groupedByRating.sort().each { points, items ->
+		  items.each {
+			  println "items: " +it
+			  it.rank = rank
+		  }
+		  rank += items.size()
+		}
+		
+		groupedByRating.each { key, value ->
+			if(value.size()>1)
+			{
+				value.eachWithIndex { obj, i ->
+					def rankUser = obj['user']
+					def points = obj['points']
+					def newRank = obj['rank']
+//					if(newRank in 1..3 || rankUser == inputUser)
+						leaderBoard.add([username: rankUser, points: points, rank: newRank])
+				}
+			}
+			else
+			{
+				def rankUser = value.getAt(0)['user']
+				def points = value.getAt(0)['points']
+				def newRank = value.getAt(0)['rank']
+//				if(newRank in 1..3 || rankUser == inputUser)
+					leaderBoard.add([username: rankUser, points: points, rank: newRank])
+			}
+
+		}
+		leaderBoard.sort{ it.rank }
+//		println "Leaderboard after cleanup: " +leaderBoard
+		return leaderBoard
+	}
+	
 	def calculateBadges(int productCount)
 	{
 		println "#productCount: " +productCount
