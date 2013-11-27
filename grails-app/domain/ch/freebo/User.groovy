@@ -9,6 +9,7 @@ class User {
 	String email
 	Boolean isActiveApp
 	Boolean isNotificationEnabled
+	Boolean isAnonymous
 	boolean enabled
 	boolean accountExpired
 	boolean accountLocked

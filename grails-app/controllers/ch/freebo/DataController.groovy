@@ -128,12 +128,35 @@ class DataController {
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def updateUserInfo()
+	def updateUserSettings()
 	{
-		println "DataController, UpdatUserInfo: " +params
+		println "DataController, UpdatUserSettings: " +params
 		def user = User.findByUsername(springSecurityService.currentUser.toString())
 		
-		
+		if(params.updateFromApp && user)
+		{
+			
+			user.properties = params
+			
+			println "user properties: " + user.properties
+			
+			if (!user.save(flush: true)) {
+				
+				def errorMessage
+				user.errors.allErrors.each {
+					println it
+					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Username not uniqe":""
+					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":""
+				}
+				println errorMessage
+				
+				render([status: "FAILED", exception: "Aktualisierung fehlgeschlagen! "+errorMessage] as JSON)
+
+			}
+			
+			render([status: 'Success', exception: 'Aktualisierung erfolgreich!'] as JSON)
+			
+		}
 	}
 	
 	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])

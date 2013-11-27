@@ -15,9 +15,10 @@ class UrlMappings {
 		"500"(view:'/error')
 		
 		"/loginFromApp"(controller: "data", action: "loginFromApp")
-		"/updateUserInfo"(controller: "data", action: "updateUserInfo")
+//		"/updateUserInfo"(controller: "data", action: "updateUserInfo")
 		"/updateFavorites" (controller: "data", action: "updateFavorites")
 		"/updateUserLog"(controller: "data", action: "updateUserLog")
+		"/updateUserSettings" (controller: "data", action:  "updateUserSettings")
 //		"/product/sendMessage"(controller: "product", action: "callGCMService")
 		"/controlPanel/sendMessage"(controller: "controlPanel", action: "callGCMService")
 		"/user/loggedIn" (controller:"user", action: "loggedIn")

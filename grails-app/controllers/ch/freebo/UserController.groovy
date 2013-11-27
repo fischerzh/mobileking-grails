@@ -58,7 +58,7 @@ class UserController {
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [userInstanceList: User.list(params), userInstanceTotal: User.count()]
     }
-
+	
     def create() {
 		switch (request.method) {
 		case 'GET':
@@ -102,7 +102,7 @@ class UserController {
 			if(params.createFromApp)
 			{
 				println "Registration successful"
-				render([status: 'Success: Create successful'] as JSON)
+				render([status: 'Success', exception: 'Benutzer erfolgreich registriert!'] as JSON)
 //				render( status: 201, exception: "Registration successful") as JSON
 			}
 			else
@@ -123,7 +123,8 @@ class UserController {
 
         [userInstance: userInstance]
     }
-	@Secured(['ROLE_ADMIN'])
+	
+	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def edit() {
 		switch (request.method) {
 		case 'GET':
@@ -137,36 +138,28 @@ class UserController {
 	        [userInstance: userInstance]
 			break
 		case 'POST':
-	        def userInstance = User.get(params.id)
-	        if (!userInstance) {
-	            flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
-	            redirect action: 'list'
-	            return
-	        }
-
-	        if (params.version) {
-	            def version = params.version.toLong()
-	            if (userInstance.version > version) {
-	                userInstance.errors.rejectValue('version', 'default.optimistic.locking.failure',
-	                          [message(code: 'user.label', default: 'User')] as Object[],
-	                          "Another user has updated this User while you were editing")
-	                render view: 'edit', model: [userInstance: userInstance]
-	                return
-	            }
-	        }
-
-	        userInstance.properties = params
-
-	        if (!userInstance.save(flush: true)) {
-	            render view: 'edit', model: [userInstance: userInstance]
-	            return
-	        }
-
-			flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
-	        redirect action: 'show', id: userInstance.id
-			break
+				def userInstance = User.get(params.id)
+				if (!userInstance) {
+					flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
+					redirect action: 'list'
+					return
+				}
+	
+	
+				userInstance.properties = params
+	
+				if (!userInstance.save(flush: true)) {
+					render view: 'edit', model: [userInstance: userInstance]
+					return
+				}
+	
+				flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), userInstance.id])
+				redirect action: 'show', id: userInstance.id
+				break
+	        
 		}
     }
+	
 	@Secured(['ROLE_ADMIN'])
     def delete() {
         def userInstance = User.get(params.id)
