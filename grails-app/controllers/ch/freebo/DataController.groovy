@@ -3,6 +3,7 @@ package ch.freebo
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonBuilder
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 import static java.util.UUID.randomUUID;
 
 
@@ -145,8 +146,8 @@ class DataController {
 				def errorMessage
 				user.errors.allErrors.each {
 					println it
-					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Username not uniqe":""
-					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":""
+					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Username not uniqe":" "
+					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":" "
 				}
 				println errorMessage
 				
@@ -190,6 +191,25 @@ class DataController {
 		}
 		println "SUCCESS: "+params
 		render([status: "SUCCESS", exception: params.logMessageId] as JSON)
+	}
+	
+	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+	def updateUserFiles()
+	{
+		println "DataController, updateUserFiles:" + params
+		def user = User.findByUsername(springSecurityService.currentUser.toString())
+		
+//		byte[] inputByteArray = params.image
+		
+		CommonsMultipartFile file = request.getFile('myImageFile')
+		
+		def webRootDir = servletContext.getRealPath("/")
+		
+		
+		def userDir = new File(webRootDir, "/uploads/"+user+"/salesSlips/")
+		userDir.mkdirs()
+		file.transferTo( new File( userDir,file.originalFilename))
+		
 	}
 	
 }

@@ -19,6 +19,7 @@ class UrlMappings {
 		"/updateFavorites" (controller: "data", action: "updateFavorites")
 		"/updateUserLog"(controller: "data", action: "updateUserLog")
 		"/updateUserSettings" (controller: "data", action:  "updateUserSettings")
+		"/updateUserFiles" (controller: "data", action: "updateUserFiles")
 //		"/product/sendMessage"(controller: "product", action: "callGCMService")
 		"/controlPanel/sendMessage"(controller: "controlPanel", action: "callGCMService")
 		"/user/loggedIn" (controller:"user", action: "loggedIn")
