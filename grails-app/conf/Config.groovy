@@ -108,6 +108,13 @@ grails.plugins.springsecurity.basic.realmName = "Freebo"
 grails.plugins.springsecurity.ui.password.minLength = 4
 grails.plugins.springsecurity.ui.password.maxLength	= 12
 grails.plugins.springsecurity.ui.password.validationRegex =	"^.*(?=.*\\d)(?=.*[a-zA-Z]).*"
+//grails.plugin.springsecurity.rejectIfNoRule = true
+//grails.plugin.springsecurity.fii.rejectPublicInvocations = true
+//
+//grails.plugins.springsecurity.interceptUrlMap = [
+//	'/uploads/**': ["IS_AUTHENTICATED_FULLY"],
+//	'/**/js/**':   ["IS_AUTHENTICATED_FULLY"]
+//]
 
 grails {
 	mail {

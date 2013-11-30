@@ -201,12 +201,27 @@ class DataController {
 		
 //		byte[] inputByteArray = params.image
 		
-		CommonsMultipartFile file = request.getFile('myImageFile')
+		CommonsMultipartFile file = request.getFile('uploadFile')
 		
-		def webRootDir = servletContext.getRealPath("/")
-		
+		def webRootDir = servletContext.getRealPath("/WEB-INF")
 		
 		def userDir = new File(webRootDir, "/uploads/"+user+"/salesSlips/")
+		userDir.mkdirs()
+		file.transferTo( new File( userDir,file.originalFilename))
+		
+	}
+	
+	def updateErrorLogs()
+	{
+		println "DataController, updateErrorLogs:" + params
+		
+//		byte[] inputByteArray = params.image
+		
+		CommonsMultipartFile file = request.getFile('uploadFile')
+		
+		def webRootDir = servletContext.getRealPath("/WEB-INF")
+		
+		def userDir = new File(webRootDir, "/logs/")
 		userDir.mkdirs()
 		file.transferTo( new File( userDir,file.originalFilename))
 		

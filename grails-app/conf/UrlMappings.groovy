@@ -15,7 +15,7 @@ class UrlMappings {
 		"500"(view:'/error')
 		
 		"/loginFromApp"(controller: "data", action: "loginFromApp")
-//		"/updateUserInfo"(controller: "data", action: "updateUserInfo")
+		"/updateErrorLogs"(controller: "data", action: "updateErrorLogs")
 		"/updateFavorites" (controller: "data", action: "updateFavorites")
 		"/updateUserLog"(controller: "data", action: "updateUserLog")
 		"/updateUserSettings" (controller: "data", action:  "updateUserSettings")
