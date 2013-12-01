@@ -200,10 +200,11 @@ class RankingService {
 			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
 			def oldRank = oldUserRanking?oldUserRanking.rank:0
 			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
+			def UserRanking newUserRanking
 			if(rankUser == localUser)
-				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
 			else
-				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
 			newUserRanking.save(failOnError:true)
 		}
 		
