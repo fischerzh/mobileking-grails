@@ -66,12 +66,15 @@ class DataGeneratorService {
 //				}
 //			}
 //		}
-		
-		def userOptInList = UserProduct.findAllByUserAndOptIn(localUser, true)
+//		
+		def userOptInList = UserProduct.findAllByUserAndOptIn(localUser, true) //[max:1, sort:"updated", order:"desc"]
 		println "optInList: " +userOptInList
 		userOptInList.each {
-			products.add(it.product)
+			println "userOptIn: " +it.optIn
+			if(it.optIn)
+				products.add(it.product)
 		}
+		println "products for opt-in: " +products.unique()
 		return products.unique()
 	}
 	
@@ -95,6 +98,9 @@ class DataGeneratorService {
 			//check if user has optIn
 			def optIn = hasUserOptIn(prod, user)
 			def isActive = isOptInActive(prod, user)
+			
+			if(!optIn)
+				return
 			//count products bought
 			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
 			//get product info
@@ -112,27 +118,27 @@ class DataGeneratorService {
 			if(isActive)
 			{
 				
-			//get rank information
-			def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-
-			if(userrank)
-			{
-				newRank = userrank.rank
-				oldRank = userrank.rankBefore
-				newRankAchieved = userrank.newRank
-				pointsCollected = userrank.pointsCollected
-			}
-//			else
-//			{
-//				rankingService.calculateUserRanking(prod, user, null)
-//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-//				newRank = userrank.rank
-//				oldRank = userrank.rankBefore
-//				newRankAchieved = userrank.newRank
-//			}
-//			
-				crowns = rankingService.getCrownsForProduct(prod, user).collect()
-				leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
+				//get rank information
+				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+	
+				if(userrank)
+				{
+					newRank = userrank.rank
+					oldRank = userrank.rankBefore
+					newRankAchieved = userrank.newRank
+					pointsCollected = userrank.pointsCollected
+				}
+	//			else
+	//			{
+	//				rankingService.calculateUserRanking(prod, user, null)
+	//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+	//				newRank = userrank.rank
+	//				oldRank = userrank.rankBefore
+	//				newRankAchieved = userrank.newRank
+	//			}
+	//			
+					crowns = rankingService.getCrownsForProduct(prod, user).collect()
+					leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
 			}
 			
 			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, isactive: isActive, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, leaderboard: leaderBoard]
