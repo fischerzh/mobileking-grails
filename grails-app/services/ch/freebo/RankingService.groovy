@@ -68,9 +68,9 @@ class RankingService {
 			if(hasUserOptIn(ps.product, inputUser))
 			{
 				oldPoints = calculateCurrentPointsForProduct(ps.product, inputUser, shopping)
-				println "oldPoints: " +oldPoints
+//				println "oldPoints: " +oldPoints
 				newPoints = calculatePointsForProduct(ps.product, inputUser)
-				println "newPoints: " +newPoints
+//				println "newPoints: " +newPoints
 				println "oldPoints + qty = newPoints: " + oldPoints + " + " + ps.qty + " = "+  newPoints
 				if(oldPoints + ps.qty == newPoints)
 				{
