@@ -53,20 +53,25 @@ class DataGeneratorService {
 		return user
 	}
 	
-	def getAllOptInProductsForUser()
+	def getAllOptInProductsForUser(User localUser)
 	{
 		def products = []
-		if(this.user.shoppings)
-		{
-			def userShopping = this.user.shoppings.each { s->
-				s.productShoppings.each { ps->
-					def optIn = hasUserOptIn(ps.product, this.user)
-					if(optIn)
-						products.addAll(ps.product)
-				}
-			}
-		}
+//		if(this.user.shoppings)
+//		{
+//			def userShopping = this.user.shoppings.each { s->
+//				s.productShoppings.each { ps->
+//					def optIn = hasUserOptIn(ps.product, localUser)
+//					if(optIn)
+//						products.addAll(ps.product)
+//				}
+//			}
+//		}
 		
+		def userOptInList = UserProduct.findAllByUserAndOptIn(localUser, true)
+		println "optInList: " +userOptInList
+		userOptInList.each {
+			products.add(it.product)
+		}
 		return products.unique()
 	}
 	
@@ -78,7 +83,7 @@ class DataGeneratorService {
 		
 		def products = []
 		
-		def userShopping = getAllOptInProductsForUser()
+		def userShopping = getAllOptInProductsForUser(user)
 		
 		def productListSize = 0
 		if(userShopping)
@@ -89,22 +94,33 @@ class DataGeneratorService {
 		jsonMap.products = userShopping.collect {Product prod ->
 			//check if user has optIn
 			def optIn = hasUserOptIn(prod, user)
+			def isActive = isOptInActive(prod, user)
 			//count products bought
 			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
 			//get product info
 			def hersteller = prod.manufacturer.toString()
 			def category = prod.productCategory.toString()
 			
-			//get rank information
-			def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-			def newRankAchieved = false
 			def newRank = 0
 			def oldRank = 0
+			
+			def newRankAchieved = false
+			
+			def crowns = {}
+			def leaderBoard = []
+			
+			if(isActive)
+			{
+				
+			//get rank information
+			def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+
 			if(userrank)
 			{
 				newRank = userrank.rank
 				oldRank = userrank.rankBefore
 				newRankAchieved = userrank.newRank
+				pointsCollected = userrank.pointsCollected
 			}
 //			else
 //			{
@@ -114,27 +130,24 @@ class DataGeneratorService {
 //				oldRank = userrank.rankBefore
 //				newRankAchieved = userrank.newRank
 //			}
+//			
+				crowns = rankingService.getCrownsForProduct(prod, user).collect()
+				leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
+			}
 			
-			//get crown per product
-			def crowns = {}
-			crowns = rankingService.getCrownsForProduct(prod, user).collect()
-			
-			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, crowns: crowns]
+			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, isactive: isActive, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, leaderboard: leaderBoard]
 		}
 		
-		def leaderBoard = rankingService.getLeaderboardProduct()
+//		def leaderBoard = rankingService.getLeaderboardProduct()
+//		jsonMap.leaderboard =  leaderBoard.collect {
+//			def username = it.username.toString()
+//			return [username: username, points: it.points, rank: it.rank]
+//		}
 		
-		jsonMap.leaderboard =  leaderBoard.collect {
-			def username = it.username.toString()
-			return [username: username, points: it.points, rank: it.rank]
-		}
-		
-		def badges = rankingService.calculateBadges(productListSize).collect()
-		
-//		println "User-Badges:" +badges
-		jsonMap.badges =  badges.unique().collect {
-			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
-		}
+//		def badges = rankingService.calculateBadges(productListSize).collect()
+//		jsonMap.badges =  badges.unique().collect {
+//			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
+//		}
 		
 		jsonMap.username = user.username
 		
@@ -156,6 +169,14 @@ class DataGeneratorService {
 		}
 
 		return optIn
+	}
+	
+	def isOptInActive(Product prod, User user)
+	{
+		def	UserProduct userProdOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		
+		def isActive = false
+		return userProdOptIn?userProdOptIn.isActive:false
 	}
 
 	

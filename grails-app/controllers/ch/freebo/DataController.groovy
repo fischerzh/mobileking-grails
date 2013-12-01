@@ -94,21 +94,21 @@ class DataController {
 				//OPT IN
 				if(params.optin)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true, updated: new Date())
+					def userProd = new UserProduct(user: user, product: prod, optIn: true, isActive:true, updated: new Date())
 					println "Opt-in: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
-						render([status: "FAILED", exception: "Opt-In fehlerhaft: Produkt nicht gefunden!"] as JSON)
+						render([status: "FAILED", exception: "Opt-In fehlerhaft: Aktion nicht gespeichert!"] as JSON)
 					}
 				}
 				//OPT OUT
 				else if(params.optout)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false, updated: new Date() )
+					def userProd = new UserProduct(user: user, product: prod, optIn: false, isActive: false, updated: new Date() )
 					println "Opt-Out: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
-						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
+						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Aktion nicht gespeichert!"] as JSON)
 					}
 				}
 				
@@ -117,12 +117,19 @@ class DataController {
 			}
 			else
 			{
-				println "Product not found for Opt-In!"
 				if(pointsForProduct == 0 && prod)
-					render([status: "FAILED", exception: "Opt In fehlerhaft: Noch keine Einkäufe vorhanden!"] as JSON)
+				{
+					if(params.optin)
+					{
+						def userProd = new UserProduct(user: user, product: prod, optIn: true, isActive: false, updated: new Date()).save(failOnError:true)
+					}
+					render([status: "SUCCESS", exception: "Noch keine Einkäufe vorhanden!"] as JSON)
+				}
 				else
+				{
+					println "Product not found for Opt-In!"
 					render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
-				
+				}
 			}
 		}
 		

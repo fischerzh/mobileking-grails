@@ -218,8 +218,10 @@ class RankingService {
 			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
 			def oldRank = oldUserRanking?oldUserRanking.rank:0
 			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
-			
-			def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+			if(RankUser == localUser)
+				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+			else
+				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
 			newUserRanking.save(failOnError:true)
 		}
 		
@@ -367,7 +369,7 @@ class RankingService {
 			crownstatus = 3
 		
 		crowns.add([rank: newUserRank, crownstatus: crownstatus, salespoint: salesPoint])
-		
+		println "Crowns: " +crowns
 		return crowns
 	}
 	
@@ -419,7 +421,7 @@ class RankingService {
 			}
 
 		}
-		leaderBoard.sort{ it.rank }
+//		leaderBoard.sort{ it.rank }
 //		println "Leaderboard after cleanup: " +leaderBoard
 		return leaderBoard
 	}
@@ -441,7 +443,7 @@ class RankingService {
 		return products.unique()
 	}
 	
-	def getLeaderboardProduct(Product prod)
+	def getLeaderboardProduct(Product localProd)
 	{
 		def leaderBoard = []
 		
@@ -449,13 +451,12 @@ class RankingService {
 		def users = UserRole.findAllByRole(userRole).user
 		def usersList = []
 		def int totalPointsForUser= 0
-		users.each { User currentUser ->
-			def optInProducts = getAllOptInProductsForUser(currentUser)
-			
-			optInProducts.each {
-				totalPointsForUser = calculatePointsForProduct(it, currentUser)
+		
+		def usersForRanking = findAllUsersOptInForProduct(localProd)
+		
+		usersForRanking.each { User currentUser ->
+				totalPointsForUser = calculatePointsForProduct(localProd, currentUser)
 				usersList.add([user: currentUser, points: totalPointsForUser])
-			}
 		}
 		println "getLeaderBoardProduct: " +usersList
 		
@@ -473,25 +474,25 @@ class RankingService {
 			if(value.size()>1)
 			{
 				value.eachWithIndex { obj, i ->
-					def rankUser = obj['user']
-					def points = obj['points']
-					def newRank = obj['rank']
+					def rankUser = obj['user'].toString()
+					def Integer points = obj['points']
+					def Integer newRank = obj['rank']
 //					if(newRank in 1..3 || rankUser == inputUser)
 						leaderBoard.add([username: rankUser, points: points, rank: newRank])
 				}
 			}
 			else
 			{
-				def rankUser = value.getAt(0)['user']
-				def points = value.getAt(0)['points']
-				def newRank = value.getAt(0)['rank']
+				def rankUser = value.getAt(0)['user'].toString()
+				def Integer points = value.getAt(0)['points']
+				def Integer newRank = value.getAt(0)['rank']
 //				if(newRank in 1..3 || rankUser == inputUser)
 					leaderBoard.add([username: rankUser, points: points, rank: newRank])
 			}
 
 		}
 		leaderBoard.sort{ it.rank }
-//		println "Leaderboard after cleanup: " +leaderBoard
+		println "Leaderboard after cleanup: " +leaderBoard
 		return leaderBoard
 	}
 	

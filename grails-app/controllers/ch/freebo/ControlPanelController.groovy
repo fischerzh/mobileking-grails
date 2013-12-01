@@ -14,6 +14,8 @@ class ControlPanelController {
 	def androidGcmService
 	def RankingService rankingService = new RankingService()
 	
+	def DataGeneratorService dataGenerator = new DataGeneratorService()
+	
 	def messageList = [:]
 	
 	def userRole = Role.findByAuthority('ROLE_USER')
@@ -167,8 +169,30 @@ class ControlPanelController {
 				}
 				
 				if(shoppingInstance.save(failOnError:true))
+				{
+					// calculate new Ranking after Shopping
 					newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
-				
+					
+					// update Opt-In if user has done pre Opt-In
+					def allOptInProducts = dataGenerator.getAllOptInProductsForUser(user)
+					println "allOptIns: " +allOptInProducts
+					allOptInProducts.each { Product localProd ->
+						shoppingInstance.productShoppings.each {
+							if(it.product == localProd)
+							{
+								def	UserProduct userProd = UserProduct.findByProductAndUser(localProd, user, [max:1, sort:"updated", order:"desc"])
+								if(!userProd.isActive)
+								{
+									println "user Opt-In: " +userProd
+									println "NEW SHOPPING: Setting product to active (pre opt-in was registered)!" + localProd
+									userProd.isActive = true
+									userProd.save(failOnError:true)
+								}
+							}
+						}
+					}
+					
+				}
 				/** pass the current shopping to be excluded (calculateCurrentPoints) and then included (calculateAllPoints) for the Ranking **/
 					
 	        }

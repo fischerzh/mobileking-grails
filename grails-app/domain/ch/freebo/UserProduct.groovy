@@ -26,12 +26,12 @@ class UserProduct {
 		Date date = new Date()
 		if(optIn)
 		{
-			isActive = true
+//			isActive = true
 			optInDate = date;
 		}
 		else
 		{
-			isActive = false
+//			isActive = false
 			optOutDate = date;
 		}
 		updated = date;
