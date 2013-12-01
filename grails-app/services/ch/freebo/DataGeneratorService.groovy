@@ -56,26 +56,22 @@ class DataGeneratorService {
 	def getAllOptInProductsForUser(User localUser)
 	{
 		def products = []
-//		if(this.user.shoppings)
-//		{
-//			def userShopping = this.user.shoppings.each { s->
-//				s.productShoppings.each { ps->
-//					def optIn = hasUserOptIn(ps.product, localUser)
-//					if(optIn)
-//						products.addAll(ps.product)
-//				}
-//			}
-//		}
-//		
-		def userOptInList = UserProduct.findAllByUserAndOptIn(localUser, true) //[max:1, sort:"updated", order:"desc"]
-		println "optInList: " +userOptInList
-		userOptInList.each {
-			println "userOptIn: " +it.optIn
-			if(it.optIn)
-				products.add(it.product)
+		def returnList = []
+
+		def	userProdListOptIn = UserProduct.findByUser( user)
+		userProdListOptIn.each {
+			products.add(it.product)
 		}
-		println "products for opt-in: " +products.unique()
-		return products.unique()
+		println "optInList: " +products
+		products.unique().each {
+			def UserProduct userOptInProd = UserProduct.findByProductAndUser(it, localUser,[max:1, sort:"updated", order:"desc"])
+			println "found Opt-in request: "+ userOptInProd
+			if(userOptInProd.optIn)
+				returnList.add(userOptInProd.product)
+		}
+		
+		println "products for opt-in: " +returnList.unique()
+		return returnList.unique()
 	}
 	
 	def getJSONData()
@@ -99,51 +95,48 @@ class DataGeneratorService {
 			def optIn = hasUserOptIn(prod, user)
 			def isActive = isOptInActive(prod, user)
 			
-			if(optIn)
+			//count products bought
+			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
+			//get product info
+			def hersteller = prod.manufacturer.toString()
+			def category = prod.productCategory.toString()
+			
+			def newRank = 0
+			def oldRank = 0
+			
+			def newRankAchieved = false
+			
+			def crowns = {}
+			def leaderBoard = []
+			
+			if(isActive)
 			{
-				//count products bought
-				def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
-				//get product info
-				def hersteller = prod.manufacturer.toString()
-				def category = prod.productCategory.toString()
 				
-				def newRank = 0
-				def oldRank = 0
-				
-				def newRankAchieved = false
-				
-				def crowns = {}
-				def leaderBoard = []
-				
-				if(isActive)
+				//get rank information
+				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+	
+				if(userrank)
 				{
-					
-					//get rank information
-					def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-		
-					if(userrank)
-					{
-						newRank = userrank.rank
-						oldRank = userrank.rankBefore
-						newRankAchieved = userrank.newRank
-						pointsCollected = userrank.pointsCollected
-					}
-		//			else
-		//			{
-		//				rankingService.calculateUserRanking(prod, user, null)
-		//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-		//				newRank = userrank.rank
-		//				oldRank = userrank.rankBefore
-		//				newRankAchieved = userrank.newRank
-		//			}
-		//
-						crowns = rankingService.getCrownsForProduct(prod, user).collect()
-						leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
+					newRank = userrank.rank
+					oldRank = userrank.rankBefore
+					newRankAchieved = userrank.newRank
+					pointsCollected = userrank.pointsCollected
 				}
-				
-				return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, isactive: isActive, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, leaderboard: leaderBoard]
+	//			else
+	//			{
+	//				rankingService.calculateUserRanking(prod, user, null)
+	//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
+	//				newRank = userrank.rank
+	//				oldRank = userrank.rankBefore
+	//				newRankAchieved = userrank.newRank
+	//			}
+	//
+					crowns = rankingService.getCrownsForProduct(prod, user).collect()
+					leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
 			}
 			
+			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, isactive: isActive, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, leaderboard: leaderBoard]
+		
 		}
 		
 //		def leaderBoard = rankingService.getLeaderboardProduct()
