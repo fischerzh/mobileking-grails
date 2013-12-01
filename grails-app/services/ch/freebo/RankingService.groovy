@@ -87,24 +87,6 @@ class RankingService {
 		println "newUserRankings: " + newUserRankList
 		
 		return newUserRankList
-//		newUserRankList.each {
-//			println "newUserRankingList: " +it
-//			UserRanking oldRanking = UserRanking.findByUserAndProduct(inputUser, it.product, [sort:"updated", order:"desc"])
-//			def oldRank = oldRanking?oldRanking.rankBefore:0
-//			def newRank = it.newRank
-//			def newRankAchieved = newRank!=oldRank?true:false
-//			
-//		}
-		
-//		addNotificationsToUser(inputUser, "Danke für den Einkauf, schau nach was Du für neue Ränge erreicht hast!", "RANK")
-//		sendNotificationToUser(inputUser)
-//		clearNotifications()
-		
-		//Go through all users with Opt-in, check ranking (and send Notification if it has changed!)
-//		sendUpdatesForRank(newUserRankingList, allUsersOptIn, localProd)
-		
-		//Only send update for current user!
-		
 	}
 	
 	def calculateCurrentPointsForProduct(Product localProd, User currentUser, Shopping currentShopping)
@@ -218,7 +200,7 @@ class RankingService {
 			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
 			def oldRank = oldUserRanking?oldUserRanking.rank:0
 			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
-			if(RankUser == localUser)
+			if(rankUser == localUser)
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
 			else
 				def newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
