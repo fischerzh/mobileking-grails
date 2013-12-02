@@ -11,7 +11,7 @@
 	
 			<ul class="nav nav-pills">
   <li >
-   <g:link class="create" controller="userProduct" action="list">User Favorites (Opt-In/Out)</g:link>
+   <g:link class="create" controller="optIn" action="list">User Favorites (Opt-In/Out)</g:link>
   </li>
   <li class="active"><a href="#">User Log Infos</a></li>
   <li><a href="#">User Achievements (Badges / Rank)</a></li>

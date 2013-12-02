@@ -81,8 +81,8 @@
 									<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 										controller="ProductShoppings">Einkaufs Details</g:link></li>
 								<li
-									<%= 'UserProduct'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-										controller="UserProduct">User Info</g:link></li>
+									<%= 'OptIn'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
+										controller="OptIn">User Info</g:link></li>
 								<li
 									<%= 'ControlPanel'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 										controller="ControlPanel">Control Panel</g:link></li>

@@ -2,38 +2,38 @@ package ch.freebo
 
 import java.util.Formatter.DateTime;
 
-class UserProduct {
+class OptIn {
 
 	Product product
 	User user
 	
 	Date optInDate
 	Date optOutDate
-	Date updated
+	Date lastUpdated
 	Boolean isActive
 	Boolean optIn
-	Integer version
 	
     static constraints = {
     	optInDate nullable:true
 		optOutDate nullable:true
 		isActive nullable:true
-		version nullable:true
+	}
+	
+	static mapping = {
+		autoTimestamp true
 	}
 	
 	def afterInsert() {
-		version= version+1;
-		Date date = new Date()
 		if(optIn)
 		{
 //			isActive = true
-			optInDate = date;
+			if(!optInDate)
+				optInDate = lastUpdated;
 		}
 		else
 		{
-//			isActive = false
-			optOutDate = date;
+			if(!optOutDate)
+				optOutDate = lastUpdated;
 		}
-		updated = date;
 	}
 }

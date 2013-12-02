@@ -180,9 +180,10 @@ class ControlPanelController {
 						shoppingInstance.productShoppings.each {
 							if(it.product == localProd)
 							{
-								def	UserProduct userProd = UserProduct.findByProductAndUser(localProd, user, [max:1, sort:"updated", order:"desc"])
+								def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
 								if(!userProd.isActive)
 								{
+									log.debug("user Opt-In " + userProd)
 									println "user Opt-In: " +userProd
 									println "NEW SHOPPING: Setting product to active (pre opt-in was registered)!" + localProd
 									userProd.isActive = true

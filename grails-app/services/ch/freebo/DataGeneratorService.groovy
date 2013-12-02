@@ -58,19 +58,18 @@ class DataGeneratorService {
 		def products = []
 		def returnList = []
 
-		def	userProdListOptIn = UserProduct.findByUser( user)
+		def	userProdListOptIn = OptIn.findAllByUser( localUser)
+		println "userProdListOptIn: " +userProdListOptIn
 		userProdListOptIn.each {
 			products.add(it.product)
 		}
-		println "optInList: " +products
 		products.unique().each {
-			def UserProduct userOptInProd = UserProduct.findByProductAndUser(it, localUser,[max:1, sort:"updated", order:"desc"])
-			println "found Opt-in request: "+ userOptInProd
+			def OptIn userOptInProd = OptIn.findByProductAndUser(it, localUser,[max:1, sort:"lastUpdated", order:"desc"])
 			if(userOptInProd.optIn)
 				returnList.add(userOptInProd.product)
 		}
 		
-		println "products for opt-in: " +returnList.unique()
+		log.debug( "products for opt-in: " +returnList.unique())
 		return returnList.unique()
 	}
 	
@@ -158,7 +157,7 @@ class DataGeneratorService {
 	
 	def hasUserOptIn(Product prod, User user)
 	{
-		def	userProdListOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		def	userProdListOptIn = OptIn.findByProductAndUser(prod, user, [max:1, sort:"lastUpdated", order:"desc"])
 		
 		def optIn = false
 		
@@ -174,70 +173,11 @@ class DataGeneratorService {
 	
 	def isOptInActive(Product prod, User user)
 	{
-		def	UserProduct userProdOptIn = UserProduct.findByProductAndUser(prod, user, [max:1, sort:"updated", order:"desc"])
+		def	OptIn userProdOptIn = OptIn.findByProductAndUser(prod, user, [max:1, sort:"lastUpdated", order:"desc"])
 		
 		def isActive = false
 		return userProdOptIn?userProdOptIn.isActive:false
 	}
 
-	
-	@Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-	def updateUserInfo()
-	{
-		println "ProductController: updateUserInfo()"
-		println "Params" + params
-//		def user = User.findByUsername(params.username)
-		def user = User.findByUsername(springSecurityService.currentUser.toString())
-//		println "User: " +user
-		
-		if(user==null)
-		{
-			render([status: "FAILED", exception: "User nicht gefunden!"] as JSON)
-		}
-		
-		if(params.ean)
-		{
-			def prod = Product.findByEan(params.ean)
-			
-			def pointsForProduct = rankingService.calculatePointsForProduct(prod, user)
-			
-			if(prod && pointsForProduct != 0)
-			{
-				println "Found product for Opt-In: " + prod.name
-				//OPT IN
-				if(params.optin)
-				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true, updated: new Date())
-					println "Opt-in: " +userProd
-					if(!userProd.save(failOnError:true))
-					{
-						render([status: "FAILED", exception: "Opt-In fehlerhaft: Produkt nicht gefunden!"] as JSON)
-					}
-				}
-				//OPT OUT
-				else if(params.optout)
-				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false, updated: new Date() )
-					println "Opt-Out: " +userProd
-					if(!userProd.save(failOnError:true))
-					{
-						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
-					}
-				}
-				
-				render([status: "SUCCESS", exception: "Opt In/Out erfolgreich: Produkt aktualisiert!"] as JSON)
 
-			}
-			else
-			{
-				println "Product not found for Opt-In!"
-				if(pointsForProduct == 0 && prod)
-					render([status: "FAILED", exception: "Opt In fehlerhaft: Noch keine Einkäufe vorhanden!"] as JSON)
-				else
-					render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
-				
-			}
-		}
-		
-	}
 }

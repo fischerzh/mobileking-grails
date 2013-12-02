@@ -6,7 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException
 
 import ch.freebo.Product;
 import ch.freebo.User;
-import ch.freebo.UserProduct;
+import ch.freebo.OptIn;
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
@@ -73,8 +73,8 @@ class CopyOfProductController {
 	
 	def hasUserOptIn(Product prod, User user)
 	{
-		def userProdListOptOut = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
-		def	userProdListOptIn = UserProduct.findAllByProductAndUser(prod, user, [max:1, sort:"optInDate", order:"desc"])
+		def userProdListOptOut = OptIn.findAllByProductAndUser(prod, user, [max:1, sort:"optOutDate", order:"desc"])
+		def	userProdListOptIn = OptIn.findAllByProductAndUser(prod, user, [max:1, sort:"optInDate", order:"desc"])
 		
 		def userProd
 		
@@ -140,7 +140,7 @@ class CopyOfProductController {
 				//OPT IN
 				if(params.optin)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true)
+					def userProd = new OptIn(user: user, product: prod, optIn: true)
 					println "Opt-in: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
@@ -150,7 +150,7 @@ class CopyOfProductController {
 				//OPT OUT
 				else if(params.optout)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false )
+					def userProd = new OptIn(user: user, product: prod, optIn: false )
 					println "Opt-Out: " +userProd
 					if(!userProd.save(failOnError:true))
 					{

@@ -94,25 +94,32 @@ class DataController {
 				//OPT IN
 				if(params.optin)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: true, isActive:true, updated: new Date())
+					def userProd = new OptIn(user: user, product: prod, optIn: true, isActive:true)
 					println "Opt-in: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
 						render([status: "FAILED", exception: "Opt-In fehlerhaft: Aktion nicht gespeichert!"] as JSON)
 					}
+					else
+					{
+						render([status: "SUCCESS", exception: "Opt In erfolgreich: Produkt aktualisiert!"] as JSON)
+					}
 				}
 				//OPT OUT
 				else if(params.optout)
 				{
-					def userProd = new UserProduct(user: user, product: prod, optIn: false, isActive: false, updated: new Date() )
+					def userProd = new OptIn(user: user, product: prod, optIn: false, isActive: false )
 					println "Opt-Out: " +userProd
 					if(!userProd.save(failOnError:true))
 					{
 						render([status: "FAILED", exception: "Opt-Out fehlerhaft: Aktion nicht gespeichert!"] as JSON)
 					}
+					else
+					{
+						render([status: "SUCCESS", exception: "Opt Out erfolgreich: Produkt aktualisiert!"] as JSON)
+					}
 				}
 				
-				render([status: "SUCCESS", exception: "Opt In/Out erfolgreich: Produkt aktualisiert!"] as JSON)
 
 			}
 			else
@@ -121,9 +128,15 @@ class DataController {
 				{
 					if(params.optin)
 					{
-						def userProd = new UserProduct(user: user, product: prod, optIn: true, isActive: false, updated: new Date()).save(failOnError:true)
+						def userProd = new OptIn(user: user, product: prod, optIn: true, isActive: false).save(failOnError:true)
+						render([status: "SUCCESS", exception: "Noch keine Einkäufe vorhanden!"] as JSON)
 					}
-					render([status: "SUCCESS", exception: "Noch keine Einkäufe vorhanden!"] as JSON)
+					else if(params.optout)
+					{
+						def userProd = new OptIn(user: user, product: prod, optIn: false).save(failOnError:true)
+						render([status: "SUCCESS", exception: "Opt-Out erfolgreich!"] as JSON)
+						
+					}
 				}
 				else
 				{

@@ -68,9 +68,7 @@ class RankingService {
 			if(hasUserOptIn(ps.product, inputUser))
 			{
 				oldPoints = calculateCurrentPointsForProduct(ps.product, inputUser, shopping)
-//				println "oldPoints: " +oldPoints
 				newPoints = calculatePointsForProduct(ps.product, inputUser)
-//				println "newPoints: " +newPoints
 				println "oldPoints + qty = newPoints: " + oldPoints + " + " + ps.qty + " = "+  newPoints
 				if(oldPoints + ps.qty == newPoints)
 				{
@@ -148,7 +146,7 @@ class RankingService {
 	def hasUserOptIn(Product localProd, User user)
 	{
 //		println "hasUserOptIn: " + localProd +user
-		def	userProdListOptIn = UserProduct.findByProductAndUser(localProd, user, [max:1, sort:"updated", order:"desc"])
+		def	userProdListOptIn = OptIn.findByProductAndUser(localProd, user, [max:1, sort:"lastUpdated", order:"desc"])
 		
 		def optIn = false
 		
@@ -292,7 +290,7 @@ class RankingService {
 		def usersList = []
 		
 		users.each { User currentUser ->
-			def userProdOptIn = UserProduct.findByUserAndProduct(currentUser, localProd, [sort:"updated", order:"desc"])
+			def userProdOptIn = OptIn.findByUserAndProduct(currentUser, localProd, [sort:"lastUpdated", order:"desc"])
 			if(userProdOptIn)
 			{
 				if(userProdOptIn.optIn)
