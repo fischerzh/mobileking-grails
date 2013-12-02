@@ -107,11 +107,14 @@ class RankingService {
 	
 	def calculatePointsForProduct(Product localProd, User currentUser)
 	{
-		Integer nmbr = 0
+		Float nmbr = 0
 		def prods = currentUser.shoppings.each { Shopping s->
-			s.productShoppings.each {ps ->
-				if(ps.product == localProd)
+			s.productShoppings.each {ProductShoppings ps ->
+				Product prod = ps.product
+				if(prod.id == localProd.id)
+				{
 					nmbr = nmbr+ps.qty
+				}					
 			}
 		}
 		return nmbr
@@ -121,7 +124,6 @@ class RankingService {
 	{
 		Integer nmbr = 0
 		shopping.each { Shopping s->
-				TimeDuration td = TimeCategory.minus(new Date(), s.date)
 				s.productShoppings.each {ps ->
 					if(ps.product == localProd)
 						nmbr = nmbr+ps.qty
@@ -434,9 +436,10 @@ class RankingService {
 		def int totalPointsForUser= 0
 		
 		def usersForRanking = findAllUsersOptInForProduct(localProd)
-		
+		println "allUsers: " +usersForRanking
 		usersForRanking.each { User currentUser ->
 				totalPointsForUser = calculatePointsForProduct(localProd, currentUser)
+				println "totalPointsForUser: " +totalPointsForUser
 				usersList.add([user: currentUser, points: totalPointsForUser])
 		}
 		println "getLeaderBoardProduct: " +usersList

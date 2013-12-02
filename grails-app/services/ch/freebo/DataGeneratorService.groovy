@@ -96,6 +96,7 @@ class DataGeneratorService {
 			
 			//count products bought
 			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
+			println "dataGeneratorService(). pointsCollected" + pointsCollected
 			//get product info
 			def hersteller = prod.manufacturer.toString()
 			def category = prod.productCategory.toString()
@@ -130,9 +131,10 @@ class DataGeneratorService {
 	//				newRankAchieved = userrank.newRank
 	//			}
 	//
-					crowns = rankingService.getCrownsForProduct(prod, user).collect()
-					leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
+//					crowns = rankingService.getCrownsForProduct(prod, user).collect()
 			}
+			
+			leaderBoard = rankingService.getLeaderboardProduct(prod).collect()
 			
 			return [id: prod.id, ean: prod.ean, name: prod.name, imagelink: prod.imageLink, optin: optIn, isactive: isActive, points: pointsCollected, ingredients: prod.ingredients, size: prod.size, producer: hersteller, userrank: newRank, olduserrank: oldRank, newrankachieved: newRankAchieved, category: category, leaderboard: leaderBoard]
 		
