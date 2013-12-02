@@ -125,7 +125,7 @@ class RankingService {
 		Integer nmbr = 0
 		shopping.each { Shopping s->
 				s.productShoppings.each {ps ->
-					if(ps.product == localProd)
+					if(ps.product.id == localProd.id)
 						nmbr = nmbr+ps.qty
 				}
 			}
@@ -136,7 +136,6 @@ class RankingService {
 	{
 		Integer nmbr = 0
 		currentUser.shoppings.each { Shopping s->
-			TimeDuration td = TimeCategory.minus(new Date(), s.date)
 			s.productShoppings.each {ps ->
 				if(hasUserOptIn(ps.product, currentUser))
 					nmbr = nmbr+ps.qty

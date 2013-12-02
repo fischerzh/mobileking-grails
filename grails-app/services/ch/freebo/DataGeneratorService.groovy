@@ -95,8 +95,7 @@ class DataGeneratorService {
 			def isActive = isOptInActive(prod, user)
 			
 			//count products bought
-			def pointsCollected = rankingService.calculatePointsForProduct(prod, user)
-			println "dataGeneratorService(). pointsCollected" + pointsCollected
+			def pointsCollected = 0
 			//get product info
 			def hersteller = prod.manufacturer.toString()
 			def category = prod.productCategory.toString()
@@ -120,7 +119,15 @@ class DataGeneratorService {
 					newRank = userrank.rank
 					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
-					pointsCollected = userrank.pointsCollected
+					def totalPointsCollected = rankingService.calculatePointsForProduct(prod, user)
+					if(totalPointsCollected != userrank.pointsCollected)
+						pointsCollected = totalPointsCollected
+					else
+						pointsCollected = userrank.pointsCollected
+						
+					println "dataGeneratorService(), totalPointsCollected: " + totalPointsCollected
+					println "dataGeneratorService(), userrank.pointsCollected: " + userrank.pointsCollected
+					
 				}
 	//			else
 	//			{
