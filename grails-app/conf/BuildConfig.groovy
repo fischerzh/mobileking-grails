@@ -58,6 +58,9 @@ grails.project.dependency.resolution = {
 		compile ":mail:1.0"
 		compile ":famfamfam:1.0.1"
 		compile ':cache:1.0.1'
+		compile group: 'org.ccil.cowan.tagsoup',
+			name: 'tagsoup',
+			version: '1.2'
 //		compile 'com.google.android.gcm:gcm-server:1.0.2'
 		compile ":android-gcm:0.2"
 		

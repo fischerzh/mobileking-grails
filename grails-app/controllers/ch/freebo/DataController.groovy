@@ -4,6 +4,8 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonBuilder
 import groovy.grape.Grape
+import org.ccil.cowan.tagsoup.*
+
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -206,7 +208,7 @@ class DataController {
 		String ENCODING = "UTF-8"
 
 		@Grab(group='org.ccil.cowan.tagsoup', module='tagsoup', version='1.2' )
-				def tagsoupParser = new org.ccil.cowan.tagsoup.Parser()
+		def tagsoupParser = new org.ccil.cowan.tagsoup.Parser()
 		def slurper = new XmlSlurper(tagsoupParser)
 		def url = "http://www.codecheck.info/product.search?q="+ean+"&OK=Suchen"
 		def htmlParseCodeCheck
