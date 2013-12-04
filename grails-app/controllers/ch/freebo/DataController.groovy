@@ -3,6 +3,7 @@ package ch.freebo
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import groovy.json.JsonBuilder
+import groovy.grape.Grape
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
