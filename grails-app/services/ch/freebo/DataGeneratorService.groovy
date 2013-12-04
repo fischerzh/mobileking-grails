@@ -91,8 +91,8 @@ class DataGeneratorService {
 		
 		jsonMap.products = userShopping.collect {Product prod ->
 			//check if user has optIn
-			def optIn = hasUserOptIn(prod, user)
-			def isActive = isOptInActive(prod, user)
+			def optIn = rankingService.hasUserOptIn(prod, user)
+			def isActive = rankingService.isOptInActive(prod, user)
 			
 			//count products bought
 			def pointsCollected = 0
@@ -119,24 +119,16 @@ class DataGeneratorService {
 					newRank = userrank.rank
 					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
-					def totalPointsCollected = rankingService.calculatePointsForProduct(prod, user)
-					if(totalPointsCollected != userrank.pointsCollected)
-						pointsCollected = totalPointsCollected
-					else
-						pointsCollected = userrank.pointsCollected
+					pointsCollected = userrank.totalPointsCollected
+//					def totalPointsCollected = rankingService.calculatePointsForProduct(prod, user)
+//					if(totalPointsCollected != userrank.pointsCollected)
+//						pointsCollected = totalPointsCollected
+//					else
+//						pointsCollected = userrank.pointsCollected
 						
-					println "dataGeneratorService(), totalPointsCollected: " + totalPointsCollected
-					println "dataGeneratorService(), userrank.pointsCollected: " + userrank.pointsCollected
+					println "dataGeneratorService(), totalPointsCollected: " + pointsCollected
 					
 				}
-	//			else
-	//			{
-	//				rankingService.calculateUserRanking(prod, user, null)
-	//				userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
-	//				newRank = userrank.rank
-	//				oldRank = userrank.rankBefore
-	//				newRankAchieved = userrank.newRank
-	//			}
 	//
 //					crowns = rankingService.getCrownsForProduct(prod, user).collect()
 			}
@@ -164,29 +156,6 @@ class DataGeneratorService {
 		return jsonMap
 	}
 	
-	def hasUserOptIn(Product prod, User user)
-	{
-		def	userProdListOptIn = OptIn.findByProductAndUser(prod, user, [max:1, sort:"lastUpdated", order:"desc"])
-		
-		def optIn = false
-		
-		if(userProdListOptIn)
-		{
-			println "optIn: " +userProdListOptIn.optIn
-			if(userProdListOptIn.optIn)
-				optIn = true
-		}
-
-		return optIn
-	}
-	
-	def isOptInActive(Product prod, User user)
-	{
-		def	OptIn userProdOptIn = OptIn.findByProductAndUser(prod, user, [max:1, sort:"lastUpdated", order:"desc"])
-		
-		def isActive = false
-		return userProdOptIn?userProdOptIn.isActive:false
-	}
 
 
 }

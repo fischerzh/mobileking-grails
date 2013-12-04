@@ -175,17 +175,16 @@ class ControlPanelController {
 					
 					// update Opt-In if user has done pre Opt-In
 					def allOptInProducts = dataGenerator.getAllOptInProductsForUser(user)
-					println "allOptIns: " +allOptInProducts
+
 					allOptInProducts.each { Product localProd ->
 						shoppingInstance.productShoppings.each {
 							if(it.product == localProd)
 							{
+								// Check if the user made a pre-opt in, if the OptIn was not active yet: set isActive = true
 								def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
 								if(!userProd.isActive)
 								{
 									log.debug("user Opt-In " + userProd)
-									println "user Opt-In: " +userProd
-									println "NEW SHOPPING: Setting product to active (pre opt-in was registered)!" + localProd
 									userProd.isActive = true
 									userProd.save(failOnError:true)
 								}
@@ -207,7 +206,7 @@ class ControlPanelController {
 			addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
 			callGCMServiceMsg(user)
 
-						flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'), shoppingInstance])
+			flash.message = message(code: 'default.created.message', args: [message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'), shoppingInstance])
 			
 			redirect action: 'create'
 			

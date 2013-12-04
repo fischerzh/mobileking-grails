@@ -20,7 +20,7 @@ class RankingService {
 		this.user = user
 	}
 	
-    def calculateUserRanking(Product inputProd, User inputUsr, Shopping shopping) 
+    def calculateRankingForOptAction(Product inputProd, User inputUsr) 
 	{	
 		this.user = inputUsr
 		this.product = inputProd
@@ -51,9 +51,57 @@ class RankingService {
 		//Go through all users with Opt-in, check ranking (and send Notification if it has changed!)
 		def usersForRanking = findAllUsersOptInForProduct(product)
 		
-		newUserRank = calculateNewRank(usersForRanking, user, shopping, newPoints)
+		calculateNewRankForOptAction(usersForRanking, user, inputProd)
 		
     }
+	
+	def calculateNewRankForOptAction(allUsersOptIn, User localUser, Product localProd)
+	{
+		def newUserRank = 1
+		def isUserInRank = false
+		def allRankings = []
+		//for all users which are opt-in, always calculate the Points accumulated for the Product
+		allUsersOptIn.each { User user ->
+			Integer totalPoints = calculatePointsInOptIn(localProd, user) //calculatePointsForProduct(localProd, user)
+			println "totalPoints: " + totalPoints
+			allRankings.add([user:user, points:totalPoints])
+					
+		}
+		def rank = 1
+		def groupedByRating = allRankings.groupBy({ -it.points})
+		
+		//sort and calculate the rank
+		groupedByRating.sort().each { points, items ->
+		  items.each {
+			  it.rank = rank
+			  println it.user
+			  println localUser
+			  if(it.user.id == localUser.id)
+				{
+				  newUserRank = rank
+				}
+		  }
+		  rank += items.size()
+		}
+		
+		groupedByRating.each { key, value ->
+			def User rankUser = value.getAt(0)['user']
+			def points = value.getAt(0)['points']
+			def newRank = value.getAt(0)['rank']
+			
+			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
+			def oldRank = oldUserRanking?oldUserRanking.rank:0
+			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
+			def UserRanking newUserRanking
+//			if(rankUser == localUser)
+//				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+//			else
+			newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+			newUserRanking.save(failOnError:true)
+		}
+		
+		return newUserRank
+	}
 	
 	def calculateRankingForShopping(User inputUser, Shopping shopping)
 	{
@@ -74,7 +122,7 @@ class RankingService {
 				{
 					//Calculate new Rank for All Opt-In Users!
 					def usersForRanking = findAllUsersOptInForProduct(ps.product)
-					def newRank = calculateNewRank(usersForRanking, inputUser, ps.product, ps, newPoints)
+					def newRank = calculateNewRankForShopping(usersForRanking, inputUser, ps.product, ps, newPoints)
 					
 					newUserRankList.add(newRank: newRank, product: ps.product)
 					
@@ -87,6 +135,131 @@ class RankingService {
 		return newUserRankList
 	}
 	
+	
+	def calculateNewRankForShopping(allUsersOptIn, User localUser, Product localProd, ProductShoppings shopping, newPoints)
+	{
+		def newUserRank = 1
+		def isUserInRank = false
+		def allRankings = []
+		//for all users which are opt-in, always calculate the Points accumulated for the Product
+		allUsersOptIn.each { User user ->
+			Integer totalPoints = calculatePointsForProduct(localProd, user)
+			println "RankingService.calculateNewRank(), totalPoints:" + totalPoints
+			allRankings.add([user:user, points:totalPoints])
+					
+		}
+		def rank = 1
+		def groupedByRating = allRankings.groupBy({ -it.points})
+		
+		//sort and calculate the rank
+		groupedByRating.sort().each { points, items ->
+		  items.each {
+			  it.rank = rank
+			  println it.user
+			  println localUser
+			  if(it.user.id == localUser.id)
+				{
+				  newUserRank = rank
+				}
+		  }
+		  rank += items.size()
+		}
+		
+		groupedByRating.each { key, value ->
+			def User rankUser = value.getAt(0)['user']
+			def points = value.getAt(0)['points']
+			def newRank = value.getAt(0)['rank']
+			
+			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
+			def oldRank = oldUserRanking?oldUserRanking.rank:0
+			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
+			def UserRanking newUserRanking
+			if(rankUser == localUser)
+				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+			else
+				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+			newUserRanking.save(failOnError:true)
+		}
+		
+		return newUserRank
+	}
+	
+	def calculatePointsInOptIn(Product localProd, User currentUser)
+	{
+		Integer nmbr = 0
+		def prods = currentUser.shoppings.each { Shopping s ->
+			Date shoppingDate = s.date
+			s.productShoppings.each { ProductShoppings ps ->
+				if(localProd.id == ps.product.id)
+				{
+					if(hasUserOptIn(ps.product, currentUser) && isInOptinPhase(shoppingDate, ps.product, currentUser))
+					{
+						nmbr = nmbr+ps.qty
+					}
+				}
+
+			}
+		}
+		return nmbr
+	}
+	
+	Boolean isInOptinPhase(Date shoppingDate, Product localProd, User localUser)
+	{
+		println "shoppingDate: " +shoppingDate
+		Date nearestDate
+		def optInOutDateList = OptIn.findAllByUserAndProduct(localUser, localProd, [sort:"lastUpdated", order:"desc"]).lastUpdated
+		println "optInOutDateList: " +optInOutDateList
+		
+		nearestDate = getClosestDate(optInOutDateList, shoppingDate)
+		
+		println "nearest updatedDate : " + nearestDate
+		
+		OptIn optAction = OptIn.findByLastUpdated(nearestDate)
+		if(optAction.lastUpdated < shoppingDate)
+		{
+			if(optAction.optIn)
+				return true
+			else
+				return false	
+		}
+		else
+		{
+			if(optAction.optIn)
+				return false
+			else
+				return true
+		}
+	}
+	
+	private Date getDateNearest(List<Date> dates, Date targetDate){
+		Date returnDate = targetDate
+		for (Date date : dates) {
+		  // if the current iteration'sdate is "before" the target date
+		  if (date.compareTo(targetDate) <= 0) {
+			// if the current iteration's date is "after" the current return date
+			if (date.compareTo(returnDate) > 0){
+			  returnDate=date;
+			}
+		  }
+		}
+		return returnDate;
+	  }
+	
+	private Date getClosestDate(List<Date> dates, Date targetDate){
+	
+		final long now = System.currentTimeMillis();
+		
+	Date closest = Collections.min(dates, new Comparator<Date>() {
+    public int compare(Date d1, Date d2) {
+        long diff1 = Math.abs(d1.getTime() - targetDate.getTime());
+        long diff2 = Math.abs(d2.getTime() - targetDate.getTime());
+        return diff1 < diff2 ? -1 : 1;
+    }
+	});
+	println "closestDate: " +closest
+	return closest
+	}
+	
 	def calculateCurrentPointsForProduct(Product localProd, User currentUser, Shopping currentShopping)
 	{
 //		println "RankingService.calculateCurrentPointsForProduct(): " + localProd + currentUser, currentShopping
@@ -96,7 +269,7 @@ class RankingService {
 			if(!s.equals(currentShopping))
 			{
 				s.productShoppings.each {ps ->
-					if(ps.product == localProd)
+					if(ps.product.id == localProd.id)
 						nmbr = nmbr+ps.qty
 				}
 			}
@@ -144,11 +317,20 @@ class RankingService {
 		return nmbr
 	}
 	
+	
+	def isOptInActive(Product prod, User user)
+	{
+		def	OptIn userProdOptIn = OptIn.findByProductAndUser(prod, user, [max:1, sort:"lastUpdated", order:"desc"])
+		
+		def isActive = false
+		return userProdOptIn?userProdOptIn.isActive:false
+	}
+	
 	def hasUserOptIn(Product localProd, User user)
 	{
 //		println "hasUserOptIn: " + localProd +user
 		def	userProdListOptIn = OptIn.findByProductAndUser(localProd, user, [max:1, sort:"lastUpdated", order:"desc"])
-		
+		println "userProdListOptIn: " +userProdListOptIn
 		def optIn = false
 		
 		if(userProdListOptIn)
@@ -161,56 +343,7 @@ class RankingService {
 		return optIn
 	}
 	
-	def calculateNewRank(allUsersOptIn, User localUser, Product localProd, ProductShoppings shopping, newPoints)
-	{
-		def newUserRank = 1
-		def isUserInRank = false
-		def allRankings = []
-		//for all users which are opt-in, always calculate the Points accumulated for the Product
-		allUsersOptIn.each { User user ->
-			Integer totalPoints = calculatePointsForProduct(localProd, user)
-			println "RankingService.calculateNewRank(), totalPoints:" + totalPoints
-			allRankings.add([user:user, points:totalPoints])
-					
-		}
-		def rank = 1
-		println "AllRankings: " +allRankings
-		def groupedByRating = allRankings.groupBy({ -it.points})
-		
-		//sort and calculate the rank
-		groupedByRating.sort().each { points, items ->
-		  items.each { 
-			  it.rank = rank 
-			  println it.user
-			  println localUser
-			  if(it.user.id == localUser.id)
-  			  {
-			      newUserRank = rank
-  			  }
-		  }
-		  rank += items.size()
-		}
-		
-		groupedByRating.each { key, value ->
-			def User rankUser = value.getAt(0)['user']
-			def points = value.getAt(0)['points']
-			def newRank = value.getAt(0)['rank']
-			
-			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
-			def oldRank = oldUserRanking?oldUserRanking.rank:0
-			def newRankAchieved = oldUserRanking?(oldUserRanking!=newRank):false
-			def UserRanking newUserRanking
-			if(rankUser == localUser)
-				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: newPoints, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
-			else
-				newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
-			newUserRanking.save(failOnError:true)
-		}
-		
-		println "groupedByRating: " +groupedByRating
-		println "newUserRank: " +newUserRank
-		return newUserRank
-	}
+	
 	
 	def addNotificationsToUser(User user, String message, String title)
 	{

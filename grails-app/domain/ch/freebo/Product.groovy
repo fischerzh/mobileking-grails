@@ -11,7 +11,7 @@ class Product {
     static constraints = {
 		loyaltyProgram unique:true, nullable:true
 		manufacturer nullable:true
-//		shoppings nullable:true
+		productCategory nullable:true
 		imageLink nullable:true
 		ingredients nullable:true
 		size nullable:true
@@ -19,8 +19,6 @@ class Product {
 	
 	static hasOne = [loyaltyProgram: LoyaltyProgram, manufacturer: Manufacturer]
 
-//	static hasMany = [shoppings:Shopping]
-		
 	static belongsTo = [productCategory:ProductCategory]
 		
 	String toString()  {
