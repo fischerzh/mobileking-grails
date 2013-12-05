@@ -201,7 +201,8 @@ class DataController {
 			}
 			else
 			{
-
+				prod = new Product(name: " ", ean: params.ean.toString(), imageLink: "http://www.codecheck.info").save(failOnError:true)
+				
 				println "Product not found for Opt-In!"
 				render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
 			}

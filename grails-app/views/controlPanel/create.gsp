@@ -51,6 +51,7 @@
 						<table class="table table-striped">
 							<thead>
 								<tr>
+								<th></th>
 									<th class="header"><g:message code="shopping.label"
 											default="Anzahl" /></th>
 
@@ -71,10 +72,13 @@
 							<tbody>
 								<g:each in="${productListForShopping}" var="item">
 									<tr>
+										<td width="50%">
+    										<img alt="" src="${fieldValue(bean: item, field: "imageLink")}" width="50%" height="75px">
 
-										<td><g:field type="number" name="anzahl" value="${anzahl}" /></td>
-										<td><g:field type="text" name="preis" value="${anzahl}" /></td>
-										<td>
+										</td>
+										<td width="10%"><g:field type="number" name="anzahl" value="${anzahl}" /></td>
+										<td width="10%"><g:field type="text" name="preis" value="${anzahl}" /></td>
+										<td width="30%">
 										<g:hiddenField name="product" value="${item.id}"/>
 											${fieldValue(bean: item, field: "name")}
 										</td>
