@@ -7,7 +7,7 @@ class User {
 	String username
 	String password
 	String email
-	Boolean isActiveApp
+	Boolean isActiveApp = false
 	Boolean isNotificationEnabled
 	Boolean isAnonymous
 	boolean enabled
