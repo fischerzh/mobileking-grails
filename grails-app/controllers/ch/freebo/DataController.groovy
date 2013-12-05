@@ -104,12 +104,15 @@ class DataController {
 			if(!prod)
 			{
 				def productResponse = getHTMLPage(params.ean);
-				def hersteller = Manufacturer.findByName(productResponse.producer.toString())?:new Manufacturer(name: productResponse.producer.toString()).save(failOnError:true)
-				def prodSegment1 = ProductSegment.findByName("Lebensmittel / Getraenke / Tabakwaren")?:new ProductSegment(name:"Lebensmittel / Getraenke / Tabakwaren").save(flush:true)
-				def prodCategory1 = ProductCategory.findByName(productResponse.category.toString())?:new ProductCategory(name:productResponse.category.toString(),productSegment:prodSegment1).save(flush:true)
-				prod = new Product(name: productResponse.productname.toString(), ean: params.ean.toString(), imageLink: productResponse.productlink.toString(), productCategory :  prodCategory1, manufacturer: hersteller).save(failOnError:true)
+				if(productResponse)
+				{
+					def hersteller = Manufacturer.findByName(productResponse.producer.toString())?:new Manufacturer(name: productResponse.producer.toString()).save(failOnError:true)
+					def prodSegment1 = ProductSegment.findByName("Lebensmittel / Getraenke / Tabakwaren")?:new ProductSegment(name:"Lebensmittel / Getraenke / Tabakwaren").save(flush:true)
+					def prodCategory1 = ProductCategory.findByName(productResponse.category.toString())?:new ProductCategory(name:productResponse.category.toString(),productSegment:prodSegment1).save(flush:true)
+					prod = new Product(name: productResponse.productname.toString(), ean: params.ean.toString(), imageLink: productResponse.productlink.toString(), productCategory :  prodCategory1, manufacturer: hersteller).save(failOnError:true)
+				}
 			}
-
+			
 			newLogMessage = new LogMessages(messageId: uuid, action: "OptIn: "+params.optin, createDate: new Date().toString(), logDate: new Date(), message: "Product: "+ prod).save(failOnError:true)
 			user.addToLogMessages(newLogMessage).save(failOnError:true)
 
@@ -218,11 +221,22 @@ class DataController {
 			htmlParseCodeCheck =  slurper.parse("http://www.codecheck.info/product.search?q="+ean+"&OK=Suchen")
 		}
 
+		def foundProduct = false
 		def productName
 		def producer
 		def category
 		def size
 		def productLink = "http://www.codecheck.info"
+		 
+		htmlParseCodeCheck.'**'.find { it.@class =='htit2lightgreen' }.each {
+			println "hit2lightgreen: " +it.text()
+			if(it.text().contains("Produkt") || it.text().contains(ean))
+				foundProduct = false
+			else
+				foundProduct = true
+		}
+		if(!foundProduct)
+			return null
 
 		htmlParseCodeCheck.'**'.findAll{ it.@class == 'h1Title'}.each {
 			println it
@@ -239,7 +253,13 @@ class DataController {
 				def split = node.parent().text().split('br')
 				println "node.parent.br: " +split
 				node.parent().each {
-					producer = it.text().replace("\n", "").replace("\r", "").replace(parentNode, " ").trim().replace("Vertrieb", "").trim()
+					producer = it.text().replace("\n", "").replace("\r", "").
+					replace(parentNode, " ").trim().
+					replace("Vertrieb", "").trim().
+					replace("Hersteller", "").trim().
+					replace(":")
+					
+					
 					println "Hersteller: " +producer
 				}
 
