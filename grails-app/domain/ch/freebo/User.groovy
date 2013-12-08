@@ -10,6 +10,7 @@ class User {
 	Boolean isActiveApp = false
 	Boolean isNotificationEnabled
 	Boolean isAnonymous
+	Integer avatarId = 0
 	boolean enabled
 	boolean accountExpired
 	boolean accountLocked
@@ -25,9 +26,12 @@ class User {
 		devices nullable:true
 		badges nullable:true
 		logMessages nullable:true
+		avatarId nullable:true
+		scannedReceipts nullable:true
 	}
 	
-	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices, badges: Badge, logMessages: LogMessages]
+	static hasMany = [loyaltyCards:LoyaltyCard, shoppings: Shopping, devices: Devices, badges: Badge, 
+		logMessages: LogMessages, scannedReceipts: ScannedReceipt]
 
 	static mapping = {
 		password column: '`password`'

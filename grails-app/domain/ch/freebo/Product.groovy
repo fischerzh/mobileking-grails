@@ -15,6 +15,7 @@ class Product {
 		imageLink nullable:true
 		ingredients nullable:true
 		size nullable:true
+		productCategory nullable:true
     }
 	
 	static hasOne = [loyaltyProgram: LoyaltyProgram, manufacturer: Manufacturer]

@@ -587,24 +587,32 @@ class RankingService {
 		}
 		
 		groupedByRating.each { key, value ->
+			def User rankUser
+			def username
+			def Integer points
+			def Integer newRank
+			def isAnon
+			def avatarId
 			if(value.size()>1)
 			{
 				value.eachWithIndex { obj, i ->
-					def rankUser = obj['user'].toString()
-					def Integer points = obj['points']
-					def Integer newRank = obj['rank']
-//					if(newRank in 1..3 || rankUser == inputUser)
-						leaderBoard.add([username: rankUser, points: points, rank: newRank])
+					rankUser = obj['user']
+					points = obj['points']
+					newRank = obj['rank']
 				}
 			}
 			else
 			{
-				def rankUser = value.getAt(0)['user'].toString()
-				def Integer points = value.getAt(0)['points']
-				def Integer newRank = value.getAt(0)['rank']
-//				if(newRank in 1..3 || rankUser == inputUser)
-					leaderBoard.add([username: rankUser, points: points, rank: newRank])
+				rankUser = value.getAt(0)['user']
+				points = value.getAt(0)['points']
+				newRank = value.getAt(0)['rank']
 			}
+			avatarId = rankUser.avatarId
+			if(isAnon)	
+				username = "Anonym"
+			else
+				username = rankUser.username
+			leaderBoard.add([username: username, points: points, rank: newRank, avatarid: avatarId])
 
 		}
 		leaderBoard.sort{ it.rank }

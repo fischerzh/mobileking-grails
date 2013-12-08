@@ -99,7 +99,7 @@ class DataController {
 		{
 			def prod = Product.findByEan(params.ean)
 			def OptIn optAction
-			def pointsForProduct
+			def pointsForProduct = 0
 
 			if(!prod)
 			{
@@ -119,9 +119,8 @@ class DataController {
 				}
 			}
 			
-			newLogMessage = new LogMessages(messageId: uuid, action: "OptIn: "+params.optin, createDate: new Date().toString(), logDate: new Date(), message: "Product: "+ prod).save(failOnError:true)
-			user.addToLogMessages(newLogMessage).save(failOnError:true)
-
+			newLogMessage = new LogMessages(user: user, messageId: uuid, userAction: "OptIn: "+params.optin, createDate: new Date().toString(), logDate: new Date(), message: "Product: "+ prod)
+			newLogMessage.save(failOnError:true)
 
 			if(prod!=null)
 			{
@@ -177,10 +176,12 @@ class DataController {
 
 					}
 				}
-				else if(pointsForProduct == 0)
+				
+				else if (pointsForProduct == 0)
 				{
 					if(params.optin)
 					{
+						println "Opt-In, points = 0"
 						if(!rankingService.hasUserOptIn(prod, user))
 						{
 							optAction = new OptIn(user: user, product: prod, optIn: true, isActive: false).save(failOnError:true)
@@ -193,6 +194,8 @@ class DataController {
 					}
 					else if(params.optout)
 					{
+						println "Opt-Out, points = 0"
+						
 						optAction = new OptIn(user: user, product: prod, optIn: false).save(failOnError:true)
 						render([status: "SUCCESS", exception: "Opt-Out erfolgreich!"] as JSON)
 
@@ -321,7 +324,7 @@ class DataController {
 				def errorMessage
 				user.errors.allErrors.each {
 					println it
-					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Username not uniqe":" "
+					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Benutzername schon vorhanden":" "
 					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":" "
 				}
 				println errorMessage
@@ -330,7 +333,7 @@ class DataController {
 
 			}
 
-			render([status: 'Success', exception: 'Aktualisierung erfolgreich!'] as JSON)
+			render([status: 'SUCCESS', exception: 'Aktualisierung erfolgreich!'] as JSON)
 
 		}
 	}
@@ -352,12 +355,8 @@ class DataController {
 			msgId = uuid
 		}
 
-		def newLogMessage = new LogMessages(messageId: msgId, action: params.title, createDate: params.createDate, logDate: new Date(), message: params.message)
-		if(newLogMessage.save(failOnError:true))
-		{
-			user.addToLogMessages(newLogMessage)
-		}
-		else
+		def newLogMessage = new LogMessages(user: user, messageId: msgId, userAction: params.title, createDate: params.createDate, logDate: new Date(), message: params.message, location: params.location)
+		if(!newLogMessage.save(failOnError:true))
 		{
 			render([status: "FAILED", exception: params.logMessageId] as JSON)
 		}
@@ -383,13 +382,25 @@ class DataController {
 		//		byte[] inputByteArray = params.image
 
 		CommonsMultipartFile file = request.getFile('uploadFile')
-
+		def scanDate = params.scandate
+		println "Date scanned: " +scanDate
+		def fileName = params.filename
+		def part = params.part
+		
+		
+		def salesSlipPart = new ScannedReceipt(fileName: fileName,  scanDate: scanDate,  user: user, filePart: part )
+		println salesSlipPart
+		
 		def webRootDir = servletContext.getRealPath("/WEB-INF")
 
 		def userDir = new File(webRootDir, "/uploads/"+user+"/salesSlips/")
 		userDir.mkdirs()
 		file.transferTo( new File( userDir,file.originalFilename))
-
+		if(salesSlipPart.save())
+			render([status: "SUCCESS", exception: "File uploaded!"] as JSON)
+		else
+			render([status: "FAILED", exception: "File not found!"] as JSON)
+		
 	}
 
 	def updateErrorLogs()

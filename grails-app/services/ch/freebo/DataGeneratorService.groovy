@@ -150,6 +150,14 @@ class DataGeneratorService {
 //			return [id: it.id, name: it.name, achieved: it.achieved, newachieved: it.newAchieved, achievementdate: it.achievementDate, group: it.badgeGroup]
 //		}
 		
+		def salesreceipts = []
+		def receipts = ScannedReceipt.findAllByUser(user).each { ScannedReceipt sr ->
+			def pointOfSales = sr.shopping?sr.shopping.retailer:""
+			salesreceipts.add([salespoint: pointOfSales.toString(), scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true ])
+		}
+		println "Receipts: " + salesreceipts.unique()
+		jsonMap.salesslips = salesreceipts
+		
 		jsonMap.username = user.username
 		
 		println jsonMap

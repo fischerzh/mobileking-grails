@@ -2,17 +2,17 @@ package ch.freebo
 
 class LogMessages {
 
+	User user
 	String messageId
 	String createDate
 	Date logDate
 	String location
-	String action
+	String userAction
 	String message
 	
     static constraints = {
-		messageId unique:true
 		createDate nullable:false
-		action nullable:false
+		userAction nullable:false
 		message nullable:false
 		logDate nullable:false
 		location nullable:true
