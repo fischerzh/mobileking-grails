@@ -153,7 +153,8 @@ class DataGeneratorService {
 		def salesreceipts = []
 		def receipts = ScannedReceipt.findAllByUser(user).each { ScannedReceipt sr ->
 			def pointOfSales = sr.shopping?sr.shopping.retailer:""
-			salesreceipts.add([salespoint: pointOfSales.toString(), scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true ])
+			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
+			salesreceipts.add([salespoint: pointOfSales.toString(), scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true, totalparts: totalParts ])
 		}
 		println "Receipts: " + salesreceipts.unique()
 		jsonMap.salesslips = salesreceipts
