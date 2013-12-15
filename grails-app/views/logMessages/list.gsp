@@ -56,7 +56,7 @@
 						
 							<g:sortableColumn property="createDate" title="${message(code: 'logMessages.createDate.label', default: 'Create Date')}" />
 						
-							<g:sortableColumn property="action" title="${message(code: 'logMessages.action.label', default: 'Action')}" />
+							<g:sortableColumn property="userAction" title="${message(code: 'logMessages.action.label', default: 'Title')}" />
 						
 							<g:sortableColumn property="message" title="${message(code: 'logMessages.message.label', default: 'Message')}" />
 						
@@ -73,11 +73,11 @@
 <%--					${userLogList.logMessages}--%>
 						<tr>
 <%--						${fieldValue(bean: logMessage, field: "messageId")}--%>
-							<td>${fieldValue(bean: logMessage, field: "messageId")}</td>
+							<td>${fieldValue(bean: logMessage.user, field: "username")}</td>
 						
 							<td>${fieldValue(bean: logMessage, field: "createDate")}</td>
 						
-							<td>${fieldValue(bean: logMessage, field: "action")}</td>
+							<td>${fieldValue(bean: logMessage, field: "userAction")}</td>
 						
 							<td>${fieldValue(bean: logMessage, field: "message")}</td>
 						

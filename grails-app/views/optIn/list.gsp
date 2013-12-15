@@ -4,12 +4,21 @@
 <html>
 	<head>
 		<meta name="layout" content="bootstrap">
-		<g:set var="entityName" value="${message(code: 'optIn.label', default: 'OptIn')}" />
+		<g:set var="entityName" value="${message(code: 'optIn.label', default: 'Opt In/Out')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
+		
+		<ul class="nav nav-pills">
+  <li class="active">
+    <a href="#">User Favorites (Opt-In/Out)</a>
+  </li>
+  <li><g:link class="create" controller="LogMessages" action="list">User Log Infos</g:link></li>
+  <li><a href="#">User Achievements (Badges / Rank)</a></li>
+</ul>
+	
 		<div class="row-fluid">
-			
+		
 			<div class="span3">
 				<div class="well">
 					<ul class="nav nav-list">
@@ -44,17 +53,18 @@
 					<thead>
 						<tr>
 						
-							<g:sortableColumn property="optInDate" title="${message(code: 'optIn.optInDate.label', default: 'Opt In Date')}" />
+							<g:sortableColumn property="user" title="${message(code: 'optIn.isActive.label', default: 'User')}" />
 						
-							<g:sortableColumn property="optOutDate" title="${message(code: 'optIn.optOutDate.label', default: 'Opt Out Date')}" />
+							<g:sortableColumn property="product" title="${message(code: 'optIn.isActive.label', default: 'Produkt')}" />
 						
-							<g:sortableColumn property="isActive" title="${message(code: 'optIn.isActive.label', default: 'Is Active')}" />
+							<g:sortableColumn property="isOptIn" title="${message(code: 'optIn.isOptIn.label', default: 'Opt-In')}" />
+
+							<g:sortableColumn property="optInDate" title="${message(code: 'optIn.optInDate.label', default: 'Opt In Datum')}" />
 						
-							<g:sortableColumn property="lastUpdated" title="${message(code: 'optIn.lastUpdated.label', default: 'Last Updated')}" />
+							<g:sortableColumn property="optOutDate" title="${message(code: 'optIn.optOutDate.label', default: 'Opt Out Datum')}" />
 						
-							<g:sortableColumn property="optIn" title="${message(code: 'optIn.optIn.label', default: 'Opt In')}" />
+							<g:sortableColumn property="isActive" title="${message(code: 'optIn.isActive.label', default: 'Produkt Aktiv')}" />
 						
-							<th class="header"><g:message code="optIn.product.label" default="Product" /></th>
 						
 							<th></th>
 						</tr>
@@ -62,6 +72,11 @@
 					<tbody>
 					<g:each in="${optInInstanceList}" var="optInInstance">
 						<tr>
+							<td>${fieldValue(bean: optInInstance, field: "user")}</td>
+
+							<td>${fieldValue(bean: optInInstance, field: "product")}</td>
+							
+														<td><g:formatBoolean boolean="${optInInstance.optIn}" /></td>
 						
 							<td><g:formatDate date="${optInInstance.optInDate}" /></td>
 						
@@ -69,19 +84,13 @@
 						
 							<td><g:formatBoolean boolean="${optInInstance.isActive}" /></td>
 						
-							<td><g:formatDate date="${optInInstance.lastUpdated}" /></td>
-						
-							<td><g:formatBoolean boolean="${optInInstance.optIn}" /></td>
-						
-							<td>${fieldValue(bean: optInInstance, field: "product")}</td>
-						
 							<td class="link">
 								<g:link action="show" id="${optInInstance.id}" class="btn btn-small">Show &raquo;</g:link>
-							</td>
+						</td>
 						</tr>
 					</g:each>
 					</tbody>
-				</table>
+			</table>
 				<div class="pagination">
 					<bootstrap:paginate total="${optInInstanceTotal}" />
 				</div>

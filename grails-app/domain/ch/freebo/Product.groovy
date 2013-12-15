@@ -7,6 +7,7 @@ class Product {
 	String imageLink
 	String ingredients
 	String size
+	Boolean isActive = true
 	
     static constraints = {
 		loyaltyProgram unique:true, nullable:true
@@ -15,6 +16,7 @@ class Product {
 		imageLink nullable:true
 		ingredients nullable:true
 		size nullable:true
+		isActive nullable:true
 		productCategory nullable:true
     }
 	

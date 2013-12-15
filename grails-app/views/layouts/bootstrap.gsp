@@ -78,9 +78,6 @@
 									<%= 'Shopping'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 										controller="Shopping">Einkäufe</g:link></li>
 								<li
-									<%= 'ProductShoppings'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
-										controller="ProductShoppings">Einkaufs Details</g:link></li>
-								<li
 									<%= 'OptIn'.equalsIgnoreCase(controllerName) ? ' class="active"' : '' %>><g:link
 										controller="OptIn">User Info</g:link></li>
 								<li

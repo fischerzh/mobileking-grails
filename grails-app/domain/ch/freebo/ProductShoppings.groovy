@@ -5,6 +5,7 @@ class ProductShoppings {
 	Product product
 	Float qty
 	Float price
+	Boolean isVerified = false
 	
     static constraints = {
 		price nullable:true, scale: 2

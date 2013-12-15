@@ -16,12 +16,20 @@ environments {
 			pooled = true
 			driverClassName = "com.mysql.jdbc.Driver"
 			dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
-			url ="jdbc:mysql://176.28.9.173:3306/product_king_test?useUnicode=yes&characterEncoding=UTF-8&autoReconnect=true"
+			url ="jdbc:mysql://176.28.9.173:3306/product_king_test?useUnicode=yes&characterEncoding=UTF-8"
 			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
 			username = "mf"
 			password = "master2013"
-//            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
-        }
+			properties {
+			   maxActive = -1
+			   minEvictableIdleTimeMillis=1800000
+			   timeBetweenEvictionRunsMillis=1800000
+			   numTestsPerEvictionRun=3
+			   testOnBorrow=true
+			   testWhileIdle=true
+			   testOnReturn=true
+			   validationQuery="SELECT 1"
+			}        }
     }
 	
 	

@@ -75,9 +75,9 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    appenders {
-        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    }
+//    appenders {
+//        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+//    }
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -91,7 +91,7 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 		   
-	warn  'org.codehaus.groovy.grails.web.servlet'       // controllers
+//	warn  'org.codehaus.groovy.grails.web.servlet'       // controllers
 	
 
 }
@@ -112,13 +112,8 @@ grails.plugins.springsecurity.basic.realmName = "Freebo"
 grails.plugins.springsecurity.ui.password.minLength = 4
 grails.plugins.springsecurity.ui.password.maxLength	= 12
 grails.plugins.springsecurity.ui.password.validationRegex =	"^.*(?=.*\\d)(?=.*[a-zA-Z]).*"
-//grails.plugin.springsecurity.rejectIfNoRule = true
-//grails.plugin.springsecurity.fii.rejectPublicInvocations = true
-//
-//grails.plugins.springsecurity.interceptUrlMap = [
-//	'/uploads/**': ["IS_AUTHENTICATED_FULLY"],
-//	'/**/js/**':   ["IS_AUTHENTICATED_FULLY"]
-//]
+grails.plugins.springsecurity.securityConfigType = "Annotation"
+
 
 grails {
 	mail {

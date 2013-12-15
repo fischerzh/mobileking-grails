@@ -5,10 +5,12 @@ class Retailer {
 	String name
 	Location location
 	String street
+	String imageLink
 	
     static constraints = {
 		location nullable:true
 		street nullable:true
+		imageLink nullable:true
     }
 	
 	String toString()  {

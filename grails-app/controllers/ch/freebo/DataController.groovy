@@ -41,7 +41,6 @@ class DataController {
 		rankingService.setUser(user)
 
 		/** PREPARE, CALCULATE AND SET UP JSON DATA FOR RESPONSE*/
-
 		def jsonExport = dataGenerator.getJSONData()
 
 		if(!user.isActiveApp)
@@ -122,7 +121,7 @@ class DataController {
 			newLogMessage = new LogMessages(user: user, messageId: uuid, userAction: "OptIn: "+params.optin, createDate: new Date().toString(), logDate: new Date(), message: "Product: "+ prod)
 			newLogMessage.save(failOnError:true)
 
-			if(prod!=null)
+			if(prod!=null && prod.isActive)
 			{
 				pointsForProduct = rankingService.calculatePointsForProduct(prod, user)
 
@@ -204,7 +203,8 @@ class DataController {
 			}
 			else
 			{
-				prod = new Product(name: " ", ean: params.ean.toString(), imageLink: "http://www.codecheck.info").save(failOnError:true)
+				if(!prod)
+					prod = new Product(name: " ", ean: params.ean.toString(), imageLink: "http://www.codecheck.info", isActive:false).save(failOnError:true)
 				
 				println "Product not found for Opt-In!"
 				render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)

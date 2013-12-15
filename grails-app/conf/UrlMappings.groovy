@@ -2,9 +2,8 @@ import ch.freebo.DataGeneratorService
 
 class UrlMappings {
 	
-	def DataGeneratorService dataGenerator
 
-	static mappings = {
+		static mappings = {
 		"/$controller/$action?/$id?"{
 			constraints {
 				// apply constraints here

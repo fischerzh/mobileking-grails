@@ -15,6 +15,7 @@ class UserController {
 	def RankingService rankingService = new RankingService()
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
+	
 	@Secured(['ROLE_ADMIN'])
     def index() {
         redirect action: 'list', params: params
@@ -59,6 +60,8 @@ class UserController {
         [userInstanceList: User.list(params), userInstanceTotal: User.count()]
     }
 	
+	
+	@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
     def create() {
 		switch (request.method) {
 		case 'GET':

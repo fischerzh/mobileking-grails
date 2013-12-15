@@ -8,8 +8,8 @@ class User {
 	String password
 	String email
 	Boolean isActiveApp = false
-	Boolean isNotificationEnabled
-	Boolean isAnonymous
+	Boolean isNotificationEnabled = true
+	Boolean isAnonymous = false
 	Integer avatarId = 0
 	boolean enabled
 	boolean accountExpired

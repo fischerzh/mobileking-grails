@@ -98,8 +98,7 @@ class ControlPanelController {
 			if(user)
 			{
 				messages.each {
-					def newLogMessage = new LogMessages(messageId: uuid, action: "NotificationSent", createDate: date.toString(), logDate: date, message: it.toString()).save(failOnError:true)
-					user.addToLogMessages(newLogMessage)
+					def newLogMessage = new LogMessages(user: user, messageId: uuid, userAction: "NotificationSent", createDate: date.toString(), logDate: date, message: it.toString()).save(failOnError:true)
 				}
 				user.save(failOnError:true)
 			}
@@ -127,24 +126,66 @@ class ControlPanelController {
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [controlPanelInstanceList: UserRole.findAllByRole(userRole).user, controlPanelInstanceTotal: User.count()]
     }
+	
+	def displayImage()
+	{
+		println "getting Image: " + params.img
+		def webRootDir = servletContext.getRealPath("/WEB-INF")
+		
+		File image = new File(webRootDir, "/uploads/"+params.user+"/salesSlips/"+params.img)
+		println "image: " +image
+//		File image = new File(IMAGES_DIR.getAbsoluteFilePath() + File.separator + params.img)
+		if(!image.exists()) {
+		  response.status = 404
+		} else {
+		  response.setContentType("application/jpg")
+		  OutputStream out = response.getOutputStream();
+		  out.write(image.bytes);
+		  out.close();
+		}
+	}
 
     def create() {
 		switch (request.method) {
 		case 'GET':
+			println "controlPanel.create: GET " + params
 			def retailerList = Retailer.list(params)
 //			println retailerList
-		
-			def productListForShopping = Product.list(params)
+			def salesSlips = ScannedReceipt.findAllByIsApproved(1)
+			def productListForShopping
+			def imageList = []
 			
-        	[userList: UserRole.findAllByRole(userRole).user, retailerList: retailerList, productListForShopping: productListForShopping]
+			if(params.selectedScannedReceipt)
+			{
+				def ScannedReceipt receipt = ScannedReceipt.findById(params.selectedScannedReceipt)
+				def User user = receipt.user
+				params.user = user
+				productListForShopping = dataGenerator.getAllOptInProductsForUser(user)
+				def webRootDir = servletContext.getRealPath("/WEB-INF")
+				def item = ScannedReceipt.findById(params.selectedScannedReceipt)
+				def scannedReceiptItems = ScannedReceipt.findAllByScanDate(item.scanDate)
+				scannedReceiptItems.each { 
+					println "Image: " +it.fileName
+					File imageFile = new File( webRootDir, "/uploads/"+user+"/salesSlips/"+it.fileName+"_part"+it.filePart+".png")
+					imageList.add(imageFile)
+				}
+				println "ImageList: " + imageList
+			}
+			
+        	[salesSlips: salesSlips, selectedScannedReceipt: params.selectedScannedReceipt, user: params.user, retailerList: retailerList, productListForShopping: productListForShopping, imageList: imageList]
 			break
 		case 'POST':
 			println "ControlPanel, create Shopping: " +params
 			def newUserRankList = []
 			
-			def user = User.findById(params.userList.username)
+			def user = User.findByUsername(params.user)
 			def retailer = Retailer.findById(params.retailerList.name)
 			
+			def item = ScannedReceipt.findById(params.selectedScannedReceipt)
+			def scannedReceiptItems = ScannedReceipt.findAllByScanDate(item.scanDate)		
+			println "Found receipt items:" + scannedReceiptItems
+			
+
 			/** create a new shopping Instance with many shoppingItems **/
 			def shoppingInstance = new Shopping(date: new Date(), retailer: retailer, user: user).save(failOnError:true)
 			
@@ -157,9 +198,11 @@ class ControlPanelController {
 //					println "Products in list: " +Product.findById(obj)
 					def anzahl = params.anzahl[i]
 					def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+//					def isVerified = params.isVerified[i].toBoolean()
+					def isSalesVerify = params.salesVerified=="Verify"?true:false
 					if(anzahl && preis)
 					{
-						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product)
+						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
 						if(shoppingItem.save(failOnError:true))
 						{
 							shoppingInstance.addToProductShoppings(shoppingItem)
@@ -170,6 +213,10 @@ class ControlPanelController {
 				
 				if(shoppingInstance.save(failOnError:true))
 				{
+					// set the receipts to Approved!
+					scannedReceiptItems.each {
+						it.isApproved = params.salesVerified=="Verify"?2:0
+					}
 					// calculate new Ranking after Shopping
 					newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
 					
