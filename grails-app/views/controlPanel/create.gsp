@@ -7,7 +7,9 @@
 	value="${message(code: 'controlPanel.label', default: 'ControlPanel')}" />
 <title><g:message code="default.label"
 		default="Shopping Matcher" /></title>
-</head>
+
+			</head>
+
 <body>
 	<div class="row-fluid">
 			
@@ -133,7 +135,10 @@
 						
 <%--						Message schicken:--%>
 <%--						<g:checkBox name="messageActive"/>--%>
-
+						Einkaufsdatum<g:datePicker name="shoppingDate" value="${new Date()}"
+              noSelection="['':'-Choose-']"/>
+              <br/>
+              Einkauf verifizieren: 
 						<g:select name="salesVerified" from="${['Reject', 'Verify']}" />
 
 						<fieldset>

@@ -1,8 +1,10 @@
 package ch.freebo
 
-import org.springframework.dao.DataIntegrityViolationException
-import static java.util.UUID.randomUUID;
+import java.text.SimpleDateFormat;
 
+import org.springframework.dao.DataIntegrityViolationException
+
+import static java.util.UUID.randomUUID;
 import grails.plugins.springsecurity.Secured
 
 
@@ -181,41 +183,69 @@ class ControlPanelController {
 			def user = User.findByUsername(params.user)
 			def retailer = Retailer.findById(params.retailerList.name)
 			
-			def item = ScannedReceipt.findById(params.selectedScannedReceipt)
+			def ScannedReceipt item = ScannedReceipt.findById(params.selectedScannedReceipt)
 			def scannedReceiptItems = ScannedReceipt.findAllByScanDate(item.scanDate)		
-			println "Found receipt items:" + scannedReceiptItems
+			println "Found receipt items:" + scannedReceiptItems + " scanDate: " +item.scanDate
 			
-
+			def scanDate = Date.parse("yyyyMMddHHmms",item.fileName.replace("scan_","").trim())
+			
+			println "scanDate: " +scanDate
+			
 			/** create a new shopping Instance with many shoppingItems **/
-			def shoppingInstance = new Shopping(date: new Date(), retailer: retailer, user: user).save(failOnError:true)
+			def shoppingInstance = new Shopping(date: scanDate, retailer: retailer, user: user, receipt: item).save(failOnError:true)
 			
 	        if (shoppingInstance) 
 			{
 				
 				/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
-				params.product.eachWithIndex { obj, i ->
-					def product = Product.findById(obj)
-//					println "Products in list: " +Product.findById(obj)
-					def anzahl = params.anzahl[i]
-					def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
-//					def isVerified = params.isVerified[i].toBoolean()
-					def isSalesVerify = params.salesVerified=="Verify"?true:false
-					if(anzahl && preis)
-					{
-						def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
-						if(shoppingItem.save(failOnError:true))
+				if(params.product.class.isArray())
+				{
+					params.product.eachWithIndex { obj, i ->
+						
+						def product = Product.findById(obj)
+	//					println "Products in list: " +Product.findById(obj)
+						def anzahl = params.anzahl[i]
+						def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+	//					def isVerified = params.isVerified[i].toBoolean()
+						def isSalesVerify = params.salesVerified=="Verify"?true:false
+						if(anzahl && preis)
 						{
-							shoppingInstance.addToProductShoppings(shoppingItem)
+							def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
+							if(shoppingItem.save(failOnError:true))
+							{
+								shoppingInstance.addToProductShoppings(shoppingItem)
+							}
 						}
+						
 					}
-					
 				}
+				else
+				{
+					
+						def product = Product.findById(params.product)
+						def anzahl = params.anzahl
+						def preis = params.preis?Float.parseFloat(params.preis):null
+	//					def isVerified = params.isVerified[i].toBoolean()
+						def isSalesVerify = params.salesVerified=="Verify"?true:false
+						if(anzahl && preis)
+						{
+							def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
+							if(shoppingItem.save(failOnError:true))
+							{
+								shoppingInstance.addToProductShoppings(shoppingItem)
+							}
+						}
+						
+					}
+
 				
 				if(shoppingInstance.save(failOnError:true))
 				{
 					// set the receipts to Approved!
-					scannedReceiptItems.each {
-						it.isApproved = params.salesVerified=="Verify"?2:0
+					scannedReceiptItems.each { ScannedReceipt sr ->
+						sr.isApproved = params.salesVerified=="Verify"?2:0
+						sr.shopping = shoppingInstance
+						sr.purchaseDate = params.shoppingDate
 					}
 					// calculate new Ranking after Shopping
 					newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)

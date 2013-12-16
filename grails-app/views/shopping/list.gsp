@@ -50,6 +50,8 @@
 						
 							<th class="header"><g:message code="shopping.user.label" default="User" /></th>
 						
+													<th class="header"><g:message code="shopping.approved.label" default="Verifiziert" /></th>
+						
 							<th></th>
 						</tr>
 					</thead>
@@ -57,11 +59,16 @@
 					<g:each in="${shoppingInstanceList}" var="shoppingInstance">
 						<tr>
 						
+													<td>${fieldValue(bean: shoppingInstance, field: "user")}</td>
+						
+						
 							<td><g:formatDate date="${shoppingInstance.date}" /></td>
 						
 							<td>${fieldValue(bean: shoppingInstance, field: "retailer")}</td>
 						
-							<td>${fieldValue(bean: shoppingInstance, field: "user")}</td>
+							
+							<td>${fieldValue(bean: shoppingInstance.receipt, field: "isApproved")}</td>
+							
 						
 							<td class="link">
 								<g:link action="show" id="${shoppingInstance.id}" class="btn btn-small">Details &raquo;</g:link>

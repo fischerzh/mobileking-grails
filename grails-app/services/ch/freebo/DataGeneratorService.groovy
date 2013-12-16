@@ -157,15 +157,15 @@ class DataGeneratorService {
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
 			def shopItems = []
 			sr.shopping.each { Shopping shop ->
-				"Shopping: " + shop
-				shop.productShoppings.each { ProductShoppings ps ->
-					"ProductShoppingItems: " + ps.product
-					if(ps.isVerified)
-						shopItems.add([name: ps.prod.name, qty: ps.qty, price: ps.prize])
+				if(shop.receipt.isApproved)
+				{
+					shop.productShoppings.each { ProductShoppings ps ->
+						if(ps.isVerified)
+							shopItems.add([name: ps.product.name, ean: ps.product.ean, quantity: ps.qty, price: ps.price])
+					}
+					salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
 				}
 			}
-			
-			salesreceipts.add([salespoint: pointOfSales.toString(), scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
 		}
 		println "Receipts: " + salesreceipts.unique()
 //		def allReceipts = salesreceipts.each { it ->
@@ -180,6 +180,8 @@ class DataGeneratorService {
 		jsonMap.username = user.username
 		
 		jsonMap.email = user.email
+		
+		jsonMap.avatarid = user.avatarId
 		
 		println jsonMap
 		return jsonMap
