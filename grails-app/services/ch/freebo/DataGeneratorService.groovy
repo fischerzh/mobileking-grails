@@ -157,7 +157,7 @@ class DataGeneratorService {
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
 			def shopItems = []
 			sr.shopping.each { Shopping shop ->
-				if(shop.receipt.isApproved)
+				if(shop.receipt.isApproved==2 || shop.receipt.isApproved==1)
 				{
 					shop.productShoppings.each { ProductShoppings ps ->
 						if(ps.isVerified)
