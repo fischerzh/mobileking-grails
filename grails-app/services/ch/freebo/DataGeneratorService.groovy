@@ -157,14 +157,14 @@ class DataGeneratorService {
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
 			def shopItems = []
 			sr.shopping.each { Shopping shop ->
-				if(shop.receipt.isApproved==2 || shop.receipt.isApproved==1)
-				{
+//				if(shop.receipt.isApproved==2 || shop.receipt.isApproved==1)
+//				{
 					shop.productShoppings.each { ProductShoppings ps ->
 						if(ps.isVerified)
 							shopItems.add([name: ps.product.name, ean: ps.product.ean, quantity: ps.qty, price: ps.price])
 					}
 					salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
-				}
+//				}
 			}
 		}
 		println "Receipts: " + salesreceipts.unique()
