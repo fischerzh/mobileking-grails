@@ -63,7 +63,7 @@ class DataController {
 		{
 			user.isActiveApp = true
 
-			this.user = dataGenerator.registerUserAndDevice(params.regId, params.deviceType, params.deviceOs)
+			this.user = dataGenerator.registerUserAndDevice(params.regId, params.deviceType, params.deviceOs, params.deviceScreen)
 
 			if(user.save(flush: true))
 				new UserLogin( user: user, loginDate: date, success: true).save(failOnError:true)

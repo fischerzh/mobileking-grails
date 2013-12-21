@@ -21,7 +21,7 @@ class DataGeneratorService {
 		'ROLE_USER',
 		'IS_AUTHENTICATED_FULLY'
 	])
-	def registerUserAndDevice(regId, deviceType, deviceOs) {
+	def registerUserAndDevice(regId, deviceType, deviceOs, deviceScreen) {
 		if(regId) {
 			def Devices device = Devices.findByDeviceId(regId)
 			if(device) {
@@ -39,7 +39,7 @@ class DataGeneratorService {
 				}
 			}
 			else {
-				device = new Devices(deviceId: regId, deviceType: deviceType.toString(),  deviceOs: deviceType.toString(), registrationDate: new Date()).save(failOnError:true)
+				device = new Devices(deviceId: regId, deviceType: deviceType.toString(),  deviceOs: deviceOs.toString(), deviceScreen: deviceScreen.toString(), registrationDate: new Date()).save(failOnError:true)
 				println "Device for User created:  " +device
 				if(device)
 					user.addToDevices(device)
@@ -149,18 +149,14 @@ class DataGeneratorService {
 			def pointOfSales_image = sr.shopping?sr.shopping.retailer.imageLink:""
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
 			def shopItems = []
-			if(sr.isApproved==1 || sr.isApproved ==2)
-			{
-				sr.shopping.each { Shopping shop ->
-					shop.productShoppings.each { ProductShoppings ps ->
-						if(ps.isVerified)
-							shopItems.add([name: ps.product.name, ean: ps.product.ean, quantity: ps.qty, price: ps.price])
-					}
-
+			sr.shopping.each { Shopping shop ->
+				shop.productShoppings.each { ProductShoppings ps ->
+					if(ps.isVerified)
+						shopItems.add([name: ps.product.name, ean: ps.product.ean, quantity: ps.qty, price: ps.price])
 				}
-				salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
-				
+
 			}
+			salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, rejectmessage:sr.rejectMessage, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
 
 		}
 		println "Receipts: " + salesreceipts.unique()

@@ -608,6 +608,7 @@ class RankingService {
 				newRank = value.getAt(0)['rank']
 			}
 			avatarId = rankUser.avatarId
+			isAnon = rankUser.isAnonymous
 			if(isAnon)	
 				username = "Anonym"
 			else

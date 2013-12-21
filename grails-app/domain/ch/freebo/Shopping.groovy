@@ -8,7 +8,7 @@ class Shopping {
 	
     static constraints = {
 		productShoppings nullable:true
-		receipt nullable:true
+		receipt nullable:true, unique: true
     }
 		
 	static belongsTo = [retailer:Retailer, user: User]
