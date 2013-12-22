@@ -244,6 +244,7 @@ class DataController {
 		}
 		htmlParseCodeCheck.'**'.findAll{it.@class == 'htit'}.each { node ->
 			def parentNode = node.text().replace("\n", "").replace("\r", "")
+			println "parentNode: "+ parentNode
 			if(node.text().trim().contains("Hersteller") && !node.text().trim().contains("Strichcodeanmelder"))
 			{
 
@@ -259,11 +260,16 @@ class DataController {
 
 			}
 
-			if(node.text().contains("Menge"))
-			{
-				println "parent: " +node.parent().text()
-				menge = node.parent().text()
-			}
+//			if(node.text().trim().contains("Menge"))
+//			{
+//				
+//				node.each {
+//					println "node: " + it
+//				}
+//				node.parent().children().each {
+//					println "parent.each: " + it.text()
+//				}
+//			}
 
 		}
 
