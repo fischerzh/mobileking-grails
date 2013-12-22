@@ -302,11 +302,12 @@ class ControlPanelController {
 							addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
 							callGCMServiceMsg(user)
 							flash.message = 'Einkauf nicht verifiziert! Message an User ' +user+" geschickt!)"
+							redirect action: 'create'
+							return
 
 						}
 
-						flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+" geschickt! (Notifications disabled!)"
-
+						flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+ " geschickt! (Notifications disabled!)"
 						redirect action: 'create'
 						return
 
