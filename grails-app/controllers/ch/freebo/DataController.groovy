@@ -105,7 +105,7 @@ class DataController {
 						hersteller = Manufacturer.findByName(productResponse.producer.toString())?:new Manufacturer(name: productResponse.producer.toString()).save(failOnError:true)
 					def prodSegment1 = ProductSegment.findByName("Lebensmittel / Getraenke / Tabakwaren")?:new ProductSegment(name:"Lebensmittel / Getraenke / Tabakwaren").save(flush:true)
 					def prodCategory1 = ProductCategory.findByName(productResponse.category.toString())?:new ProductCategory(name:productResponse.category.toString(),productSegment:prodSegment1).save(flush:true)
-					prod = new Product(name: productResponse.productname.toString(), ean: params.ean.toString(), imageLink: productResponse.productlink.toString(), productCategory :  prodCategory1, manufacturer: hersteller).save(failOnError:true)
+					prod = new Product(name: productResponse.productname.toString(), ean: params.ean.toString(), imageLink: productResponse.productlink.toString(), size : productResponse.menge.toString()  , productCategory : prodCategory1, manufacturer: hersteller).save(failOnError:true)
 				}
 			}
 			
@@ -226,7 +226,7 @@ class DataController {
 		def productName
 		def producer
 		def category
-		def size
+		def menge
 		def productLink = "http://www.codecheck.info"
 		 
 		htmlParseCodeCheck.'**'.find { it.@class =='htit2lightgreen' }.each {
@@ -262,7 +262,7 @@ class DataController {
 			if(node.text().contains("Menge"))
 			{
 				println "parent: " +node.parent().text()
-
+				menge = node.parent().text()
 			}
 
 		}
@@ -289,6 +289,7 @@ class DataController {
 		productResponse.productlink = productLink
 		productResponse.producer = producer
 		productResponse.category = category
+		productResponse.menge = menge
 		println productResponse
 		return productResponse
 
