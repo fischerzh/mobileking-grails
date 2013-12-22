@@ -143,6 +143,8 @@ class DataGeneratorService {
 			def pointOfSales = sr.shopping?sr.shopping.retailer:""
 			def pointOfSales_image = sr.shopping?sr.shopping.retailer.imageLink:""
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
+			def Date date = sr.purchaseDate?sr.purchaseDate.setHours(sr.purchaseDate.getHours()+1):null
+			def purchaseDate = date?date.toGMTString():null
 			def shopItems = []
 			if(sr.isApproved == 2 && sr.shopping)
 			{
@@ -152,11 +154,11 @@ class DataGeneratorService {
 							shopItems.add([name: ps.product.name, ean: ps.product.ean, quantity: ps.qty, price: ps.price])
 					}
 				}
-				salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, rejectmessage:sr.rejectMessage, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
+				salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, rejectmessage:sr.rejectMessage, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
 			}
 			else if (sr.isApproved == 1 || sr.isApproved == 0)
 			{
-				salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: sr.purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, rejectmessage:sr.rejectMessage, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
+				salesreceipts.add([salespoint: pointOfSales.toString(), purchasedate: purchaseDate, scandate: sr.scanDate, isapproved : sr.isApproved, rejectmessage:sr.rejectMessage, filename: sr.fileName, isuploaded: true, totalparts: totalParts, imagelink: pointOfSales_image, salesslipitems: shopItems])
 
 			}
 		}
