@@ -143,8 +143,7 @@ class DataGeneratorService {
 			def pointOfSales = sr.shopping?sr.shopping.retailer:""
 			def pointOfSales_image = sr.shopping?sr.shopping.retailer.imageLink:""
 			def totalParts = ScannedReceipt.findAllByUserAndFileName(user, sr.fileName).size()
-			def Date date = sr.purchaseDate?sr.purchaseDate.setHours(sr.purchaseDate.getHours()+1):null
-			def purchaseDate = date?date.toGMTString():null
+			def String purchaseDate = sr.purchaseDate?sr.purchaseDate.format("dd MMM yyyy HH:mm:ss"):null
 			def shopItems = []
 			if(sr.isApproved == 2 && sr.shopping)
 			{
