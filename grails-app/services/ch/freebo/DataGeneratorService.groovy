@@ -113,11 +113,6 @@ class DataGeneratorService {
 					oldRank = userrank.rankBefore
 					newRankAchieved = userrank.newRank
 					pointsCollected = userrank.totalPointsCollected
-					//					def totalPointsCollected = rankingService.calculatePointsForProduct(prod, user)
-					//					if(totalPointsCollected != userrank.pointsCollected)
-					//						pointsCollected = totalPointsCollected
-					//					else
-					//						pointsCollected = userrank.pointsCollected
 
 					println "dataGeneratorService(), totalPointsCollected: " + pointsCollected
 
@@ -174,7 +169,13 @@ class DataGeneratorService {
 		jsonMap.email = user.email
 
 		jsonMap.avatarid = user.avatarId
-
+		
+		jsonMap.isnotification = user.isNotificationEnabled
+		
+		jsonMap.isanonymous = user.isAnonymous
+		
+		jsonMap.isactiveapp = user.isActiveApp
+		
 		println jsonMap
 		return jsonMap
 	}

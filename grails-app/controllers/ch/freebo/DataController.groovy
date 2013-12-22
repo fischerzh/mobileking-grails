@@ -43,15 +43,6 @@ class DataController {
 		/** PREPARE, CALCULATE AND SET UP JSON DATA FOR RESPONSE*/
 		def jsonExport = dataGenerator.getJSONData()
 
-		if(!user.isActiveApp)
-		{
-			jsonExport.isactiveapp = false
-		}
-		else
-		{
-			jsonExport.isactiveapp = true
-		}
-
 		def json = new JsonBuilder(jsonExport)
 
 
