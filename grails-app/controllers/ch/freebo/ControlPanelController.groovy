@@ -197,24 +197,45 @@ class ControlPanelController {
 
 				def isSalesVerify = params.salesVerified=="Verify"?true:false
 
-				if(isSalesVerify)
+				if(params.product && isSalesVerify)
 				{
-					/** create a new shopping Instance with many shoppingItems **/
-					def shoppingInstance = new Shopping(date: scanDate, retailer: retailer, user: user, receipt: item).save(failOnError:true)
 
-
-					if (shoppingInstance)
+					if(isSalesVerify)
 					{
+						/** create a new shopping Instance with many shoppingItems **/
+						def shoppingInstance = new Shopping(date: scanDate, retailer: retailer, user: user, receipt: item).save(failOnError:true)
 
-						/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
-						if(params.product.class.isArray())
+
+						if (shoppingInstance)
 						{
-							params.product.eachWithIndex { obj, i ->
 
-								def product = Product.findById(obj)
-								//					println "Products in list: " +Product.findById(obj)
-								def anzahl = params.anzahl[i]
-								def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+							/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
+							if(params.product.class.isArray())
+							{
+								params.product.eachWithIndex { obj, i ->
+
+									def product = Product.findById(obj)
+									//					println "Products in list: " +Product.findById(obj)
+									def anzahl = params.anzahl[i]
+									def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+									//					def isVerified = params.isVerified[i].toBoolean()
+									if(anzahl && preis)
+									{
+										def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
+										if(shoppingItem.save(failOnError:true))
+										{
+											shoppingInstance.addToProductShoppings(shoppingItem)
+										}
+									}
+
+								}
+							}
+							else
+							{
+
+								def product = Product.findById(params.product)
+								def anzahl = params.anzahl
+								def preis = params.preis?Float.parseFloat(params.preis):null
 								//					def isVerified = params.isVerified[i].toBoolean()
 								if(anzahl && preis)
 								{
@@ -224,102 +245,94 @@ class ControlPanelController {
 										shoppingInstance.addToProductShoppings(shoppingItem)
 									}
 								}
-
 							}
-						}
-						else
-						{
-
-							def product = Product.findById(params.product)
-							def anzahl = params.anzahl
-							def preis = params.preis?Float.parseFloat(params.preis):null
-							//					def isVerified = params.isVerified[i].toBoolean()
-							if(anzahl && preis)
+							if(shoppingInstance.save(failOnError:true))
 							{
-								def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: isSalesVerify)
-								if(shoppingItem.save(failOnError:true))
-								{
-									shoppingInstance.addToProductShoppings(shoppingItem)
+								// set the receipts to Approved!
+								scannedReceiptItems.each { ScannedReceipt sr ->
+									sr.isApproved = params.salesVerified=="Verify"?2:0
+									sr.shopping = shoppingInstance
+									sr.purchaseDate = params.shoppingDate
 								}
-							}
-						}
-						if(shoppingInstance.save(failOnError:true))
-						{
-							// set the receipts to Approved!
-							scannedReceiptItems.each { ScannedReceipt sr ->
-								sr.isApproved = params.salesVerified=="Verify"?2:0
-								sr.shopping = shoppingInstance
-								sr.purchaseDate = params.shoppingDate
-							}
-							// calculate new Ranking after Shopping
-							newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
+								// calculate new Ranking after Shopping
+								newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
 
-							// update Opt-In if user has done pre Opt-In
-							def allOptInProducts = dataGenerator.getAllOptInProductsForUser(user)
+								// update Opt-In if user has done pre Opt-In
+								def allOptInProducts = dataGenerator.getAllOptInProductsForUser(user)
 
-							allOptInProducts.each { Product localProd ->
-								shoppingInstance.productShoppings.each {
-									if(it.product == localProd)
-									{
-										// Check if the user made a pre-opt in, if the OptIn was not active yet: set isActive = true
-										def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
-										if(!userProd.isActive)
+								allOptInProducts.each { Product localProd ->
+									shoppingInstance.productShoppings.each {
+										if(it.product == localProd)
 										{
-											log.debug("user Opt-In " + userProd)
-											userProd.isActive = true
-											userProd.save(failOnError:true)
+											// Check if the user made a pre-opt in, if the OptIn was not active yet: set isActive = true
+											def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
+											if(!userProd.isActive)
+											{
+												log.debug("user Opt-In " + userProd)
+												userProd.isActive = true
+												userProd.save(failOnError:true)
+											}
 										}
 									}
 								}
+
 							}
+							else
+							{
+								flash.message = message(code: 'default.created.message', args: [
+									message(code: 'controlPanel.label', default: 'Einkauf konnte nicht erstellt werden!'),
+									shoppingInstance
+								])
+								redirect action: 'create'
+								break
+							}
+						}
 
-						}
-						else
-						{
-							flash.message = message(code: 'default.created.message', args: [
-								message(code: 'controlPanel.label', default: 'Einkauf konnte nicht erstellt werden!'),
-								shoppingInstance
-							])
-							redirect action: 'create'
-							break
-						}
 					}
+					else
+					{
+						// set the receipts to Rejected!
+						scannedReceiptItems.each { ScannedReceipt sr ->
+							sr.isApproved = params.salesVerified=="Verify"?2:0
+							sr.purchaseDate = params.shoppingDate
+							sr.rejectMessage = params.rejectMessage
+						}
+						if(user.isNotificationEnabled)
+						{
+							addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
+							callGCMServiceMsg(user)
+							flash.message = 'Einkauf nicht verifiziert! Message an User ' +user+" geschickt!)"
 
-				}
-				else
-				{
-					// set the receipts to Rejected!
-					scannedReceiptItems.each { ScannedReceipt sr ->
-						sr.isApproved = params.salesVerified=="Verify"?2:0
-						sr.purchaseDate = params.shoppingDate
-						sr.rejectMessage = params.rejectMessage
+						}
+
+						flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+" geschickt! (Notifications disabled!)"
+
+						redirect action: 'create'
+						return
+
 					}
 					if(user.isNotificationEnabled)
 					{
-						addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
+						addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
 						callGCMServiceMsg(user)
-						flash.message = 'Einkauf nicht verifiziert! Message an User ' +user+" geschickt!)"
-						
-					}
+						flash.message = 'Neuer Einkauf erstellt für user: ' +user +' Keine Message geschickt (Notification disabled!)'
 
-					flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+" geschickt! (Notifications disabled!)"
-					
+					}
+					flash.message = 'Neuer Einkauf erstellt für user: ' +user + 'Message geschickt!'
+
 					redirect action: 'create'
 					return
 
 				}
-
-				if(user.isNotificationEnabled)
+				else
 				{
-					addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
-					callGCMServiceMsg(user)
-					flash.message = 'Neuer Einkauf erstellt für user: ' +user +' Keine Message geschickt (Notification disabled!)'
-					
-				}
-				flash.message = 'Neuer Einkauf erstellt für user: ' +user + 'Message geschickt!'
+					flash.message = 'Einkauf kann nicht gereniert werden wenn keine Einkäufe definiert wurden (Preis, Anzahl!)'
 
-				redirect action: 'create'
-				return
+					redirect action: 'create'
+					return
+				}
+
+
 
 		}
 	}
