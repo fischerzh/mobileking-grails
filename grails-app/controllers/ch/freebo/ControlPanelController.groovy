@@ -294,22 +294,29 @@ class ControlPanelController {
 						sr.purchaseDate = params.shoppingDate
 						sr.rejectMessage = params.rejectMessage
 					}
-					addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
-					callGCMServiceMsg(user)
-					flash.message = 'Einkauf nicht verifiziert! Meesage an User geschickt!'
+					if(user.isNotificationEnabled)
+					{
+						addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
+						callGCMServiceMsg(user)
+						flash.message = 'Einkauf nicht verifiziert! Message an User ' +user+" geschickt!)"
+						
+					}
 
+					flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+" geschickt! (Notifications disabled!)"
+					
 					redirect action: 'create'
 					return
 
 				}
 
-
-				addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
-				callGCMServiceMsg(user)
-				flash.message = message(code: 'default.created.message', args: [
-					message(code: 'controlPanel.label', default: 'Neuer Einkauf erstellt!'),
-					shoppingInstance
-				])
+				if(user.isNotificationEnabled)
+				{
+					addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
+					callGCMServiceMsg(user)
+					flash.message = 'Neuer Einkauf erstellt für user: ' +user +' Keine Message geschickt (Notification disabled!)'
+					
+				}
+				flash.message = 'Neuer Einkauf erstellt für user: ' +user + 'Message geschickt!'
 
 				redirect action: 'create'
 				return
