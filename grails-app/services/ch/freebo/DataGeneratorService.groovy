@@ -101,9 +101,9 @@ class DataGeneratorService {
 			def crowns = {}
 			def leaderBoard = []
 
+			//if the product is activated => Product purchased!
 			if(isActive)
 			{
-
 				//get rank information
 				def UserRanking userrank = UserRanking.findByUserAndProduct(user, prod, [sort:"updated", order:"desc"])
 

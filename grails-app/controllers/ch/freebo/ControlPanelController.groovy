@@ -200,8 +200,6 @@ class ControlPanelController {
 				if(params.product && isSalesVerify)
 				{
 
-					if(isSalesVerify)
-					{
 						/** create a new shopping Instance with many shoppingItems **/
 						def shoppingInstance = new Shopping(date: scanDate, retailer: retailer, user: user, receipt: item).save(failOnError:true)
 
@@ -288,10 +286,45 @@ class ControlPanelController {
 							}
 						}
 
-					}
-					else
+//					else
+//					{
+//						// set the receipts to Rejected!
+//						scannedReceiptItems.each { ScannedReceipt sr ->
+//							sr.isApproved = params.salesVerified=="Verify"?2:0
+//							sr.purchaseDate = params.shoppingDate
+//							sr.rejectMessage = params.rejectMessage
+//						}
+//						if(user.isNotificationEnabled)
+//						{
+//							addMessages("MESSAGE", "Einkauf konnte nicht verifiziert werden!")
+//							callGCMServiceMsg(user)
+//							flash.message = 'Einkauf nicht verifiziert! Message an User ' +user+" geschickt!)"
+//							redirect action: 'create'
+//							return
+//
+//						}
+//
+//						flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+ " geschickt! (Notifications disabled!)"
+//						redirect action: 'create'
+//						return
+//
+//					}
+					if(user.isNotificationEnabled)
 					{
-						// set the receipts to Rejected!
+						addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
+						callGCMServiceMsg(user)
+						flash.message = 'Neuer Einkauf erstellt für user: ' +user +' Keine Message geschickt (Notification disabled!)'
+
+					}
+					flash.message = 'Neuer Einkauf erstellt für user: ' +user + 'Message geschickt!'
+
+					redirect action: 'create'
+					return
+
+				}
+				else if (!isSalesVerify)
+				{
+					// set the receipts to Rejected!
 						scannedReceiptItems.each { ScannedReceipt sr ->
 							sr.isApproved = params.salesVerified=="Verify"?2:0
 							sr.purchaseDate = params.shoppingDate
@@ -307,31 +340,12 @@ class ControlPanelController {
 
 						}
 
-						flash.message = 'Einkauf nicht verifiziert! KEINE Message an User ' +user+ " geschickt! (Notifications disabled!)"
-						redirect action: 'create'
-						return
-
-					}
-					if(user.isNotificationEnabled)
-					{
-						addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
-						callGCMServiceMsg(user)
-						flash.message = 'Neuer Einkauf erstellt für user: ' +user +' Keine Message geschickt (Notification disabled!)'
-
-					}
-					flash.message = 'Neuer Einkauf erstellt für user: ' +user + 'Message geschickt!'
-
-					redirect action: 'create'
-					return
-
 				}
-				else
-				{
-					flash.message = 'Einkauf kann nicht gereniert werden wenn keine Einkäufe definiert wurden (Preis, Anzahl!)'
-
-					redirect action: 'create'
-					return
-				}
+				
+				flash.message = 'Einkauf kann nicht gereniert werden wenn keine Einkäufe definiert wurden (Preis, Anzahl!)'
+				
+				redirect action: 'create'
+				return
 
 
 

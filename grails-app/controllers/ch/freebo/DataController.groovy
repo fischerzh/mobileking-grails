@@ -159,7 +159,7 @@ class DataController {
 							{
 								rankingService.calculateRankingForOptAction(prod, user)
 
-								render([status: "SUCCESS", exception: "Opt Out erfolgreich!"] as JSON)
+								render([status: "SUCCESS", exception: "Opt-Out "] as JSON)
 							}
 						}
 						render([status: "SUCCESS", exception: "Opt Out schon erfolgt!"] as JSON)
