@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import org.springframework.dao.DataIntegrityViolationException
 
 import static java.util.UUID.randomUUID;
+import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
 
@@ -350,6 +351,110 @@ class ControlPanelController {
 
 
 		}
+	}
+	
+	def createShopping()
+	{
+			println "ControlPanel, create Shopping: " +params
+			def newUserRankList = []
+			
+			def user = User.findById(params.user)
+			def retailer = Retailer.findById(params.retailer)
+			
+			/** create a new shopping Instance with many shoppingItems **/
+			if(user && retailer)
+			{
+				def shoppingInstance = new Shopping(date: new Date(), retailer: retailer, user: user).save(failOnError:true)
+				
+				if (shoppingInstance)
+				{
+					
+					/** create new shoppingItems and add to shoppingInstance for selected Retailer! **/
+					if(params.product.class.isArray())
+							{
+								params.product.eachWithIndex { obj, i ->
+
+									def product = Product.findById(obj)
+									//					println "Products in list: " +Product.findById(obj)
+									def anzahl = params.anzahl[i]
+									def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
+									//					def isVerified = params.isVerified[i].toBoolean()
+									if(anzahl && preis)
+									{
+										def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: true)
+										if(shoppingItem.save(failOnError:true))
+										{
+											shoppingInstance.addToProductShoppings(shoppingItem)
+										}
+									}
+
+								}
+							}
+							else
+							{
+
+								def product = Product.findById(params.product)
+								def anzahl = params.anzahl
+								def preis = params.preis?Float.parseFloat(params.preis):null
+								//					def isVerified = params.isVerified[i].toBoolean()
+								if(anzahl && preis)
+								{
+									def shoppingItem = new ProductShoppings(qty: anzahl, price: preis, product: product, isVerified: true)
+									if(shoppingItem.save(failOnError:true))
+									{
+										shoppingInstance.addToProductShoppings(shoppingItem)
+									}
+								}
+							}
+					
+					if(shoppingInstance.save(failOnError:true))
+					{
+						// calculate new Ranking after Shopping
+						newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
+						
+						// update Opt-In if user has done pre Opt-In
+						def allOptInProducts = dataGenerator.getAllOptInProductsForUser(user)
+	
+						allOptInProducts.each { Product localProd ->
+							shoppingInstance.productShoppings.each {
+								if(it.product == localProd)
+								{
+									// Check if the user made a pre-opt in, if the OptIn was not active yet: set isActive = true
+									def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
+									if(!userProd.isActive)
+									{
+										log.debug("user Opt-In " + userProd)
+										userProd.isActive = true
+										userProd.save(failOnError:true)
+									}
+								}
+							}
+						}
+						
+					}
+					/** pass the current shopping to be excluded (calculateCurrentPoints) and then included (calculateAllPoints) for the Ranking **/
+						
+				}
+				else
+				{
+					render([status: "FAILED", exception: "Einkauf konnte nicht erstellt werden!"] as JSON)
+					return
+				}
+				
+				addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
+				callGCMServiceMsg(user)
+	
+				render([status: "SUCCESS", exception: "Neuer Einkauf erstellt! Message an User geschickt!"] as JSON)
+				
+				return
+			}
+			else
+			{
+				render([status: "FAILED", exception: "Einkauf konnte nicht erstellt werden!"] as JSON)
+				return
+			}
+			
+			
 	}
 
 	def show() {

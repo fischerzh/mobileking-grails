@@ -21,6 +21,7 @@ class UrlMappings {
 		"/updateUserFiles" (controller: "data", action: "updateUserFiles")
 //		"/product/sendMessage"(controller: "product", action: "callGCMService")
 		"/controlPanel/sendMessage"(controller: "controlPanel", action: "callGCMService")
+		"/controlPanel/createShopping" (controller: "controlPanel", action: "createShopping")
 		"/user/loggedIn" (controller:"user", action: "loggedIn")
 	}
 }
