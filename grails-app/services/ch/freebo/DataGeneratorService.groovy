@@ -173,7 +173,7 @@ class DataGeneratorService {
 
 		jsonMap.username = user.username
 
-		jsonMap.email = user.email
+//		jsonMap.email = user.email
 
 		jsonMap.avatarid = user.avatarId
 		
