@@ -323,7 +323,7 @@ class DataController {
 				user.errors.allErrors.each {
 					println it
 					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.username.unique.error")?"Benutzername schon vorhanden":" "
-					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":" "
+//					errorMessage += it.toString().toLowerCase().contains("ch.freebo.user.email.unique.error")?"E-Mail schon vorhanden":" "
 				}
 				println errorMessage
 

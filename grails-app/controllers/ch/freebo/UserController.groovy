@@ -79,11 +79,11 @@ class UserController {
 					userInstance.errors.allErrors.each { 
 						println it 
 						errorMessage += it.toString().toLowerCase().contains("ch.freebo.User.username.unique.error")?"Username not uniqe":""
-						errorMessage += it.toString().toLowerCase().contains("ch.freebo.User.email.unique.error")?"E-Mail not unique":""
+//						errorMessage += it.toString().toLowerCase().contains("ch.freebo.User.email.unique.error")?"E-Mail not unique":""
 					}
 					println errorMessage
 					println "createFromApp: " +params.createFromApp
-					render([status: "FAILED", exception: "Username oder E-Mail bereits vorhanden"] as JSON)
+					render([status: "FAILED", exception: "Username bereits vorhanden"] as JSON)
 //					render( status: 500, exception: "Create not successful") as JSON
 				}
 				else

@@ -6,7 +6,7 @@ class User {
 
 	String username
 	String password
-	String email
+//	String email
 	Boolean isActiveApp = false
 	Boolean isNotificationEnabled = true
 	Boolean isAnonymous = false
@@ -19,7 +19,7 @@ class User {
 	static constraints = {
 		username blank: false, unique: true
 		password blank: false
-		email email: true, blank: false, unique:true
+//		email email: true, blank: false, unique:true
 		isActiveApp nullable:true
 		loyaltyCards nullable:true
 		shoppings nullable:true
