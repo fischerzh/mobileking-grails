@@ -46,7 +46,10 @@
 						
 							<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" />
 						
-							<g:sortableColumn property="email" title="${message(code: 'user.email.label', default: 'Email')}" />
+							<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Notification aktiviert')}" />
+						
+							<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Anonym')}" />
+						
 						
 							<g:sortableColumn property="isActiveApp" title="${message(code: 'user.isActiveApp.label', default: 'App Aktiviert')}" />
 						
@@ -60,8 +63,11 @@
 						<tr>
 						
 							<td>${fieldValue(bean: userInstance, field: "username")}</td>
-						
-							<td>${fieldValue(bean: userInstance, field: "email")}</td>
+							
+							<td>${fieldValue(bean: userInstance, field: "isNotificationEnabled")}</td>
+							
+							<td>${fieldValue(bean: userInstance, field: "isAnonymous")}</td>
+							
 						
 							<td><g:formatBoolean boolean="${userInstance.isActiveApp}" /></td>
 						

@@ -28,6 +28,8 @@ class ControlPanelController {
 
 	def callGCMService() {
 		println params
+		if(params.controlPanelUser)
+			this.user = User.findByUsername(params.controlPanelUser)
 		addMessages("MESSAGE", params.inputMessage)
 		sendMessage();
 	}
@@ -113,8 +115,6 @@ class ControlPanelController {
 				])
 			}
 		}
-
-
 
 		if(this.user)
 			return

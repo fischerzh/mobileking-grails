@@ -56,13 +56,6 @@
 						
 					</g:if>
 				
-					<g:if test="${userInstance?.email}">
-						<dt><g:message code="user.email.label" default="Email" /></dt>
-						
-							<dd><g:fieldValue bean="${userInstance}" field="email"/></dd>
-						
-					</g:if>
-				
 					<g:if test="${userInstance?.isActiveApp}">
 						<dt><g:message code="user.isActiveApp.label" default="Is Active App" /></dt>
 						

@@ -84,6 +84,9 @@
 					</g:each>
 				</tbody>
 			</table>
+			
+			<g:select name="controlPanelUser" from="${controlPanelInstanceList.username}" 
+					  noSelection="${['null':'Select One...']}" />
 
 				<g:textArea name="inputMessage" value="Message an registrierte Geräte!" />
 				
