@@ -93,7 +93,7 @@ class RankingService {
 					rankUser = obj['user']
 					points = obj['points']
 					newRank = obj['rank']
-					createNewUserRanking(rankUser, localProd, points, newRank)
+					createNewUserRanking(rankUser, localProd, points, newRank, 0)
 				}
 			}
 			else
@@ -101,7 +101,7 @@ class RankingService {
 				rankUser = value.getAt(0)['user']
 				points = value.getAt(0)['points']
 				newRank = value.getAt(0)['rank']
-				createNewUserRanking(rankUser, localProd, points, newRank)
+				createNewUserRanking(rankUser, localProd, points, newRank, 0)
 			}
 			
 		}
@@ -109,13 +109,13 @@ class RankingService {
 		return newUserRank
 	}
 	
-	def createNewUserRanking(User rankUser, Product localProd, points, newRank)
+	def createNewUserRanking(User rankUser, Product localProd, points, newRank, pointsCollected)
 	{
 		def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
 		def oldRank = oldUserRanking?oldUserRanking.rank:0
 		def newRankAchieved = oldRank!=newRank
 		def UserRanking newUserRanking
-		newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: 0, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
+		newUserRanking = new UserRanking(rank: newRank,  rankBefore: oldRank, newRank: newRankAchieved,  pointsCollected: pointsCollected, totalPointsCollected: points, product: localProd,  user: rankUser, updated: new Date())
 		newUserRanking.save(failOnError:true)
 	}
 	
@@ -138,7 +138,7 @@ class RankingService {
 				{
 					//Calculate new Rank for All Opt-In Users!
 					def usersForRanking = findAllUsersOptInForProduct(ps.product)
-					def newRank = calculateNewRankForShopping(usersForRanking, inputUser, ps.product, ps, newPoints)
+					def newRank = calculateNewRankForShopping(usersForRanking, inputUser, ps.product, ps, newPoints, ps.qty)
 					
 					newUserRankList.add(newRank: newRank, product: ps.product)
 					
@@ -152,7 +152,7 @@ class RankingService {
 	}
 	
 	
-	def calculateNewRankForShopping(allUsersOptIn, User localUser, Product localProd, ProductShoppings shopping, newPoints)
+	def calculateNewRankForShopping(allUsersOptIn, User localUser, Product localProd, ProductShoppings shopping, newPoints, pointsCollected)
 	{
 		def newUserRank = 1
 		def isUserInRank = false
@@ -192,7 +192,10 @@ class RankingService {
 					rankUser = obj['user']
 					points = obj['points']
 					newRank = obj['rank']
-					createNewUserRanking(rankUser, localProd, points, newRank)
+					if(localUser == rankUser)
+						createNewUserRanking(rankUser, localProd, points, newRank, pointsCollected)
+					else
+						createNewUserRanking(rankUser, localProd, points, newRank, 0)
 				}
 			}
 			else
@@ -200,7 +203,10 @@ class RankingService {
 				rankUser = value.getAt(0)['user']
 				points = value.getAt(0)['points']
 				newRank = value.getAt(0)['rank']
-				createNewUserRanking(rankUser, localProd, points, newRank)
+				if(localUser == rankUser)
+					createNewUserRanking(rankUser, localProd, points, newRank, pointsCollected)
+				else
+					createNewUserRanking(rankUser, localProd, points, newRank, 0)
 			}
 			
 //			def UserRanking oldUserRanking = UserRanking.findByUserAndProduct(rankUser, localProd, [sort:"updated", order:"desc"])
