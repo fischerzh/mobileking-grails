@@ -14,7 +14,8 @@
     <a href="#">User Favorites (Opt-In/Out)</a>
   </li>
   <li><g:link class="create" controller="LogMessages" action="list">User Log Infos</g:link></li>
-  <li><a href="#">User Achievements (Badges / Rank)</a></li>
+   <li><g:link class="create" controller="userRanking" action="list">User Achievements (Badges / Rank)</g:link></li>
+
 </ul>
 	
 		<div class="row-fluid">
@@ -76,7 +77,7 @@
 
 							<td>${fieldValue(bean: optInInstance, field: "product")}</td>
 							
-														<td><g:formatBoolean boolean="${optInInstance.optIn}" /></td>
+							<td><g:formatBoolean boolean="${optInInstance.optIn}" /></td>
 						
 							<td><g:formatDate date="${optInInstance.optInDate}" /></td>
 						

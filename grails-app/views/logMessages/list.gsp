@@ -14,7 +14,9 @@
    <g:link class="create" controller="optIn" action="list">User Favorites (Opt-In/Out)</g:link>
   </li>
   <li class="active"><a href="#">User Log Infos</a></li>
-  <li><a href="#">User Achievements (Badges / Rank)</a></li>
+  <li>
+  <g:link class="create" controller="userRanking" action="list">User Achievements (Badges / Rank)</g:link>
+  </li>
 </ul>
 		<div class="row-fluid">
 			

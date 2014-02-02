@@ -18,11 +18,11 @@ class LogMessagesController {
     }
 
     def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
+        params.max = Math.min(params.max ? params.int('max') : 10, 50)
 		
 		def userLogList = UserRole.findAllByRole(userRole).user
 		println userLogList
-        [userLogList: userLogList, logMessagesInstanceTotal: userLogList.size()]
+        [userLogList: userLogList, logMessagesInstanceTotal: LogMessages.count()]
     }
 
     def create() {
