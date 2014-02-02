@@ -373,10 +373,11 @@ class ControlPanelController {
 					if(params.product.class.isArray())
 							{
 								params.product.eachWithIndex { obj, i ->
-
-									def product = Product.findById(obj)
-									//					println "Products in list: " +Product.findById(obj)
+									println "Obj: "+ obj + ", i: " + i
+									def product = Product.findByEan(obj)
+									println "Products in list: " +product
 									def anzahl = params.anzahl[i]
+									println "anzahl: " + anzahl
 									def preis = params.preis[i]?Float.parseFloat(params.preis[i]):null
 									//					def isVerified = params.isVerified[i].toBoolean()
 									if(anzahl && preis)
@@ -393,8 +394,10 @@ class ControlPanelController {
 							else
 							{
 
-								def product = Product.findById(params.product)
+								def product = Product.findByEan(params.product)
+								println "product: " + product
 								def anzahl = params.anzahl
+								println "anzahl: " + anzahl
 								def preis = params.preis?Float.parseFloat(params.preis):null
 								//					def isVerified = params.isVerified[i].toBoolean()
 								if(anzahl && preis)
