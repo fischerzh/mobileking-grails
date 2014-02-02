@@ -139,7 +139,7 @@
               noSelection="['':'-Choose-']"/>
               <br/>
               Einkauf verifizieren: 
-						<g:select name="salesVerified" from="${['Reject', 'Verify']}" />
+						<g:select name="salesVerified" from="${['Verify', 'Reject']}" />
 
 						<fieldset>
 							<%--							<f:all bean="controlPanelInstance"/>--%>
