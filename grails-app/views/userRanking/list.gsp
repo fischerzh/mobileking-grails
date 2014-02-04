@@ -68,6 +68,8 @@
 							<g:sortableColumn property="updated" title="${message(code: 'userRanking.updated.label', default: 'Last Updated')}" />
 						
 							<g:sortableColumn property="pointsCollected" title="${message(code: 'userRanking.pointsCollected.label', default: 'Points Collected')}" />
+							
+							<g:sortableColumn property="pointsCollected" title="${message(code: 'userRanking.totalPointsCollected.label', default: 'Total Points')}" />
 						
 							<g:sortableColumn property="product" title="Products" default="Product" /></th>
 						
@@ -86,6 +88,8 @@
 						
 							<td><g:formatDate date="${userRankingInstance.updated}" /></td>
 						
+							<td>${fieldValue(bean: userRankingInstance, field: "pointsCollected")}</td>
+							
 							<td>${fieldValue(bean: userRankingInstance, field: "pointsCollected")}</td>
 						
 							<td>${fieldValue(bean: userRankingInstance, field: "product")}</td>
