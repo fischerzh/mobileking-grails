@@ -172,6 +172,8 @@ class DataGeneratorService {
 		jsonMap.salesslips = salesreceipts.unique()
 
 		jsonMap.username = user.username
+		
+		jsonMap.userid = user.id
 
 //		jsonMap.email = user.email
 
