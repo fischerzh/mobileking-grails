@@ -90,7 +90,7 @@
 						
 							<td>${fieldValue(bean: userRankingInstance, field: "pointsCollected")}</td>
 							
-							<td>${fieldValue(bean: userRankingInstance, field: "pointsCollected")}</td>
+							<td>${fieldValue(bean: userRankingInstance, field: "totalPointsCollected")}</td>
 						
 							<td>${fieldValue(bean: userRankingInstance, field: "product")}</td>
 						
