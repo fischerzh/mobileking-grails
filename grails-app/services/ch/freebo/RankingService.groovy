@@ -657,6 +657,7 @@ class RankingService {
 		def Integer oldRank = 0
 		def avatarId = rankUser.avatarId
 		def isAnon = rankUser.isAnonymous
+		def userId = rankUser.id
 		def username
 		if(isAnon)
 			username = "Anonym"
@@ -669,7 +670,7 @@ class RankingService {
 			oldRank = userrank.rank
 			oldPoints = userrank.totalPointsCollected
 		}
-		leaderBoard.add([username: username, points: points, rank: newRank, avatarid: avatarId, oldrank: oldRank, oldpoints: oldPoints])
+		leaderBoard.add([userid: userId, username: username, points: points, rank: newRank, avatarid: avatarId, oldrank: oldRank, oldpoints: oldPoints])
 		return leaderBoard
 	}
 	
