@@ -198,7 +198,7 @@ class DataController {
 					prod = new Product(name: " ", ean: params.ean.toString(), imageLink: "http://www.codecheck.info", isActive:false).save(failOnError:true)
 				
 				println "Product not found for Opt-In!"
-				render([status: "FAILED", exception: "Opt In/Out fehlerhaft: Produkt nicht gefunden!"] as JSON)
+				render([status: "FAILED", exception: "Leider existiert das Produkt nicht in unserer Datenbank, daher können wir für dieses Produkt kein Loyalitätsprogramm anbieten!\nProbieren Sie doch ein anderes Produkt aus!"] as JSON)
 			}
 
 		}
