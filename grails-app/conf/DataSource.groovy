@@ -16,7 +16,7 @@ environments {
 			pooled = true
 			driverClassName = "com.mysql.jdbc.Driver"
 			dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
-			url ="jdbc:mysql://176.28.9.173:3306/product_king_test?useUnicode=yes&characterEncoding=UTF-8"
+			url ="jdbc:mysql://176.28.9.173:3306/product_king_test_nfc?useUnicode=yes&characterEncoding=UTF-8"
 			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
 			username = "mf"
 			password = "master2013"
@@ -45,7 +45,7 @@ environments {
 //			url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
 			dialect = org.hibernate.dialect.MySQL5InnoDBDialect
 			driverClassName = "com.mysql.jdbc.Driver"
-			url ="jdbc:mysql://176.28.9.173:3306/product_king?useUnicode=yes&characterEncoding=UTF-8"
+			url ="jdbc:mysql://176.28.9.173:3306/product_king_nfc?useUnicode=yes&characterEncoding=UTF-8"
 			pooled = true
 			username = "mf"
 			password = "master2013"
