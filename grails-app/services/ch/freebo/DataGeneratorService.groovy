@@ -174,6 +174,8 @@ class DataGeneratorService {
 		jsonMap.username = user.username
 
 //		jsonMap.email = user.email
+		
+		jsonMap.userid = user.id
 
 		jsonMap.avatarid = user.avatarId
 		

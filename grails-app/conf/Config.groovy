@@ -108,7 +108,7 @@ grails.plugins.springsecurity.authority.className = 'ch.freebo.Role'
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = '/User/loggedIn'
 grails.plugins.springsecurity.ui.register.postRegisterUrl = '/'
 grails.plugins.springsecurity.useBasicAuth = true
-grails.plugins.springsecurity.basic.realmName = "Freebo"
+grails.plugins.springsecurity.basic.realmName = "ProductKingNFC"
 grails.plugins.springsecurity.ui.password.minLength = 4
 grails.plugins.springsecurity.ui.password.maxLength	= 12
 grails.plugins.springsecurity.ui.password.validationRegex =	"^.*(?=.*\\d)(?=.*[a-zA-Z]).*"

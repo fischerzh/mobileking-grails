@@ -43,13 +43,6 @@
 						
 					</g:if>
 				
-					<g:if test="${userInstance?.email}">
-						<dt><g:message code="user.email.label" default="Email" /></dt>
-						
-							<dd><g:fieldValue bean="${userInstance}" field="email"/></dd>
-						
-					</g:if>
-				
 				
 					<g:if test="${userInstance?.loyaltyCards}">
 						<dt><g:message code="user.loyaltyCards.label" default="Bonuskarten" /></dt>
@@ -76,13 +69,6 @@
 							<g:each in="${optInProducts}" var="optProd">
 							<dd>${optProd?.name}</dd>
 							</g:each>
-						</g:if>
-					
-						<g:if test="${userInstance?.email}">
-						<dt><g:message code="user.points.label" default="Punkte gesammelt" /></dt>
-						
-							<dd>${points}</dd>
-						
 						</g:if>
 				
 					<g:if test="${userInstance?.devices}">
