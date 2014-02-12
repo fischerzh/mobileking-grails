@@ -412,6 +412,10 @@ class ControlPanelController {
 					
 					if(shoppingInstance.save(failOnError:true))
 					{
+						def dateNow = new Date();
+						// create a new shopping receipt
+						ScannedReceipt sr = new ScannedReceipt(approveDate: dateNow, fileName: dateNow.toGMTString(), filePart: 0,isApproved: 2, scanDate: dateNow.toGMTString(), purchaseDate: dateNow, user: user, shopping: shoppingInstance );
+						sr.save(failOnError:true)
 						// calculate new Ranking after Shopping
 						newUserRankList = rankingService.calculateRankingForShopping(user, shoppingInstance)
 						
