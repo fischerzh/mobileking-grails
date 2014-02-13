@@ -361,6 +361,8 @@ class ControlPanelController {
 			def user = User.findById(params.user)
 			def retailer = Retailer.findById(params.retailer)
 			
+			def sendMessage = false
+			
 			/** create a new shopping Instance with many shoppingItems **/
 			if(user && retailer)
 			{
@@ -426,6 +428,7 @@ class ControlPanelController {
 							shoppingInstance.productShoppings.each {
 								if(it.product == localProd)
 								{
+									sendMessage = true
 									// Check if the user made a pre-opt in, if the OptIn was not active yet: set isActive = true
 									def	OptIn userProd = OptIn.findByProductAndUserAndOptIn(localProd, user, true, [max:1, sort:"lastUpdated", order:"desc"])
 									if(!userProd.isActive)
@@ -447,11 +450,23 @@ class ControlPanelController {
 					render([status: "FAILED", exception: "Einkauf konnte nicht erstellt werden!"] as JSON)
 					return
 				}
+				def msgText = ""
 				
-				addMessages("MESSAGE", "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!")
-				callGCMServiceMsg(user)
+				if(sendMessage)
+				{
+					msgText = "Neuer Einkauf. Schau nach ob du einen neuen Rang erreicht hast!"
+					addMessages("MESSAGE", msgText)
+					callGCMServiceMsg(user)
+				}
+				else
+				{
+					msgText = "Einkauf erfasst. Du hast leider noch keine aktiven Produktefavoriten!"
+					addMessages("MESSAGE", msgText)
+					callGCMServiceMsg(user)
+				}
+
 	
-				render([status: "SUCCESS", exception: "Neuer Einkauf erstellt! Message an User geschickt!"] as JSON)
+				render([status: "SUCCESS", exception: "Neuer Einkauf erstellt! Message an User geschickt: "+msgText] as JSON)
 				
 				return
 			}
