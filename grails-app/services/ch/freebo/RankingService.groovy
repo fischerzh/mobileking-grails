@@ -81,7 +81,7 @@ class RankingService {
 				  newUserRank = rank
 				}
 		  }
-		  rank += items.size()
+		  rank += 1
 		}
 		def User rankUser
 		def points = 0
@@ -178,8 +178,10 @@ class RankingService {
 				  newUserRank = rank
 				}
 		  }
-		  rank += items.size()
+		  rank += 1
 		}
+		
+		println "groupedByRating.sorted: " + groupedByRating
 		
 		groupedByRating.each { key, value ->
 			def User rankUser
@@ -492,7 +494,7 @@ class RankingService {
 				  salesPoint = it.location.toString()
   			  }
 		  }
-		  rank += items.size()
+		  rank += 1
 		}
 		
 		def currentUsersCnt = groupedByRating.size()
@@ -608,7 +610,7 @@ class RankingService {
 			  println "items: " +it
 			  it.rank = rank
 		  }
-		  rank += items.size()
+		  rank += 1
 		}
 		
 		println "getLeaderBoardProduct after sorting: " + groupedByRating
